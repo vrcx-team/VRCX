@@ -204,7 +204,7 @@ describe('useWorldDialogCommands', () => {
             const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Share');
-            expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://vrchat.com/home/world/wrld_123');
+            expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://nexvr.net/worlds/wrld_123');
         });
 
         test('Change Allowed Domains opens the allowed domains dialog', () => {
@@ -465,7 +465,7 @@ describe('useWorldDialogCommands', () => {
 
             copyWorldUrl();
             await vi.waitFor(() => {
-                expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://vrchat.com/home/world/wrld_123');
+                expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://nexvr.net/worlds/wrld_123');
             });
         });
 

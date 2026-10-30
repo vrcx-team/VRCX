@@ -64,7 +64,7 @@
                 "search_placeholder": "Tìm kiếm",
                 "filter_placeholder": "Lọc",
                 "chatbox_blacklist": "Cho chatbox vào danh sách đen",
-                "status_tooltip": "VRCX Companion Status"
+                "status_tooltip": "Nexy Companion Status"
             }
         },
         "search": {
@@ -152,7 +152,6 @@
         },
         "profile": {
             "profile": {
-                "vrchat_credits": "Tín dụng VRChat",
                 "refresh": "Bấm để làm mới"
             },
             "game_info": {
@@ -185,7 +184,7 @@
                     "support": "Hỗ trợ"
                 },
                 "vrcx_updater": {
-                    "header": "Cập nhật VRCX",
+                    "header": "Cập nhật Nexy",
                     "change_build": "Thay đổi phiên bản",
                     "auto_update_off": "Tắt",
                     "auto_update_notify": "Thông báo",
@@ -200,7 +199,7 @@
                     "proxy": "Proxy settings"
                 },
                 "favorites": {
-                    "header": "VRCX Favorite Friends",
+                    "header": "Nexy Favorite Friends",
                     "group_placeholder": "Choose Groups"
                 },
                 "logging": {
@@ -212,13 +211,10 @@
                     "auto_invite_request_accept": "Auto Accept Invite Requests",
                     "auto_invite_request_accept_tooltip": "Automatically accept invite requests from favorite friends",
                     "auto_invite_request_accept_favs": "All Favorites",
-                    "auto_invite_request_accept_selected_favs": "VRCX Favorites"
+                    "auto_invite_request_accept_selected_favs": "Nexy Favorites"
                 },
                 "legal_notice": {
                     "header": "Lưu ý pháp lý (Tiếng Anh)",
-                    "info": "VRCX is an assistant application for VRChat that provides information about and managing friendship. This application makes use of the unofficial VRChat API SDK.",
-                    "disclaimer1": "VRCX is not endorsed by VRChat and does not reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat properties. VRChat and all associated properties are trademarks or registered trademarks of VRChat Inc. VRChat © VRChat Inc.",
-                    "disclaimer2": "pypy & Natsumi are not responsible for any problems caused by VRCX. Use at your own risk!",
                     "open_source_software_notice": "Open Source Software Notice"
                 },
                 "contributors": {
@@ -261,7 +257,7 @@
                 "user_dialog": {
                     "header": "User Dialog",
                     "vrchat_notes": "VRChat Notes",
-                    "vrcx_memos": "VRCX Memos"
+                    "vrcx_memos": "Nexy Memos"
                 },
                 "user_colors": {
                     "header": "Màu của người dùng",
@@ -398,7 +394,7 @@
                         "auto_close": "Tự động đóng ứng dụng"
                     },
                     "cache_debug": {
-                        "header": "VRCX Instance Cache/Debug",
+                        "header": "Nexy Instance Cache/Debug",
                         "udon_exception_logging": "Udon Exception Logging",
                         "disable_gamelog": "Tắt GameLog",
                         "disable_gamelog_notice": "(Có thẻ gây vấn đề)",
@@ -1018,14 +1014,14 @@
         },
         "note_export": {
             "header": "Xuát ghi chú",
-            "description1": "Quá trình này sẽ xuất tất cả ghi chú VRCX và nhập lưu vào ghi chú trên VRChat.",
+            "description1": "Quá trình này sẽ xuất tất cả ghi chú Nexy và nhập lưu vào ghi chú trên VRChat.",
             "description2": "Lưu yé về giới hạn sau:",
             "description3": "- API có mức độ giới hạn yêu cầu trễ mỗi lần yêu cầu.",
             "description4": "- Giới hạn ký tự là 256 mỗi ghi chú.",
             "description5": "- Lọc từ bậy swear words (Không được vui).",
             "description6": "- Không dòng mới (Sẽ được thay thế bằng dấu cách).",
             "description7": "- Làm cái này sẽ xóa ghi chú có sắn trên nhưng người lưu đó.",
-            "description8": "- Tất cả thay đổi trên đây sẽ không tác động đến ghi chú trên VRCX nhưng sẽ ảnh hưởng trên VRChat sau khi xuất xong",
+            "description8": "- Tất cả thay đổi trên đây sẽ không tác động đến ghi chú trên Nexy nhưng sẽ ảnh hưởng trên VRChat sau khi xuất xong",
             "refresh": "Làm mới",
             "export": "Xuất",
             "cancel": "Hủy",
@@ -1220,22 +1216,22 @@
             "add_item": "Thêm mục"
         },
         "vrcx_updater": {
-            "header": "Cập nhật VRCX",
-            "latest_version": "VRCX đã được cập nhật mới nhất.",
+            "header": "Cập nhật Nexy",
+            "latest_version": "Nexy đã được cập nhật mới nhất.",
             "ready_for_update": "Sẵn sằng cài đặt, khởi động lại để áp dụng",
             "download": "Tải xuống",
             "install": "Cài đặt"
         },
         "change_log": {
             "header": "Thông tin về thay đổi (log)",
-            "description": "Nếu bạn thích thì hãy xem xét donate để phát triển tương lai VRCX",
+            "description": "Nếu bạn thích thì hãy xem xét donate để phát triển tương lai Nexy",
             "close": "Đóng",
             "donate": "Donate",
             "github": "GitHub"
         },
         "open_source": {
             "header": "Thông báo phần mềm mở (Tiếng Anh) - Open Source Software Notice",
-            "description": "VRCX is based on open source software. It was possible because of their contribution."
+            "description": "Nexy is based on open source software. It was possible because of their contribution."
         },
         "primary_password": {
             "header": "Yêu cầu mật khẩu chính",
@@ -1255,7 +1251,7 @@
             "date": "Date",
             "action": "Action",
             "auto_backup": "Weekly Auto Backup",
-            "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
+            "restore_prompt": "Nexy has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
         },
         "avatar_database_provider": {
             "header": "Nguồn Avatar Database",
@@ -1399,7 +1395,7 @@
             "input_error": "Yêu cầu số hợp lệ"
         },
         "auto_clear_cache": {
-            "header": "Xóa thời gian VRCX Cache",
+            "header": "Xóa thời gian Nexy Cache",
             "description": "Nhập số giờ, số lớn có thể sử dụng nhiều RAM và hiệu năng hơn (mặc định: 24, tắt: 0)",
             "cancel": "Hủy",
             "ok": "OK",

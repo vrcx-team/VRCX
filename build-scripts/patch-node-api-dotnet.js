@@ -69,5 +69,9 @@ function patchNodeApiDotNet(arch, platform) {
     patchFile(postBuildPath);
 }
 
-const { arch, platform } = getArchAndPlatform();
-patchNodeApiDotNet(arch, platform);
+if (require.main === module) {
+    const { arch, platform } = getArchAndPlatform();
+    patchNodeApiDotNet(arch, platform);
+}
+
+module.exports = { patchFile };

@@ -28,17 +28,12 @@ function isRealInstance(instanceId) {
  */
 function getLaunchURL(instance) {
     const L = instance;
-    if (L.instanceId) {
-        if (L.shortName) {
-            return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
-                L.worldId
-            )}&instanceId=${encodeURIComponent(L.instanceId)}&shortName=${encodeURIComponent(L.shortName)}`;
-        }
-        return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
-            L.worldId
-        )}&instanceId=${encodeURIComponent(L.instanceId)}`;
+    // NexVR's id is the part before any ~region(...)/~private(...) suffix
+    const instanceId = String(L.instanceId || '').split('~')[0];
+    if (instanceId) {
+        return `https://nexvr.net/worlds/${encodeURIComponent(L.worldId)}/${encodeURIComponent(instanceId)}`;
     }
-    return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(L.worldId)}`;
+    return `https://nexvr.net/worlds/${encodeURIComponent(L.worldId)}`;
 }
 
 const regionTagMap = {

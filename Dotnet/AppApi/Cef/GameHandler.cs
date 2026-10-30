@@ -13,7 +13,7 @@ namespace VRCX
     {
         public override void OnProcessStateChanged(MonitoredProcess monitoredProcess)
         {
-            if (!monitoredProcess.HasName("VRChat") && !monitoredProcess.HasName("vrserver"))
+            if (!monitoredProcess.HasName("NexVR") && !monitoredProcess.HasName("vrserver"))
                 return;
 
             CheckGameRunning();
@@ -24,7 +24,7 @@ namespace VRCX
             var isGameRunning = false;
             var isSteamVRRunning = false;
 
-            if (ProcessMonitor.Instance.IsProcessRunning("VRChat"))
+            if (ProcessMonitor.Instance.IsProcessRunning("NexVR"))
                 isGameRunning = true;
 
             if (ProcessMonitor.Instance.IsProcessRunning("vrserver"))
@@ -38,7 +38,7 @@ namespace VRCX
         public override bool IsGameRunning()
         {
             // unused
-            return ProcessMonitor.Instance.IsProcessRunning("VRChat");
+            return ProcessMonitor.Instance.IsProcessRunning("NexVR");
         }
 
         public override bool IsSteamVRRunning()
@@ -49,7 +49,7 @@ namespace VRCX
 
         public override int QuitGame()
         {
-            var processes = Process.GetProcessesByName("VRChat");
+            var processes = Process.GetProcessesByName("NexVR");
             if (processes.Length == 1)
                 processes[0].Kill();
             foreach (var process in processes)

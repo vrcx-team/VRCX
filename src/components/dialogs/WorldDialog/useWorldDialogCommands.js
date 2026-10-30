@@ -113,7 +113,7 @@ export function useWorldDialogCommands(
 
     function copyWorldUrl() {
         navigator.clipboard
-            .writeText(`https://vrchat.com/home/world/${worldDialog.value.id}`)
+            .writeText(`https://nexvr.net/worlds/${worldDialog.value.id}`)
             .then(() => {
                 toast.success(t('message.world.url_copied'));
             })

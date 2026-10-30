@@ -53,17 +53,19 @@ export function sanitizeLayout(layout, hiddenKeys, definitionMap, allDefinitions
         if (chartsKeys.some((key) => usedKeys.has(key))) {
             return;
         }
-        if (!chartsKeys.every((key) => definitionMap.has(key))) {
+        // some charts may be unavailable (NexVR has no mutual-friends chart)
+        const availableKeys = chartsKeys.filter((key) => definitionMap.has(key) && !hiddenSet.has(key));
+        if (!availableKeys.length) {
             return;
         }
-        chartsKeys.forEach((key) => usedKeys.add(key));
+        availableKeys.forEach((key) => usedKeys.add(key));
         target.push({
             type: 'folder',
             id: 'default-folder-charts',
             nameKey: 'nav_tooltip.charts',
             name: t('nav_tooltip.charts'),
             icon: 'ri-pie-chart-line',
-            items: [...chartsKeys]
+            items: availableKeys
         });
     };
 
@@ -104,6 +106,8 @@ export function sanitizeLayout(layout, hiddenKeys, definitionMap, allDefinitions
         });
     }
 
+    const placedCount = normalized.length;
+
     allDefinitions.forEach((item) => {
         if (!usedKeys.has(item.key) && !hiddenSet.has(item.key)) {
             if (chartsKeys.includes(item.key)) {
@@ -115,6 +119,9 @@ export function sanitizeLayout(layout, hiddenKeys, definitionMap, allDefinitions
                     usedKeys.add(item.key);
                     return;
                 }
+                // charts are grouped, never loose: start the folder here
+                appendChartsFolder();
+                return;
             }
             appendItemEntry(item.key);
         }
@@ -122,6 +129,25 @@ export function sanitizeLayout(layout, hiddenKeys, definitionMap, allDefinitions
 
     if (!chartsKeys.some((key) => usedKeys.has(key)) && !chartsKeys.some((key) => hiddenSet.has(key))) {
         appendChartsFolder();
+    }
+
+    // Entries the saved layout lacks (new, or back after being unavailable) go
+    // where the default menu has them rather than at the bottom: right after
+    // the last entry that comes before them in definition order.
+    const definitionOrder = new Map(allDefinitions.map((item, index) => [item.key, index]));
+    const orderOf = (entry) =>
+        entry.type === 'folder'
+            ? Math.min(...entry.items.map((key) => definitionOrder.get(key) ?? Infinity))
+            : (definitionOrder.get(entry.key) ?? Infinity);
+    for (const entry of normalized.splice(placedCount)) {
+        const order = orderOf(entry);
+        let insertAt = 0;
+        normalized.forEach((other, index) => {
+            if (orderOf(other) < order) {
+                insertAt = index + 1;
+            }
+        });
+        normalized.splice(insertAt, 0, entry);
     }
 
     // Ensure direct-access is always the last item
@@ -132,6 +158,23 @@ export function sanitizeLayout(layout, hiddenKeys, definitionMap, allDefinitions
     }
 
     return normalized;
+}
+
+/**
+ * Removes the given keys from a layout, top level and inside folders, so
+ * sanitizeLayout places them afresh.
+ *
+ * @param {Array} layout - Navigation layout
+ * @param {string[]} keys - Keys to remove
+ * @returns {Array} A new layout without those keys
+ */
+export function withoutNavKeys(layout, keys) {
+    const drop = new Set(keys);
+    return (layout || [])
+        .filter((entry) => !(entry?.type === 'item' && drop.has(entry.key)))
+        .map((entry) =>
+            entry?.type === 'folder' ? { ...entry, items: (entry.items || []).filter((key) => !drop.has(key)) } : entry
+        );
 }
 
 /**

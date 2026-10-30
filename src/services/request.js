@@ -233,6 +233,10 @@ export function request(endpoint, options) {
  * @returns {boolean}
  */
 export function shouldIgnoreError(code, endpoint) {
+    // VRChat features with no NexVR equivalent; see services/nexvr/shim.js
+    if (code === 501) {
+        return true;
+    }
     if (
         (code === 404 || code === -1) &&
         typeof endpoint === 'string' &&

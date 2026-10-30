@@ -36,7 +36,7 @@ namespace VRCX
             {
                 hash += c;
             }
-            return $"vrcx-ipc-{hash}";
+            return $"nexy-ipc-{hash}";
         }
 
         public void CreateIPCServer()

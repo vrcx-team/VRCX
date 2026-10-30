@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 
+import { NEXVR_HIDDEN_ROUTE_NAMES } from '../shared/constants/nexvr';
 import { watchState } from '../services/watchState';
 
 import FavoritesAvatar from './../views/Favorites/FavoritesAvatar.vue';
@@ -151,6 +152,11 @@ router.beforeEach((to) => {
     }
 
     if (to.name === 'login' && watchState.isLoggedIn) {
+        return { name: 'feed' };
+    }
+
+    // VRChat-only pages, e.g. one restored as the last open page
+    if (NEXVR_HIDDEN_ROUTE_NAMES.has(String(to.name))) {
         return { name: 'feed' };
     }
 

@@ -25,6 +25,19 @@ export function sanitizeUserJson(json, robotUrl) {
     return json;
 }
 
+const NEXVR_RANK_TAG_PREFIX = 'nexvr_rank_';
+
+// Ranks reuse the trust-level colour slots so user colour settings still apply
+const NEXVR_RANK_TIERS = {
+    E: { colorKey: 'untrusted', sortNum: 1 },
+    D: { colorKey: 'basic', sortNum: 2 },
+    C: { colorKey: 'known', sortNum: 3 },
+    B: { colorKey: 'trusted', sortNum: 4 },
+    A: { colorKey: 'veteran', sortNum: 5 },
+    S: { colorKey: 'veteran', sortNum: 5.5 },
+    'S+': { colorKey: 'veteran', sortNum: 5.8 }
+};
+
 /**
  * Compute trust level, moderator status, and troll status from user tags.
  * Pure function — no store dependencies.
@@ -60,7 +73,16 @@ export function computeTrustLevel(tags, developerType) {
         isProbableTroll = true;
     }
 
-    if (tags.includes('system_trust_veteran')) {
+    const rankTag = tags.find((tag) => tag.startsWith(NEXVR_RANK_TAG_PREFIX));
+    if (rankTag) {
+        // NexVR's social rank (E lowest .. S+ highest) replaces VRChat's trust levels
+        const rank = rankTag.slice(NEXVR_RANK_TAG_PREFIX.length);
+        const tier = NEXVR_RANK_TIERS[rank] ?? NEXVR_RANK_TIERS.E;
+        trustLevel = `Rank ${rank}`;
+        trustClass = `x-tag-${tier.colorKey}`;
+        trustColorKey = tier.colorKey;
+        trustSortNum = tier.sortNum;
+    } else if (tags.includes('system_trust_veteran')) {
         trustLevel = 'Trusted User';
         trustClass = 'x-tag-veteran';
         trustColorKey = 'veteran';

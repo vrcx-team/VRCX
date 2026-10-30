@@ -182,6 +182,10 @@ span[class='flags'] {
 .flags.my {
     background-position: calc(var(--offx) * -2) calc(var(--offy) * -9);
 }
+/* not in flags.png; NexVR has a Canadian region */
+.flags.ca {
+    background: url('/images/flag-ca.svg') no-repeat center / contain;
+}
 .flags.blank {
     background-position: calc(var(--offx) * -4) calc(var(--offy) * -4);
 }

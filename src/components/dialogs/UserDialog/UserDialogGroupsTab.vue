@@ -308,12 +308,7 @@
                     <div class="flex justify-between align-bottom">
                         <span class="text-base font-bold"
                             >{{ t('dialog.user.groups.own_groups') }}
-                            <span class="text-xs ml-1.5"
-                                >{{ userDialog.userGroups.ownGroups.length }}/{{
-                                    // @ts-ignore
-                                    cachedConfig?.constants?.GROUPS?.MAX_OWNED
-                                }}</span
-                            ></span
+                            <span class="text-xs ml-1.5">{{ userDialog.userGroups.ownGroups.length }}</span></span
                         >
 
                         <TooltipWrapper
@@ -354,15 +349,6 @@
                         <span class="text-base font-bold">{{ t('dialog.user.groups.groups') }}</span>
                         <span class="text-xs ml-1.5">
                             {{ userDialog.userGroups.remainingGroups.length }}
-                            <template v-if="currentUser.id === userDialog.id">
-                                /
-                                <template v-if="isLocalUserVrcPlusSupporter">
-                                    {{ cachedConfig?.constants?.GROUPS?.MAX_JOINED_PLUS }}
-                                </template>
-                                <template v-else>
-                                    {{ cachedConfig?.constants?.GROUPS?.MAX_JOINED }}
-                                </template>
-                            </template>
                         </span>
                         <div class="flex flex-wrap items-start" style="margin-top: 8px; margin-bottom: 16px">
                             <UserDialogGroupCard
@@ -404,7 +390,7 @@
     import { useI18n } from 'vue-i18n';
 
     import UserDialogGroupCard from './UserDialogGroupCard.vue';
-    import { useAuthStore, useGroupStore, useUiStore, useUserStore } from '../../../stores';
+    import { useGroupStore, useUiStore, useUserStore } from '../../../stores';
     import {
         showGroupDialog,
         applyGroup,
@@ -424,11 +410,10 @@
 
     const { t } = useI18n();
 
-    const { userDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
+    const { userDialog, currentUser } = storeToRefs(useUserStore());
     const groupStore = useGroupStore();
     const { currentUserGroups, inGameGroupOrder } = storeToRefs(groupStore);
     const { showCreateGroupDialog } = groupStore;
-    const { cachedConfig } = storeToRefs(useAuthStore());
     const { shiftHeld } = storeToRefs(useUiStore());
 
     const userDialogGroupEditMode = ref(false);
@@ -444,25 +429,12 @@
 
     const groupSearchQuery = ref('');
     const groupSearchActive = computed(() => groupSearchQuery.value.trim().length > 0);
-    const maxOwnedGroups = computed(() => Number(cachedConfig.value?.constants?.GROUPS?.MAX_OWNED ?? 5));
-    const isOwnedGroupLimitReached = computed(
-        () => userDialog.value.userGroups.ownGroups.length >= maxOwnedGroups.value
-    );
+    // NexVR needs no VRC+ and enforces each account's own group limit when
+    // creating, so the button only waits for the group list to load
     const canCreateGroup = computed(
-        () =>
-            currentUser.value.id === userDialog.value.id &&
-            !userDialog.value.isGroupsLoading &&
-            isLocalUserVrcPlusSupporter.value &&
-            !isOwnedGroupLimitReached.value
+        () => currentUser.value.id === userDialog.value.id && !userDialog.value.isGroupsLoading
     );
-    const createGroupTooltip = computed(() => {
-        if (!isLocalUserVrcPlusSupporter.value) {
-            return t('dialog.user.groups.create_requires_vrc_plus');
-        }
-        if (isOwnedGroupLimitReached.value) {
-            return t('dialog.user.groups.create_limit_reached');
-        }
-    });
+    const createGroupTooltip = computed(() => undefined);
     const allFilteredGroups = computed(() => {
         const query = groupSearchQuery.value.trim().toLowerCase();
         if (!query) return [];

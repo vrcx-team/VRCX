@@ -90,7 +90,7 @@
         "resources": "RESOURCES",
         "wiki": "Wiki",
         "get_help": "GET HELP",
-        "github": "VRCX on GitHub",
+        "github": "Nexy on GitHub",
         "discord": "Join our Discord",
         "changelog": "Changelog",
         "update_available": "Update available",
@@ -121,7 +121,9 @@
             "cancel": "Cancel",
             "restore_default": "Restore Default",
             "restore_default_confirm": "Restore navigation to its default order?"
-        }
+        },
+        "report_issue": "Report an issue",
+        "nexvr_website": "NexVR website"
     },
     "dashboard": {
         "default_name": "Dashboard",
@@ -330,7 +332,7 @@
                 "search_placeholder": "Search",
                 "filter_placeholder": "Filter",
                 "chatbox_blacklist": "Chatbox Blacklist",
-                "status_tooltip": "VRCX Companion Status"
+                "status_tooltip": "Nexy Companion Status"
             }
         },
         "my_avatars": {
@@ -567,7 +569,7 @@
                 "next_day": "Next Day",
                 "refresh": "Refresh",
                 "tips": {
-                    "online_time": "Online time refers to the game time recorded by VRCX for the current day.",
+                    "online_time": "Online time refers to the game time recorded by Nexy for the current day.",
                     "click_Y_axis": "Click Y-axis label to navigate to the instance details or open User dialog.",
                     "click_instance_name": "Click instance name to open Previous Instance Info dialog."
                 },
@@ -705,7 +707,7 @@
             "export": {
                 "header": "Export",
                 "export_notes": "Export User Memos",
-                "export_notes_description": "Export VRCX user memos to VRChat notes",
+                "export_notes_description": "Export Nexy user memos to VRChat notes",
                 "discord_names": "Discord Names",
                 "export_friend_list": "Export Friends List",
                 "export_own_avatars": "Export Own Avatars"
@@ -726,8 +728,8 @@
             },
             "shortcuts": {
                 "header": "Shortcuts",
-                "vrcx_data": "VRCX Data",
-                "vrcx_data_description": "Open the VRCX data folder",
+                "vrcx_data": "Nexy Data",
+                "vrcx_data_description": "Open the Nexy data folder",
                 "vrchat_data": "VRChat Data",
                 "vrchat_data_description": "Open the VRChat data folder",
                 "crash_dumps": "Crash Dumps",
@@ -755,7 +757,7 @@
         },
         "profile": {
             "profile": {
-                "vrchat_credits": "VRChat Credits",
+                "vrchat_credits": "NexVR Credits",
                 "refresh": "Click to refresh"
             },
             "game_info": {
@@ -850,7 +852,7 @@
                     "support": "Support"
                 },
                 "vrcx_updater": {
-                    "header": "VRCX Updater",
+                    "header": "Nexy Updater",
                     "change_build": "Change Build",
                     "update_action": "Update Action",
                     "auto_update_off": "Off",
@@ -865,10 +867,10 @@
                     "minimized": "Start Minimized at System Startup",
                     "tray": "Minimize to Tray When Closing",
                     "disable_gpu_acceleration": "Disable GPU Acceleration",
-                    "disable_gpu_acceleration_tooltip": "Only change this option if you know what you're doing, may fix issues with UI, requires restarting VRCX",
+                    "disable_gpu_acceleration_tooltip": "Only change this option if you know what you're doing, may fix issues with UI, requires restarting Nexy",
                     "disable_vr_overlay_gpu_acceleration": "Disable VR Overlay GPU Acceleration",
                     "proxy": "Proxy Settings",
-                    "startup_linux": "Add \"--startup\" arg to startup VRCX.desktop file to start VRCX minimized at system startup"
+                    "startup_linux": "Add \"--startup\" arg to startup Nexy.desktop file to start Nexy minimized at system startup"
                 },
                 "favorites": {
                     "header": "Favorite Groups Filter",
@@ -909,9 +911,9 @@
                 },
                 "legal_notice": {
                     "header": "Legal Notice",
-                    "info": "VRCX is an assistant application for VRChat that provides information about and managing friendship. This application makes use of the unofficial VRChat API SDK.",
-                    "disclaimer1": "VRCX is not endorsed by VRChat and does not reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat properties. VRChat and all associated properties are trademarks or registered trademarks of VRChat Inc. VRChat © VRChat Inc.",
-                    "disclaimer2": "pypy & Natsumi and all contributors are not responsible for any problems caused by VRCX. Use at your own risk!",
+                    "info": "Nexy is an assistant application for NexVR that provides information about and managing friendship. It is a fork of VRCX and uses the NexVR API.",
+                    "disclaimer1": "Nexy is not endorsed by NexVR and does not reflect the views or opinions of NexVR or anyone officially involved in producing or managing NexVR. NexVR and all associated properties are trademarks of their respective owners.",
+                    "disclaimer2": "The Nexy contributors and the VRCX authors are not responsible for any problems caused by Nexy. Use at your own risk!",
                     "open_source_software_notice": "Open Source Software Notice"
                 },
                 "contributors": {
@@ -1035,8 +1037,8 @@
                     "header": "User Dialog",
                     "vrchat_notes": "VRChat Notes",
                     "vrchat_notes_description": "Shows notes stored in VRChat",
-                    "vrcx_memos": "VRCX Memos",
-                    "vrcx_memos_description": "Shows notes saved locally in VRCX",
+                    "vrcx_memos": "Nexy Memos",
+                    "vrcx_memos_description": "Shows notes saved locally in Nexy",
                     "recent_action_cooldown": "Recent Action Icon",
                     "recent_action_cooldown_description": "Show a clock icon on recent invite and request actions.",
                     "recent_action_cooldown_minutes": "Cooldown (Minutes)"
@@ -1179,7 +1181,7 @@
                         "header": "VRChat"
                     },
                     "vrcx_settings": {
-                        "header": "VRCX"
+                        "header": "Nexy"
                     },
                     "primary_password": {
                         "header": "Primary Password",
@@ -1203,11 +1205,11 @@
                     },
                     "anonymous_error_reporting": {
                         "header": "Anonymous Error Reporting (Nightly Only)",
-                        "description": "Help improve VRCX by sending anonymous crash and error reports. No personal or VRChat data is collected.",
+                        "description": "Help improve Nexy by sending anonymous crash and error reports. No personal or VRChat data is collected.",
                         "consent_title": "Anonymous Error Reporting",
-                        "consent_description": "Allow anonymous error reporting to help improve VRCX?\n\n• Crash and error data only\n• No personal or VRChat data\n• Nightly builds only\n• Can be disabled in Advanced Settings",
-                        "enabled_restart_description": "Error reporting enabled. Restart VRCX to apply changes?",
-                        "disabled_restart_description": "Error reporting disabled. Restart VRCX to apply changes?"
+                        "consent_description": "Allow anonymous error reporting to help improve Nexy?\n\n• Crash and error data only\n• No personal or VRChat data\n• Nightly builds only\n• Can be disabled in Advanced Settings",
+                        "enabled_restart_description": "Error reporting enabled. Restart Nexy to apply changes?",
+                        "disabled_restart_description": "Error reporting disabled. Restart Nexy to apply changes?"
                     },
                     "save_instance_prints_to_file": {
                         "header": "Save Instance Prints to File",
@@ -1228,7 +1230,7 @@
                     },
                     "delete_all_screenshot_metadata": {
                         "button": "Remove Screenshot Metadata",
-                        "ask": "Are you sure you want to delete all VRC & VRCX screenshot metadata from your VRChat Pictures folder?",
+                        "ask": "Are you sure you want to delete all VRC & Nexy screenshot metadata from your VRChat Pictures folder?",
                         "confirm": "Deleting all screenshot metadata is a very destructive action and cannot be undone! This includes all prints, sub folders and other unrelated images in your VRChat Pictures folder, if these photos are precious to you, please make a backup before proceeding.",
                         "confirm_yes": "Yes",
                         "confirm_no": "No"
@@ -1261,7 +1263,7 @@
                         "header": "Launch Commands (Deep Links)",
                         "docs": "Launch Command Docs",
                         "show_confirmation_on_switch_avatar_enable": "Confirm Before Switching Avatars",
-                        "show_confirmation_on_switch_avatar_tooltip": "When disabled, VRCX will not ask for confirmation before switching avatars.",
+                        "show_confirmation_on_switch_avatar_tooltip": "When disabled, Nexy will not ask for confirmation before switching avatars.",
                         "website_userscript": "VRC Website Userscript"
                     },
                     "screenshot_helper": {
@@ -1281,7 +1283,7 @@
                         "run_process_once": "Open Single Instance of App"
                     },
                     "cache_debug": {
-                        "header": "VRCX Instance Cache/Debug",
+                        "header": "Nexy Instance Cache/Debug",
                         "udon_exception_logging": "Udon Exception Logging",
                         "disable_gamelog": "Disable GameLog",
                         "disable_gamelog_notice": "(will likely break things)",
@@ -1331,7 +1333,7 @@
                         "purge_confirm_title": "Purge Avatar Feed Data",
                         "purge_confirm_description_1": "This will permanently delete avatar change records from the database and reclaim disk space.",
                         "purge_confirm_description_2": "This action cannot be undone!",
-                        "purge_confirm_description_3": "VRCX will restart after the operation completes.",
+                        "purge_confirm_description_3": "Nexy will restart after the operation completes.",
                         "purge_confirm_alert": "It is strongly recommended to back up your database file before proceeding!",
                         "purge_confirm_button": "Purge & Restart",
                         "purge_in_progress": "Purging avatar data...",
@@ -1398,7 +1400,7 @@
                 "friend_number": "Friend Number",
                 "vrchat_team": "VRChat Team",
                 "age_verified": "Age Verified",
-                "trust_level": "Trust Level",
+                "trust_level": "Social Rank",
                 "account_standing": "Account Standing",
                 "mutual_friends": "Mutual Friends",
                 "mutual_groups": "Mutual Groups",
@@ -1453,8 +1455,8 @@
             },
             "info": {
                 "header": "Info",
-                "vrcx_info": "VRCX Info",
-                "vrcx_info_tooltip": "VRCX info may be inaccurate",
+                "vrcx_info": "Nexy Info",
+                "vrcx_info_tooltip": "Nexy info may be inaccurate",
                 "launch_invite_tooltip": "Launch/Invite",
                 "self_invite_tooltip": "Invite Yourself",
                 "open_in_vrchat_tooltip": "Open in VRChat",
@@ -2364,14 +2366,14 @@
         },
         "note_export": {
             "header": "Note Export",
-            "description1": "This process will export all of your VRCX memos and import them into VRChat notes.",
+            "description1": "This process will export all of your Nexy memos and import them into VRChat notes.",
             "description2": "Be warned of the following limitations:",
             "description3": "- API endpoint has a rate limit that requires a large delay between requests.",
             "description4": "- Character limit of 256 per note.",
             "description5": "- Swear words filter (no fun allowed).",
             "description6": "- No new lines (they will replaced with a space).",
             "description7": "- This will overwrite any existing VRChat notes for these users.",
-            "description8": "- Any edits made here wont affect VRCX memos but will affect VRChat notes once exported.",
+            "description8": "- Any edits made here wont affect Nexy memos but will affect VRChat notes once exported.",
             "refresh": "Refresh",
             "export": "Export",
             "cancel": "Cancel",
@@ -2813,9 +2815,9 @@
             "add_item": "Add Item"
         },
         "vrcx_updater": {
-            "header": "VRCX Updater",
-            "latest_version": "VRCX is up to date.",
-            "ready_for_update": "Ready for install, restart VRCX to apply.",
+            "header": "Nexy Updater",
+            "latest_version": "Nexy is up to date.",
+            "ready_for_update": "Ready for install, restart Nexy to apply.",
             "branch_stable": "Stable",
             "branch_nightly": "Nightly",
             "nightly_title": "Nightly builds",
@@ -2827,14 +2829,14 @@
         },
         "change_log": {
             "header": "Change Log",
-            "description": "Consider donating to support future development of VRCX",
+            "description": "Consider donating to support future development of Nexy",
             "close": "Close",
             "donate": "Donate",
             "github": "GitHub"
         },
         "open_source": {
             "header": "Open Source Software Notice",
-            "description": "VRCX is based on open source software. It was possible because of their contribution.",
+            "description": "Nexy is based on open source software. It was possible because of their contribution.",
             "loading": "Loading generated third-party notices...",
             "unavailable": "No generated third-party notice manifest is available in this build. Run a production build to regenerate it.",
             "search_placeholder": "Search packages, versions, or licenses",
@@ -2866,7 +2868,7 @@
             "action": "Action",
             "auto_backup": "Auto backup every 3 days (deletes after 2 weeks)",
             "ask_to_restore": "Ask to restore when no VRC registry settings are present",
-            "restore_prompt": "VRCX has noticed auto backup of VRChat registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
+            "restore_prompt": "Nexy has noticed auto backup of VRChat registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
         },
         "avatar_database_provider": {
             "header": "Avatar Database Provider",
@@ -3073,7 +3075,7 @@
             "input_error": "Valid number is required"
         },
         "auto_clear_cache": {
-            "header": "Clear VRCX Cache Timer",
+            "header": "Clear Nexy Cache Timer",
             "description": "Enter amount of hours, larger values may impact RAM usage and performance (default: 24, disabled: 0)",
             "cancel": "Cancel",
             "ok": "OK",
@@ -3119,7 +3121,7 @@
         },
         "table_entries_settings": {
             "header": "Table Entries Settings",
-            "description": "Limit the number of entries the VRCX logs from the database to the UI. A large number may impact RAM usage and performance",
+            "description": "Limit the number of entries the Nexy logs from the database to the UI. A large number may impact RAM usage and performance",
             "table_max_entries": "Table Max Entries",
             "table_max_entries_error": "Enter a number between {min} and {max}.",
             "table_max_entries_hint": "Valid range: {min} – {max}.",
@@ -3189,8 +3191,8 @@
         "database": {
             "upgrade_complete": "Database upgrade complete",
             "upgrade_in_progress_title": "Database upgrade in progress",
-            "upgrade_in_progress_description": "Updating database from version {from} to {to}. Please do not close VRCX.",
-            "upgrade_in_progress_initializing": "Initializing database upgrade. Please do not close VRCX.",
+            "upgrade_in_progress_description": "Updating database from version {from} to {to}. Please do not close Nexy.",
+            "upgrade_in_progress_initializing": "Initializing database upgrade. Please do not close Nexy.",
             "upgrade_in_progress_wait": "User actions are temporarily blocked until the upgrade finishes.",
             "upgrade_failed_title": "Database upgrade failed",
             "upgrade_failed_description": "Database upgrade failed. Check the console for details.",
@@ -3267,7 +3269,7 @@
             "delete_failed": "Failed to delete screenshot metadata"
         },
         "crash": {
-            "vrcx_reload": "VRCX was reloaded for stability"
+            "vrcx_reload": "Nexy was reloaded for stability"
         },
         "image": {
             "downloading": "Downloading image...",
@@ -3306,7 +3308,7 @@
         "friend_request": "has sent you a friend request",
         "friend": "is now your friend",
         "unfriend": "is no longer your friend",
-        "trust_level": "Trust level is now {trustLevel}",
+        "trust_level": "Social rank is now {trustLevel}",
         "display_name": "changed their name to {displayName}",
         "group_announcement_title": "Group Announcement",
         "group_event_created_title": "Group Event Created",
@@ -3554,7 +3556,7 @@
     },
     "onboarding": {
         "welcome": {
-            "title": "Welcome to VRCX",
+            "title": "Welcome to Nexy",
             "subtitle": "Here are a few things you might not discover on your own.",
             "features": {
                 "user_profiles": {
@@ -3577,13 +3579,13 @@
             "cta": "Get Started"
         },
         "whatsnew": {
-            "title": "What's New in VRCX",
+            "title": "What's New in Nexy",
             "subtitle": "Here's what changed in this update.",
             "cta": "Got It",
             "common": {
                 "got_it": "Got It",
                 "view_changelog": "View All Changes",
-                "support": "Support VRCX"
+                "support": "Support Nexy"
             },
             "releases": {
                 "2026_05_03": {

@@ -4,8 +4,8 @@
  * @see https://www.electron.build/configuration/configuration
  */
 module.exports = {
-    appId: 'app.vrcx',
-    productName: 'VRCX',
+    appId: 'app.nexy',
+    productName: 'Nexy',
     icon: 'images/VRCX.png',
     files: [
         'build/html/**/*',
@@ -55,21 +55,23 @@ module.exports = {
     directories: {
         output: 'build'
     },
+    // patch node-api-dotnet before the installer is made, not after
+    afterPack: './build-scripts/after-pack.js',
     linux: {
-        artifactName: 'VRCX_Version.${ext}',
+        artifactName: 'Nexy_Version.${ext}',
         target: ['AppImage'],
         icon: 'images/VRCX.png',
-        executableName: 'VRCX',
+        executableName: 'Nexy',
         mimeTypes: ['x-scheme-handler/vrcx'],
         desktop: {
             entry: {
-                Name: 'VRCX',
-                Comment: 'Friendship management tool for VRChat',
+                Name: 'Nexy',
+                Comment: 'Friendship management tool for NexVR',
                 Icon: 'VRCX',
                 Terminal: 'false',
                 Type: 'Application',
                 Categories: 'Utility;Application;',
-                StartupWMClass: 'VRCX',
+                StartupWMClass: 'Nexy',
                 MimeType: 'x-scheme-handler/vrcx;'
             }
         },
@@ -78,15 +80,15 @@ module.exports = {
         syncDesktopName: true
     },
     mac: {
-        artifactName: 'VRCX_Version.${ext}',
+        artifactName: 'Nexy_Version.${ext}',
         target: ['dmg'],
         icon: 'images/VRCX.png',
         category: 'public.app-category.utilities',
-        executableName: 'VRCX',
+        executableName: 'Nexy',
         minimumSystemVersion: '14.0'
     },
     win: {
-        artifactName: 'VRCX_Version.${ext}',
+        artifactName: 'Nexy_Version.${ext}',
         target: ['nsis'],
         icon: 'images/VRCX.ico'
     },

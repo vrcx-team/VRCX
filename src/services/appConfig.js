@@ -17,10 +17,10 @@ const AppDebug = reactive({
     debugVrcPlus: false,
     errorNoty: null,
     dontLogMeOut: false,
-    endpointDomain: 'https://api.vrchat.cloud/api/1',
-    endpointDomainVrchat: 'https://api.vrchat.cloud/api/1',
-    websocketDomain: 'wss://pipeline.vrchat.cloud',
-    websocketDomainVrchat: 'wss://pipeline.vrchat.cloud'
+    endpointDomain: 'https://nexvr.net/api',
+    endpointDomainVrchat: 'https://nexvr.net/api',
+    websocketDomain: 'wss://nexvr.net/api/realtime',
+    websocketDomainVrchat: 'wss://nexvr.net/api/realtime'
 });
 
 window.$debug = AppDebug;

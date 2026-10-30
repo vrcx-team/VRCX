@@ -10,21 +10,17 @@
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="right" align="start" class="w-56">
-                        <DropdownMenuItem @click="emit('show-changelog')">
-                            <span>{{ t('nav_menu.changelog') }}</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
                         <DropdownMenuLabel>{{ t('nav_menu.resources') }}</DropdownMenuLabel>
-                        <DropdownMenuItem @click="emit('support-link', 'wiki')">
-                            <span>{{ t('nav_menu.wiki') }}</span>
+                        <DropdownMenuItem @click="emit('support-link', 'nexvr')">
+                            <span>{{ t('nav_menu.nexvr_website') }}</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuLabel>{{ t('nav_menu.get_help') }}</DropdownMenuLabel>
                         <DropdownMenuItem @click="emit('support-link', 'github')">
                             <span>{{ t('nav_menu.github') }}</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem @click="emit('support-link', 'discord')">
-                            <span>{{ t('nav_menu.discord') }}</span>
+                        <DropdownMenuItem @click="emit('support-link', 'issues')">
+                            <span>{{ t('nav_menu.report_issue') }}</span>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -48,14 +44,14 @@
                             <img
                                 class="h-6 w-6 cursor-pointer"
                                 :src="vrcxLogo"
-                                alt="VRCX"
+                                alt="Nexy"
                                 @click="emit('open-github')" />
                             <div class="flex min-w-0 flex-col">
                                 <button
                                     type="button"
                                     class="text-left text-sm font-medium truncate flex items-center gap-1 cursor-pointer"
                                     @click="emit('open-github')">
-                                    VRCX
+                                    Nexy
                                     <Heart class="text-primary fill-current stroke-none" />
                                 </button>
                                 <span class="text-xs text-muted-foreground">{{ version }}</span>

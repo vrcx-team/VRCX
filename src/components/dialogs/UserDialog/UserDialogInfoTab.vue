@@ -352,7 +352,7 @@
                         {{ t('dialog.user.info.header') }}
                     </div>
                     <div class="flex flex-col gap-1.5">
-                        <TooltipWrapper side="right">
+                        <TooltipWrapper v-if="showVrchatOnlyFields" side="right">
                             <template #content>
                                 <span
                                     >{{ t('dialog.user.info.last_login') }}
@@ -375,6 +375,7 @@
                         </TooltipWrapper>
 
                         <TooltipWrapper
+                            v-if="showVrchatOnlyFields"
                             side="right"
                             :content="formatDateFilter(userDialog.ref.date_joined, 'date')"
                             :disabled="!userDialog.ref.date_joined">
@@ -406,7 +407,9 @@
                             </TooltipWrapper>
                         </template>
 
-                        <div v-if="currentUser.id !== userDialog.id" class="flex justify-between items-center text-xs">
+                        <div
+                            v-if="showVrchatOnlyFields && currentUser.id !== userDialog.id"
+                            class="flex justify-between items-center text-xs">
                             <span class="text-muted-foreground">{{ t('dialog.user.info.avatar_cloning') }}</span>
                             <span class="text-muted-foreground">{{
                                 userDialog.ref.allowAvatarCopying
@@ -461,6 +464,10 @@
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import IconFrame from '@/components/IconFrame.vue';
     import { ref, watch } from 'vue';
+
+    // Last activity, join date and avatar cloning are VRChat account data
+    // that NexVR doesn't expose
+    const showVrchatOnlyFields = false;
     import { Button } from '@/components/ui/button';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';

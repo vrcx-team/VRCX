@@ -53,7 +53,7 @@ namespace VRCX
 
         public void Init()
         {
-            AddProcess("vrchat");
+            AddProcess("nexvr");
             AddProcess("vrserver");
             monitorProcessTimer.Start();
         }

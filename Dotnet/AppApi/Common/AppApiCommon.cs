@@ -61,6 +61,31 @@ namespace VRCX
             }
         }
 
+        /// <summary>
+        /// Hands an instance to the NexVR client through its nexvr:// protocol
+        /// handler, the same link nexvr.net's Join button uses.
+        /// </summary>
+        public bool JoinNexvrInstance(string instanceId)
+        {
+            if (string.IsNullOrEmpty(instanceId) ||
+                !System.Text.RegularExpressions.Regex.IsMatch(instanceId, "^[A-Za-z0-9_-]+$"))
+                return false;
+
+            try
+            {
+                Process.Start(new ProcessStartInfo($"nexvr://instances/{instanceId}/join")
+                {
+                    UseShellExecute = true
+                });
+                return true;
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, "Failed to open NexVR instance {instanceId}", instanceId);
+                return false;
+            }
+        }
+
         public void OpenDiscordProfile(string discordId)
         {
             if (!long.TryParse(discordId, out _))

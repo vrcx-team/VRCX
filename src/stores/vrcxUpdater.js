@@ -60,6 +60,8 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         if (isMacOS.value) {
             noUpdater.value = true;
         }
+        // Nexy has no release feed yet; the inherited one would install VRCX
+        noUpdater.value = true;
 
         const [VRCX_autoUpdateVRCX, VRCX_id] = await Promise.all([
             configRepository.getString('VRCX_autoUpdateVRCX', 'Auto Download'),
@@ -131,7 +133,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         if (!appVersion.value) {
             return;
         }
-        if (currentVersion.value.includes('VRCX Nightly')) {
+        if (currentVersion.value.includes('Nexy Nightly')) {
             branch.value = 'Nightly';
         } else {
             branch.value = 'Stable';
@@ -261,8 +263,8 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     async function checkForVRCXUpdate() {
         if (
             !currentVersion.value ||
-            currentVersion.value === 'VRCX Nightly Build' ||
-            currentVersion.value === 'VRCX Build'
+            currentVersion.value === 'Nexy Nightly Build' ||
+            currentVersion.value === 'Nexy Build'
         ) {
             // ignore custom builds
             return false;

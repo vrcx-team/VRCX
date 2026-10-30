@@ -64,7 +64,7 @@
                 "search_placeholder": "검색",
                 "filter_placeholder": "필터",
                 "chatbox_blacklist": "채팅창 블랙리스트",
-                "status_tooltip": "VRCX Companion 상태"
+                "status_tooltip": "Nexy Companion 상태"
             }
         },
         "search": {
@@ -100,7 +100,7 @@
             "worlds": {
                 "search": "검색",
                 "vrchat_favorites": "VRChat 즐겨찾기",
-                "local_favorites": "VRCX 즐겨찾기",
+                "local_favorites": "Nexy 즐겨찾기",
                 "new_group": "새 그룹"
             },
             "avatars": {
@@ -163,7 +163,6 @@
         },
         "profile": {
             "profile": {
-                "vrchat_credits": "VRChat 크레딧",
                 "refresh": "새로고침"
             },
             "game_info": {
@@ -196,7 +195,7 @@
                     "support": "지원/커뮤니티"
                 },
                 "vrcx_updater": {
-                    "header": "VRCX 업데이터",
+                    "header": "Nexy 업데이터",
                     "change_build": "버전 변경",
                     "auto_update_off": "끄기",
                     "auto_update_notify": "알림",
@@ -211,7 +210,7 @@
                     "proxy": "Proxy settings"
                 },
                 "favorites": {
-                    "header": "VRCX Favorite Friends",
+                    "header": "Nexy Favorite Friends",
                     "group_placeholder": "Choose Groups"
                 },
                 "logging": {
@@ -223,13 +222,10 @@
                     "auto_invite_request_accept": "Auto Accept Invite Requests",
                     "auto_invite_request_accept_tooltip": "Automatically accept invite requests from favorite friends",
                     "auto_invite_request_accept_favs": "All Favorites",
-                    "auto_invite_request_accept_selected_favs": "VRCX Favorites"
+                    "auto_invite_request_accept_selected_favs": "Nexy Favorites"
                 },
                 "legal_notice": {
                     "header": "법적 공지",
-                    "info": "VRCX는 친구 관계에 도움을 줄 만한 정보를 제공하는 보조 프로그램입니다. 비공식 VRChat API SDK를 사용합니다",
-                    "disclaimer1": "VRCX는 VRChat이 보증하지 않고, VRChat 개발/운영에 공식적으로 관련한 사람의 견해나 의견을 반영하지 않습니다. VRChat은 VRChat Inc.의 상표입니다. VRChat © VRChat Inc",
-                    "disclaimer2": "pypy 혹은 Natsumi는 VRCX로 인한 문제의 책임을 지지 않습니다. 본인의 책임하에 사용하시기 바랍니다!",
                     "open_source_software_notice": "오픈 소스 소프트웨어 공지"
                 },
                 "contributors": {
@@ -272,7 +268,7 @@
                 "user_dialog": {
                     "header": "유저 정보 대화 상자",
                     "vrchat_notes": "VRChat Notes",
-                    "vrcx_memos": "VRCX Memos"
+                    "vrcx_memos": "Nexy Memos"
                 },
                 "user_colors": {
                     "header": "유저 색상",
@@ -409,7 +405,7 @@
                         "auto_close": "자동 종료"
                     },
                     "cache_debug": {
-                        "header": "VRCX 인스턴스 캐시/디버그",
+                        "header": "Nexy 인스턴스 캐시/디버그",
                         "udon_exception_logging": "Udon 예외(exception) 로깅",
                         "disable_gamelog": "VRChat 로그 비활성화",
                         "disable_gamelog_notice": "(아마도 고장날 수 있음)",
@@ -526,7 +522,7 @@
                 "instance_creator": "방파개",
                 "note": "VRChat 메모",
                 "note_placeholder": "-",
-                "memo": "VRCX 메모",
+                "memo": "Nexy 메모",
                 "memo_placeholder": "-",
                 "avatar_info": "아바타 정보",
                 "represented_group": "이름표에 표시 중인 그룹",
@@ -638,7 +634,7 @@
             },
             "info": {
                 "header": "정보",
-                "memo": "VRCX 메모",
+                "memo": "Nexy 메모",
                 "memo_placeholder": "-",
                 "id": "월드 ID",
                 "id_tooltip": "클립보드에 복사",
@@ -717,7 +713,7 @@
                 "version": "버전",
                 "platform": "플랫폼",
                 "time_spent": "방문 시간",
-                "memo": "VRCX 메모",
+                "memo": "Nexy 메모",
                 "memo_placeholder": "-"
             },
             "json": {
@@ -822,7 +818,7 @@
         "favorite": {
             "header": "그룹 선택",
             "vrchat_favorites": "VRChat 즐겨찾기",
-            "local_favorites": "VRCX 즐겨찾기",
+            "local_favorites": "Nexy 즐겨찾기",
             "local_avatar_favorites": "Local Favorites (Requires VRC+)"
         },
         "social_status": {
@@ -1029,14 +1025,14 @@
         },
         "note_export": {
             "header": "메모 내보내기",
-            "description1": "이 과정은 모든 VRCX 메모를 VRChat 메모로 옮깁니다",
+            "description1": "이 과정은 모든 Nexy 메모를 VRChat 메모로 옮깁니다",
             "description2": "아래의 제한 사항이 있습니다:",
             "description3": "- API 속도 제한이 있습니다",
             "description4": "- 메모 당 256자까지 쓸 수 있습니다",
             "description5": "- 욕설은 걸러집니다. (예외 없음)",
             "description6": "- 줄바꿈은 공백으로 대체됩니다",
             "description7": "- 기존에 있던 VRChat 메모는 대체됩니다",
-            "description8": "- 이 작업은 VRCX 메모에 영향이 없고 VRChat 메모에는 영향을 줍니다",
+            "description8": "- 이 작업은 Nexy 메모에 영향이 없고 VRChat 메모에는 영향을 줍니다",
             "refresh": "새로고침",
             "export": "내보내기",
             "cancel": "취소",
@@ -1231,22 +1227,22 @@
             "add_item": "항목 추가"
         },
         "vrcx_updater": {
-            "header": "VRCX 업데이트",
+            "header": "Nexy 업데이트",
             "latest_version": "최신 버전입니다",
-            "ready_for_update": "설치가 준비됐습니다. VRCX를 재시작하면 적용됩니다",
+            "ready_for_update": "설치가 준비됐습니다. Nexy를 재시작하면 적용됩니다",
             "download": "다운로드",
             "install": "설치"
         },
         "change_log": {
             "header": "변경사항",
-            "description": "VRCX가 마음에 드시나요? 개발자에게 후원도 가능합니다♥",
+            "description": "Nexy가 마음에 드시나요? 개발자에게 후원도 가능합니다♥",
             "close": "닫기",
             "donate": "후원",
             "github": "GitHub"
         },
         "open_source": {
             "header": "오픈 소스 소프트웨어 안내",
-            "description": "VRCX는 오픈 소스 소프트웨어에 기반하고 있습니다. 그들의 기여에 감사드립니다"
+            "description": "Nexy는 오픈 소스 소프트웨어에 기반하고 있습니다. 그들의 기여에 감사드립니다"
         },
         "primary_password": {
             "header": "잠금 비밀번호 필요",
@@ -1266,7 +1262,7 @@
             "date": "Date",
             "action": "Action",
             "auto_backup": "Weekly Auto Backup",
-            "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
+            "restore_prompt": "Nexy has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
         },
         "avatar_database_provider": {
             "header": "아바타 데이터베이스 제공자",
@@ -1410,7 +1406,7 @@
             "input_error": "숫자만 입력 가능"
         },
         "auto_clear_cache": {
-            "header": "VRCX 캐시 타이머 초기화",
+            "header": "Nexy 캐시 타이머 초기화",
             "description": "시간을 입력하세요..  주기가 길수록 메모리 사용량과 성능에 영향을 줍니다 (기본: 24, 끄기: 0)",
             "cancel": "취소",
             "ok": "확인",

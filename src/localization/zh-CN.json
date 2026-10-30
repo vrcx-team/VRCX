@@ -89,7 +89,6 @@
         "resources": "帮助资源",
         "wiki": "Wiki",
         "get_help": "请求帮助",
-        "github": "GitHub 仓库",
         "discord": "加入 Discord",
         "changelog": "更新日志",
         "update_available": "有新版本可用",
@@ -317,7 +316,7 @@
                 "search_placeholder": "搜索",
                 "filter_placeholder": "筛选",
                 "chatbox_blacklist": "聊天框黑名单",
-                "status_tooltip": "VRCX Companion 状态"
+                "status_tooltip": "Nexy Companion 状态"
             }
         },
         "my_avatars": {
@@ -542,7 +541,7 @@
                 "next_day": "后一天",
                 "refresh": "刷新",
                 "tips": {
-                    "online_time": "在线时长是指 VRCX 记录的，在当天的游戏时长",
+                    "online_time": "在线时长是指 Nexy 记录的，在当天的游戏时长",
                     "click_Y_axis": "点击Y轴标签可以查看其对应内容的详细信息",
                     "click_instance_name": "点击房间名称可以查看对应房间的记录"
                 },
@@ -697,8 +696,8 @@
             },
             "shortcuts": {
                 "header": "文件直通车",
-                "vrcx_data": "VRCX 数据",
-                "vrcx_data_description": "打开 VRCX 的数据文件夹",
+                "vrcx_data": "Nexy 数据",
+                "vrcx_data_description": "打开 Nexy 的数据文件夹",
                 "vrchat_data": "VRChat 数据",
                 "vrchat_data_description": "打开 VRChat 的数据文件夹",
                 "crash_dumps": "崩溃转储",
@@ -720,7 +719,6 @@
         },
         "profile": {
             "profile": {
-                "vrchat_credits": "拥有的 VRChat 点数",
                 "refresh": "点击以刷新"
             },
             "game_info": {
@@ -814,14 +812,14 @@
                     "support": "获取帮助支持"
                 },
                 "vrcx_updater": {
-                    "header": "VRCX 更新设置",
+                    "header": "Nexy 更新设置",
                     "change_build": "更改版本",
                     "update_action": "自动更新",
                     "auto_update_off": "关闭",
                     "auto_update_notify": "显示通知",
                     "auto_update_download": "自动下载",
                     "change_log": "更新日志",
-                    "updater_disabled": "自带的更新检查已被禁用，因为 VRCX 的更新现在由你的系统包管理器处理。"
+                    "updater_disabled": "自带的更新检查已被禁用，因为 Nexy 的更新现在由你的系统包管理器处理。"
                 },
                 "application": {
                     "header": "首选项",
@@ -829,10 +827,10 @@
                     "minimized": "以最小化的形式启动",
                     "tray": "最小化到系统托盘",
                     "disable_gpu_acceleration": "禁用 GPU 加速",
-                    "disable_gpu_acceleration_tooltip": "仅在你“知道自己在做什么”时才应更改此选项，这可能会导致 SteamVR 叠加界面出现问题。但如果你遇到 UI 显示问题，那么可以尝试关闭此选项，重启 VRCX 生效",
+                    "disable_gpu_acceleration_tooltip": "仅在你“知道自己在做什么”时才应更改此选项，这可能会导致 SteamVR 叠加界面出现问题。但如果你遇到 UI 显示问题，那么可以尝试关闭此选项，重启 Nexy 生效",
                     "disable_vr_overlay_gpu_acceleration": "禁用 VR 叠加界面的GPU加速",
                     "proxy": "代理服务器设置",
-                    "startup_linux": "向 VRCX.desktop 启动文件添加 “--startup” 参数，以便在系统启动时将 VRCX 以最小化窗口的方式启动。"
+                    "startup_linux": "向 Nexy.desktop 启动文件添加 “--startup” 参数，以便在系统启动时将 Nexy 以最小化窗口的方式启动。"
                 },
                 "favorites": {
                     "header": "筛选好友分组",
@@ -871,9 +869,6 @@
                 },
                 "legal_notice": {
                     "header": "法律声明",
-                    "info": "VRCX 是一个提供VRChat好友管理的辅助应用。这个程序使用了非官方的 VRChat API (VRCSDK)。",
-                    "disclaimer1": "VRCX 不受 VRChat 的认可，也不反映 VRChat 或者任何正式参与制作或管理 VRChat 的人员/团体的观点或意见。VRChat 是 VRChat Inc. 的商标。 VRChat © VRChat Inc.",
-                    "disclaimer2": "pypy & Natsumi 及本项目的全体贡献者，均不对使用 VRCX 引起的任何问题负责。使用时请自负风险！",
                     "open_source_software_notice": "开放源代码软件许可"
                 },
                 "contributors": {
@@ -996,7 +991,7 @@
                     "vrchat_notes": "显示线上备注",
                     "vrchat_notes_description": "显示 VRChat 服务器上保存的备注",
                     "vrcx_memos": "显示本地备注",
-                    "vrcx_memos_description": "显示在 VRCX 中本地保存的备注",
+                    "vrcx_memos_description": "显示在 Nexy 中本地保存的备注",
                     "recent_action_cooldown": "显示“最近操作”图标",
                     "recent_action_cooldown_description": "在最近的邀请和加入申请操作上显示一个时钟图标。",
                     "recent_action_cooldown_minutes": "冷却时间（分钟）"
@@ -1127,11 +1122,11 @@
                         "header": "VRChat"
                     },
                     "vrcx_settings": {
-                        "header": "VRCX"
+                        "header": "Nexy"
                     },
                     "primary_password": {
                         "header": "独立密码",
-                        "description": "使用独立密码加密 VRCX 数据（将停用自动登录）"
+                        "description": "使用独立密码加密 Nexy 数据（将停用自动登录）"
                     },
                     "relaunch_vrchat": {
                         "header": "崩溃后重启",
@@ -1151,11 +1146,11 @@
                     },
                     "anonymous_error_reporting": {
                         "header": "匿名错误报告",
-                        "description": "通过发送匿名的崩溃和错误报告来帮助改进 VRCX。不会收集任何有关个人或 VRChat 的相关数据。",
+                        "description": "通过发送匿名的崩溃和错误报告来帮助改进 Nexy。不会收集任何有关个人或 VRChat 的相关数据。",
                         "consent_title": "匿名错误报告",
-                        "consent_description": "要启用匿名错误报告以帮助改进 VRCX 吗？\n\n• 我们仅收集有关 VRCX 的崩溃和错误报告数据\n• 不会收集任何有关个人或 VRChat 的相关数据\n• 匿名错误报告仅限测试版可用\n• 并且可在高级设置中禁用",
-                        "enabled_restart_description": "错误报告目前已启用，要重启 VRCX 以便禁用它吗？",
-                        "disabled_restart_description": "错误报告目前已禁用，要重启 VRCX 以便启用它吗？"
+                        "consent_description": "要启用匿名错误报告以帮助改进 Nexy 吗？\n\n• 我们仅收集有关 Nexy 的崩溃和错误报告数据\n• 不会收集任何有关个人或 VRChat 的相关数据\n• 匿名错误报告仅限测试版可用\n• 并且可在高级设置中禁用",
+                        "enabled_restart_description": "错误报告目前已启用，要重启 Nexy 以便禁用它吗？",
+                        "disabled_restart_description": "错误报告目前已禁用，要重启 Nexy 以便启用它吗？"
                     },
                     "save_instance_prints_to_file": {
                         "header": "“拍立得”照片保存选项",
@@ -1176,7 +1171,7 @@
                     },
                     "delete_all_screenshot_metadata": {
                         "button": "删除截图元数据",
-                        "ask": "你确定要从 VRChat 图片文件夹中删除所有由 VRC 和 VRCX 添加的截图元数据吗？",
+                        "ask": "你确定要从 VRChat 图片文件夹中删除所有由 VRC 和 Nexy 添加的截图元数据吗？",
                         "confirm": "删除截图元数据是一个非常破坏性的操作，无法撤销！这包括你的 VRChat 图片文件夹中的所有拍立得照片，如果这些照片的元数据信息对你很珍贵，请在继续操作之前进行备份。",
                         "confirm_yes": "是，确认删除",
                         "confirm_no": "否，我再想想"
@@ -1209,7 +1204,7 @@
                         "header": "启动命令 / 客户端连接",
                         "docs": "文档",
                         "show_confirmation_on_switch_avatar_enable": "切换模型前显示确认对话框",
-                        "show_confirmation_on_switch_avatar_tooltip": "禁用后，切换模型时 VRCX 将不会弹至前台要求确认",
+                        "show_confirmation_on_switch_avatar_tooltip": "禁用后，切换模型时 Nexy 将不会弹至前台要求确认",
                         "website_userscript": "相关脚本"
                     },
                     "screenshot_helper": {
@@ -1229,7 +1224,7 @@
                         "run_process_once": "仅允许启动应用的单个实例（禁止多开）"
                     },
                     "cache_debug": {
-                        "header": "VRCX 缓存/调试选项",
+                        "header": "Nexy 缓存/调试选项",
                         "udon_exception_logging": "显示 Udon 错误日志",
                         "disable_gamelog": "关闭游戏日志",
                         "disable_gamelog_notice": "（可能会弄坏很多东西！）",
@@ -1279,7 +1274,7 @@
                         "purge_confirm_title": "清理模型变动记录",
                         "purge_confirm_description_1": "这将永久删除数据库中的模型变动记录并回收磁盘空间。",
                         "purge_confirm_description_2": "此操作无法撤销！",
-                        "purge_confirm_description_3": "VRCX 将在操作完成后重启。",
+                        "purge_confirm_description_3": "Nexy 将在操作完成后重启。",
                         "purge_confirm_alert": "强烈建议在继续之前备份你的数据库文件！",
                         "purge_confirm_button": "清理 & 重启",
                         "purge_in_progress": "正在清理模型变动的相关数据...",
@@ -1398,8 +1393,8 @@
             },
             "info": {
                 "header": "信息",
-                "vrcx_info": "VRCX 信息",
-                "vrcx_info_tooltip": "VRCX 的信息可能不准确",
+                "vrcx_info": "Nexy 信息",
+                "vrcx_info_tooltip": "Nexy 的信息可能不准确",
                 "launch_invite_tooltip": "启动 / 邀请",
                 "self_invite_tooltip": "邀请自己",
                 "open_in_vrchat_tooltip": "在 VRChat 中打开",
@@ -2270,7 +2265,7 @@
             "description5": "- 有脏话过滤器（对中文没什么用，但还是扫兴）。",
             "description6": "- 不能换行（换行符将会被替换成空格）。",
             "description7": "- 这将会覆盖这些玩家现有的任何 VRChat 线上备注。",
-            "description8": "- 在这里所做的任何编辑都不会影响 VRCX 在本地写入的备注，但会在导出后影响 VRChat 上显示的备注。",
+            "description8": "- 在这里所做的任何编辑都不会影响 Nexy 在本地写入的备注，但会在导出后影响 VRChat 上显示的备注。",
             "refresh": "刷新",
             "export": "导出",
             "cancel": "取消",
@@ -2598,9 +2593,9 @@
             "add_item": "新增项目"
         },
         "vrcx_updater": {
-            "header": "VRCX 更新",
-            "latest_version": "VRCX 已是最新版本",
-            "ready_for_update": "现已准备好安装更新，重启 VRCX 以开始安装",
+            "header": "Nexy 更新",
+            "latest_version": "Nexy 已是最新版本",
+            "ready_for_update": "现已准备好安装更新，重启 Nexy 以开始安装",
             "branch_stable": "稳定版",
             "branch_nightly": "测试版",
             "nightly_title": "测试版构建",
@@ -2612,14 +2607,14 @@
         },
         "change_log": {
             "header": "更新日志",
-            "description": "考虑捐赠一下，以支持 VRCX 的未来发展",
+            "description": "考虑捐赠一下，以支持 Nexy 的未来发展",
             "close": "关闭",
             "donate": "捐赠支持",
             "github": "在 GitHub 上查看"
         },
         "open_source": {
             "header": "开放源代码许可条款",
-            "description": "VRCX 是基于开放源代码软件开发的。没有他们的贡献，这个程序不可能开发出来。",
+            "description": "Nexy 是基于开放源代码软件开发的。没有他们的贡献，这个程序不可能开发出来。",
             "loading": "正在加载生成的第三方声明...",
             "unavailable": "此构建中没有可用的生成的第三方声明清单。请进行生产构建以重新生成。",
             "search_placeholder": "搜索软件包、版本或许可证",
@@ -2842,7 +2837,7 @@
             "input_error": "请输入有效的秒数"
         },
         "auto_clear_cache": {
-            "header": "VRCX 缓存自动清理间隔",
+            "header": "Nexy 缓存自动清理间隔",
             "description": "以小时为单位，较大的数值可能会影响性能（默认值：24，为 0 时关闭）",
             "cancel": "取消",
             "ok": "确定",
@@ -2956,8 +2951,8 @@
         "database": {
             "upgrade_complete": "数据库升级完成",
             "upgrade_in_progress_title": "数据库升级进行中",
-            "upgrade_in_progress_description": "正在将数据库从版本 {from} 更新到 {to}，请不要关闭 VRCX。",
-            "upgrade_in_progress_initializing": "正在初始化数据库升级流程，请不要关闭 VRCX。",
+            "upgrade_in_progress_description": "正在将数据库从版本 {from} 更新到 {to}，请不要关闭 Nexy。",
+            "upgrade_in_progress_initializing": "正在初始化数据库升级流程，请不要关闭 Nexy。",
             "upgrade_in_progress_wait": "在升级完成前，交互操作将被暂时禁止。",
             "upgrade_failed_title": "数据库升级失败",
             "upgrade_failed_description": "数据库升级失败，请查看调试控制台以获取详细信息。",
@@ -3034,7 +3029,7 @@
             "delete_failed": "删除图片元数据失败"
         },
         "crash": {
-            "vrcx_reload": "为保证稳定性，VRCX 已重新加载"
+            "vrcx_reload": "为保证稳定性，Nexy 已重新加载"
         },
         "image": {
             "downloading": "正在下载图片...",
@@ -3320,7 +3315,7 @@
     },
     "onboarding": {
         "welcome": {
-            "title": "欢迎使用 VRCX",
+            "title": "欢迎使用 Nexy",
             "subtitle": "这里有一些你可能没注意到的奇妙功能",
             "features": {
                 "user_profiles": {
@@ -3343,13 +3338,13 @@
             "cta": "开始使用"
         },
         "whatsnew": {
-            "title": "VRCX 更新内容",
+            "title": "Nexy 更新内容",
             "subtitle": "本次更新的变更如下。",
             "cta": "知道了",
             "common": {
                 "got_it": "知道了",
                 "view_changelog": "查看全部更改",
-                "support": "支持 VRCX"
+                "support": "支持 Nexy"
             },
             "releases": {
                 "2026_05_03": {

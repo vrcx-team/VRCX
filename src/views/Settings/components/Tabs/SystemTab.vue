@@ -34,17 +34,18 @@
                 </div>
             </div>
 
-            <div class="flex flex-col gap-0.5 px-1 py-1 cursor-pointer" @click="openExternalLink(links.discord)">
+            <div class="flex flex-col gap-0.5 px-1 py-1 cursor-pointer" @click="openExternalLink(links.issues)">
                 <div class="flex-1">
                     <span class="block truncate font-medium text-sm leading-[18px]">{{
                         t('view.settings.general.general.support')
                     }}</span>
-                    <span v-once class="block truncate text-xs text-muted-foreground">{{ links.discord }}</span>
+                    <span v-once class="block truncate text-xs text-muted-foreground">{{ links.issues }}</span>
                 </div>
             </div>
         </SettingsGroup>
 
-        <SettingsGroup :title="t('view.settings.general.vrcx_updater.header')">
+        <!-- Nexy has no release feed yet, so the updater (and VRCX's changelog) stay hidden -->
+        <SettingsGroup v-if="!noUpdater" :title="t('view.settings.general.vrcx_updater.header')">
             <div class="flex gap-2">
                 <Button size="sm" variant="outline" @click="showChangeLogDialog">{{
                     t('view.settings.general.vrcx_updater.change_log')
@@ -152,6 +153,8 @@
         <SettingsGroup :title="t('view.settings.general.legal_notice.header')">
             <div class="flex flex-col gap-2 text-sm text-muted-foreground mb-2">
                 <p class="m-0">
+                    Based on
+                    <a class="cursor-pointer" @click="openExternalLink('https://github.com/vrcx-team/VRCX')">VRCX</a>
                     &copy; 2019-2026
                     <a class="cursor-pointer" @click="openExternalLink('https://github.com/pypy-vrc')">pypy</a> &amp;
                     <a class="cursor-pointer" @click="openExternalLink('https://github.com/Natsumi-sama')">Natsumi</a>

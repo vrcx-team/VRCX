@@ -1,4 +1,6 @@
-const toolCategories = [
+import { NEXVR_HIDDEN_TOOL_KEYS } from './nexvr';
+
+const allToolCategories = [
     { key: 'image', labelKey: 'view.tools.pictures.header' },
     { key: 'shortcuts', labelKey: 'view.tools.shortcuts.header' },
     { key: 'group', labelKey: 'view.tools.group.header' },
@@ -7,7 +9,7 @@ const toolCategories = [
     { key: 'other', labelKey: 'view.tools.other.header' }
 ];
 
-const toolDefinitions = [
+const allToolDefinitions = [
     {
         key: 'screenshot-metadata',
         category: 'image',
@@ -266,6 +268,13 @@ const toolDefinitions = [
         action: { type: 'dialog', dialogKey: 'info-push' }
     }
 ];
+
+const toolDefinitions = allToolDefinitions.filter((tool) => !NEXVR_HIDDEN_TOOL_KEYS.has(tool.key));
+
+// categories left empty by the NexVR filter would show as bare headers
+const toolCategories = allToolCategories.filter((category) =>
+    toolDefinitions.some((tool) => tool.category === category.key)
+);
 
 const toolDefinitionMap = new Map(toolDefinitions.map((tool) => [tool.key, tool]));
 

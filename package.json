@@ -1,20 +1,20 @@
 {
-    "name": "vrcx",
-    "version": "2026.09.16",
+    "name": "nexy",
+    "version": "2026.10.31",
     "private": true,
-    "description": "Friendship management tool for VRChat",
+    "description": "Friendship management tool for NexVR",
     "keywords": [
-        "vrchat"
+        "nexvr"
     ],
-    "homepage": "https://github.com/vrcx-team/VRCX#readme",
+    "homepage": "https://github.com/valzzu/nexy#readme",
     "bugs": {
-        "url": "https://github.com/vrcx-team/VRCX/issues"
+        "url": "https://github.com/valzzu/nexy/issues"
     },
     "license": "MIT",
-    "author": "VRCX Team",
+    "author": "Nexy contributors",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/vrcx-team/VRCX.git"
+        "url": "git+https://github.com/valzzu/nexy.git"
     },
     "main": "src-electron/main.js",
     "scripts": {
@@ -45,6 +45,7 @@
         "node-api-dotnet": "^0.9.27"
     },
     "devDependencies": {
+        "@bufbuild/protobuf": "^2.2.3",
         "@dnd-kit/vue": "^0.5.1",
         "@fontsource-variable/inter": "^5.3.0",
         "@fontsource-variable/noto-sans-jp": "^5.3.1",
@@ -137,5 +138,5 @@
         "vue-demi": true,
         "electron": true
     },
-    "desktopName": "VRCX"
+    "desktopName": "Nexy"
 }

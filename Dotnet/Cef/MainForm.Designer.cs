@@ -95,7 +95,7 @@ namespace VRCX
             // TrayIcon
             //
             this.TrayIcon.ContextMenuStrip = this.TrayMenu;
-            this.TrayIcon.Text = "VRCX";
+            this.TrayIcon.Text = "Nexy";
             this.TrayIcon.Visible = true;
             this.TrayIcon.MouseClick += new MouseEventHandler(this.TrayIcon_MouseClick);
             //

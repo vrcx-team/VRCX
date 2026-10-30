@@ -26,8 +26,8 @@ try {
  */
 function renameBuild(arch, platform) {
     if (platform === 'linux') {
-        const oldAppImage = path.join(buildDir, `VRCX_Version.AppImage`);
-        const newAppImage = path.join(buildDir, `VRCX_${version}_${arch}.AppImage`);
+        const oldAppImage = path.join(buildDir, `Nexy_Version.AppImage`);
+        const newAppImage = path.join(buildDir, `Nexy_${version}_${arch}.AppImage`);
         try {
             if (fs.existsSync(oldAppImage)) {
                 fs.renameSync(oldAppImage, newAppImage);
@@ -40,8 +40,8 @@ function renameBuild(arch, platform) {
             process.exit(1);
         }
     } else if (platform === 'darwin') {
-        const oldDmg = path.join(buildDir, `VRCX_Version.dmg`);
-        const newDmg = path.join(buildDir, `VRCX_${version}_${arch}.dmg`);
+        const oldDmg = path.join(buildDir, `Nexy_Version.dmg`);
+        const newDmg = path.join(buildDir, `Nexy_${version}_${arch}.dmg`);
         try {
             if (fs.existsSync(oldDmg)) {
                 fs.renameSync(oldDmg, newDmg);
@@ -54,8 +54,8 @@ function renameBuild(arch, platform) {
             process.exit(1);
         }
     } else if (platform === 'win32') {
-        const oldSetup = path.join(buildDir, 'VRCX_Version.exe');
-        const newSetup = path.join(buildDir, `VRCX_${version}_Setup_${arch}.exe`);
+        const oldSetup = path.join(buildDir, 'Nexy_Version.exe');
+        const newSetup = path.join(buildDir, `Nexy_${version}_Setup_${arch}.exe`);
         try {
             if (fs.existsSync(oldSetup)) {
                 fs.renameSync(oldSetup, newSetup);

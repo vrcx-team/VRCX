@@ -124,7 +124,7 @@
                 "search_placeholder": "Rechercher",
                 "filter_placeholder": "Filtrer",
                 "chatbox_blacklist": "Liste noire des boîtes de dialogue",
-                "status_tooltip": "Statut du Compagnon VRCX"
+                "status_tooltip": "Statut du Compagnon Nexy"
             }
         },
         "search": {
@@ -319,7 +319,7 @@
                 "next_day": "Jour suivant",
                 "refresh": "Rafraîchir",
                 "tips": {
-                    "online_time": "Online time refers to the game time recorded by VRCX for the current day.",
+                    "online_time": "Online time refers to the game time recorded by Nexy for the current day.",
                     "click_Y_axis": "Click Y-axis label to navigate to the instance details or open User dialog.",
                     "click_instance_name": "Click instance name to open Previous Instance Info dialog."
                 },
@@ -406,7 +406,6 @@
         },
         "profile": {
             "profile": {
-                "vrchat_credits": "Crédits VRChat",
                 "refresh": "Cliquez pour actualiser"
             },
             "game_info": {
@@ -439,7 +438,7 @@
                     "support": "Soutien"
                 },
                 "vrcx_updater": {
-                    "header": "Mise à jour de VRCX",
+                    "header": "Mise à jour de Nexy",
                     "change_build": "Changer de build",
                     "update_action": "Action de mise à jour",
                     "auto_update_off": "Désactivé",
@@ -453,7 +452,7 @@
                     "minimized": "Lancer en arrière plan",
                     "tray": "Minimiser dans la barre des tâches",
                     "disable_gpu_acceleration": "Désactiver l'accélération GPU",
-                    "disable_gpu_acceleration_tooltip": "Ne changez cette option que si vous savez ce que vous faites, cette fonctionnalité casse la surcouche SteamVR, peut corriger des problèmes avec l'interface utilisateur, nécessite le redémarrage de VRCX.",
+                    "disable_gpu_acceleration_tooltip": "Ne changez cette option que si vous savez ce que vous faites, cette fonctionnalité casse la surcouche SteamVR, peut corriger des problèmes avec l'interface utilisateur, nécessite le redémarrage de Nexy.",
                     "disable_vr_overlay_gpu_acceleration": "Désactiver l'accélération GPU de l'overlay VR",
                     "proxy": "Proxy settings"
                 },
@@ -482,9 +481,6 @@
                 },
                 "legal_notice": {
                     "header": "Mentions légales",
-                    "info": "VRCX est une application d'assistance pour VRChat qui fournit des informations sur les amitiés et les gère. Cette application utilise l'API SDK non officielle de VRChat.",
-                    "disclaimer1": "VRCX n'est pas soutenu par VRChat et ne reflète pas les points de vue ou les opinions de VRChat ou de toute personne officiellement impliquée dans la production ou la gestion des propriétés de VRChat. VRChat et toutes les propriétés associées sont des marques commerciales ou des marques déposées de VRChat Inc. VRChat © VRChat Inc.",
-                    "disclaimer2": "pypy & Natsumi ne sont pas responsables des problèmes causés par VRCX. Utilisez-le à vos risques et périls !",
                     "open_source_software_notice": "Mentions relatives aux logiciels libres"
                 },
                 "contributors": {
@@ -535,7 +531,7 @@
                 "user_dialog": {
                     "header": "Boîte d'information utilisateur",
                     "vrchat_notes": "VRChat Notes",
-                    "vrcx_memos": "VRCX Memos"
+                    "vrcx_memos": "Nexy Memos"
                 },
                 "user_colors": {
                     "header": "Couleurs des utilisateurs",
@@ -686,7 +682,7 @@
                         "auto_close": "Fermeture automatique des applications"
                     },
                     "cache_debug": {
-                        "header": "Cache/débogage d'instance VRCX",
+                        "header": "Cache/débogage d'instance Nexy",
                         "udon_exception_logging": "Enregistrement des exceptions d'Udon",
                         "disable_gamelog": "Désactiver l'historique du jeu",
                         "disable_gamelog_notice": "(ce qui risque de tout casser)",
@@ -1339,14 +1335,14 @@
         },
         "note_export": {
             "header": "Exporter les notes",
-            "description1": "Ce processus exportera tous vos mémos VRCX et les importera dans les notes VRChat.",
+            "description1": "Ce processus exportera tous vos mémos Nexy et les importera dans les notes VRChat.",
             "description2": "Il convient d'être attentif aux limitations suivantes :",
             "description3": "- L'API a une limite de trafic qui nécessite un délai important entre les requêtes.",
             "description4": "- Limitation à 256 caractères par note.",
             "description5": "- Filtre sur les gros mots (pas d'amusement autorisé).",
             "description6": "- Pas de retour à la ligne (elles seront remplacées par un espace).",
             "description7": "- Cela remplacera toutes les notes VRChat existantes pour ces utilisateurs.",
-            "description8": "- Les modifications apportées ici n'affecteront pas les mémos VRCX mais affecteront les notes VRChat une fois exportées.",
+            "description8": "- Les modifications apportées ici n'affecteront pas les mémos Nexy mais affecteront les notes VRChat une fois exportées.",
             "refresh": "Actualiser",
             "export": "Exporter",
             "cancel": "Annuler",
@@ -1552,22 +1548,22 @@
             "add_item": "Ajouter un élément"
         },
         "vrcx_updater": {
-            "header": "Mise à jour de VRCX",
-            "latest_version": "VRCX est à jour.",
-            "ready_for_update": "Prêt pour l'installation, redémarrer VRCX pour l'appliquer.",
+            "header": "Mise à jour de Nexy",
+            "latest_version": "Nexy est à jour.",
+            "ready_for_update": "Prêt pour l'installation, redémarrer Nexy pour l'appliquer.",
             "download": "Télécharger",
             "install": "Installer"
         },
         "change_log": {
             "header": "Historique des modifications",
-            "description": "Envisagez de faire un don pour soutenir le développement futur de VRCX.",
+            "description": "Envisagez de faire un don pour soutenir le développement futur de Nexy.",
             "close": "Fermer",
             "donate": "Faire un don",
             "github": "GitHub"
         },
         "open_source": {
             "header": "Mentions relatives aux logiciels libres",
-            "description": "VRCX est basé sur un logiciel libre. Il a été possible grâce à leurs contributions."
+            "description": "Nexy est basé sur un logiciel libre. Il a été possible grâce à leurs contributions."
         },
         "primary_password": {
             "header": "Mot de passe primaire nécessaire",
@@ -1587,7 +1583,7 @@
             "date": "Date",
             "action": "Action",
             "auto_backup": "Sauvegarde automatique hebdomadaire",
-            "restore_prompt": "VRCX a remarqué que la sauvegarde automatique des paramètres du registre VRC est activée mais que cet ordinateur n'en a pas. Si vous souhaitez restaurer à partir d'une sauvegarde, vous pouvez le faire à partir d'ici."
+            "restore_prompt": "Nexy a remarqué que la sauvegarde automatique des paramètres du registre VRC est activée mais que cet ordinateur n'en a pas. Si vous souhaitez restaurer à partir d'une sauvegarde, vous pouvez le faire à partir d'ici."
         },
         "avatar_database_provider": {
             "header": "Gestionnaire de la base de données d'avatars",
@@ -1737,7 +1733,7 @@
             "input_error": "Un numéro valide est nécessaire"
         },
         "auto_clear_cache": {
-            "header": "Effacer la temporisation du cache VRCX",
+            "header": "Effacer la temporisation du cache Nexy",
             "description": "Saisissez le nombre d'heures, des valeurs plus élevées peuvent avoir un impact sur l'utilisation de la RAM et les performances (par défaut : 24, désactivé : 0)",
             "cancel": "Annuler",
             "ok": "OK",
@@ -1812,7 +1808,7 @@
             "delete_failed": "Failed to delete screenshot metadata"
         },
         "crash": {
-            "vrcx_reload": "VRCX was reloaded for stability"
+            "vrcx_reload": "Nexy was reloaded for stability"
         },
         "image": {
             "downloading": "Downloading image...",

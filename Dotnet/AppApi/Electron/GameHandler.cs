@@ -20,9 +20,15 @@ namespace VRCX
         {
         }
 
+        // The NexVR client: "NexVR" natively on Windows, "NexVR.exe" under Wine/Proton
+        private static Process[] GetGameProcesses()
+        {
+            return Process.GetProcessesByName("NexVR").Concat(Process.GetProcessesByName("NexVR.exe")).ToArray();
+        }
+
         public override bool IsGameRunning()
         {
-            var processes = Process.GetProcessesByName("VRChat.exe");
+            var processes = GetGameProcesses();
             var isGameRunning = processes.Length > 0;
             foreach (var process in processes)
                 process.Dispose();
@@ -55,7 +61,7 @@ namespace VRCX
 
         public override int QuitGame()
         {
-            var processes = Process.GetProcessesByName("VRChat.exe");
+            var processes = GetGameProcesses();
             if (processes.Length == 1)
                 processes[0].Kill();
             foreach (var process in processes)

@@ -16,3 +16,4 @@ export * from './tags';
 export * from './dashboard';
 export * from './tools';
 export * from './marketplace';
+export * from './nexvr';

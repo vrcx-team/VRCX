@@ -1,6 +1,7 @@
+import { NEXVR_HIDDEN_NAV_KEYS } from './nexvr';
 import { toolNavDefinitions } from './tools';
 
-const navDefinitions = [
+const allNavDefinitions = [
     {
         key: 'feed',
         icon: 'ri-rss-line',
@@ -129,5 +130,7 @@ const navDefinitions = [
     },
     ...toolNavDefinitions
 ];
+
+const navDefinitions = allNavDefinitions.filter((definition) => !NEXVR_HIDDEN_NAV_KEYS.has(definition.key));
 
 export { navDefinitions };

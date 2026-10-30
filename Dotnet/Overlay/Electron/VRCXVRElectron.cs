@@ -544,7 +544,7 @@ namespace VRCX
 
             if (dashboardHandle == 0)
             {
-                err = overlay.FindOverlay("VRCX", ref dashboardHandle);
+                err = overlay.FindOverlay("Nexy", ref dashboardHandle);
                 if (err != EVROverlayError.None)
                 {
                     if (err != EVROverlayError.UnknownOverlay)
@@ -553,7 +553,7 @@ namespace VRCX
                     }
 
                     ulong thumbnailHandle = 0;
-                    err = overlay.CreateDashboardOverlay("VRCX", "VRCX", ref dashboardHandle, ref thumbnailHandle);
+                    err = overlay.CreateDashboardOverlay("Nexy", "Nexy", ref dashboardHandle, ref thumbnailHandle);
                     if (err != EVROverlayError.None)
                     {
                         return err;

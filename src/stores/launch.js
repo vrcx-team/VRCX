@@ -7,8 +7,6 @@ import { instanceRequest } from '../api';
 import { parseLocation } from '../shared/utils';
 import { watchState } from '../services/watchState';
 
-import configRepository from '../services/config';
-
 export const useLaunchStore = defineStore('Launch', () => {
     const isLaunchOptionsDialogVisible = ref(false);
     const isOpeningInstance = ref(false);
@@ -50,32 +48,19 @@ export const useLaunchStore = defineStore('Launch', () => {
 
     /**
      * @param {string} location
-     * @param {string} shortName
+     * @param {string} _shortName Unused: NexVR has no short names
      * @returns {Promise<string>} LaunchUrl
      */
-    async function getLaunchUrl(location, shortName) {
-        const L = parseLocation(location);
-        if (shortName && L.instanceType !== 'public' && L.groupAccessType !== 'public') {
-            return `vrchat://launch?ref=vrcx.app&id=${location}&shortName=${shortName}`;
-        }
+    async function getLaunchUrl(location, _shortName) {
+        return `nexvr://instances/${encodeURIComponent(parseLocation(location).instanceName)}/join`;
+    }
 
-        // fetch shortName
-        let newShortName = '';
-        const response = await instanceRequest.getInstanceShortName({
-            worldId: L.worldId,
-            instanceId: L.instanceId
-        });
-        if (response.json) {
-            if (response.json.shortName) {
-                newShortName = response.json.shortName;
-            } else {
-                newShortName = response.json.secureName;
-            }
-        }
-        if (newShortName) {
-            return `vrchat://launch?ref=vrcx.app&id=${location}&shortName=${newShortName}`;
-        }
-        return `vrchat://launch?ref=vrcx.app&id=${location}`;
+    /**
+     * @param {string} location
+     * @returns {Promise<boolean>} Whether the nexvr:// link was handed to the OS
+     */
+    function joinInstance(location) {
+        return AppApi.JoinNexvrInstance(parseLocation(location).instanceName);
     }
 
     /**
@@ -94,13 +79,13 @@ export const useLaunchStore = defineStore('Launch', () => {
         let result = false;
         try {
             launchUrl = await getLaunchUrl(location, shortName);
-            result = await AppApi.TryOpenInstanceInVrc(launchUrl);
+            result = await joinInstance(location);
         } catch (e) {
             console.error(e);
         }
         console.log('Attach Game', launchUrl, result);
         if (!result) {
-            toast.warning('Failed open instance in VRChat, falling back to self invite');
+            toast.warning('Failed to open instance in NexVR, falling back to self invite');
             // self invite fallback
             try {
                 const L = parseLocation(location);
@@ -126,37 +111,19 @@ export const useLaunchStore = defineStore('Launch', () => {
      * @returns {Promise<void>}
      */
     async function launchGame(location, shortName, desktopMode) {
+        // The nexvr:// link has no VR/desktop switch; the NexVR client decides
         const launchUrl = await getLaunchUrl(location, shortName);
-        const args = [launchUrl];
-        const launchArguments = await configRepository.getString('launchArguments');
-        const vrcLaunchPathOverride = await configRepository.getString('vrcLaunchPathOverride');
-        if (launchArguments) {
-            args.push(launchArguments);
-        }
-        if (desktopMode) {
-            args.push('--no-vr');
-        }
         try {
-            if (vrcLaunchPathOverride && !LINUX) {
-                const result = await AppApi.StartGameFromPath(vrcLaunchPathOverride, args.join(' '));
-                if (!result) {
-                    toast.error('Failed to launch VRChat, invalid custom path set');
-                } else {
-                    toast.success('VRChat launched');
-                }
+            if (await joinInstance(location)) {
+                toast.success('Opening instance in NexVR');
             } else {
-                const result = await AppApi.StartGame(args.join(' '));
-                if (!result) {
-                    toast.error('Failed to find VRChat, set a custom path in launch options');
-                } else {
-                    toast.success('VRChat launched');
-                }
+                toast.error('Failed to open NexVR, is the NexVR client installed?');
             }
         } catch (e) {
             console.error(e);
-            toast.error(`Failed to launch VRChat: ${e.message}`);
+            toast.error(`Failed to launch NexVR: ${e.message}`);
         }
-        console.log('Launch Game', args.join(' '), desktopMode);
+        console.log('Launch Game', launchUrl, desktopMode);
     }
 
     return {

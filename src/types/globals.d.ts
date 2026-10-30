@@ -191,6 +191,7 @@ declare global {
         SetAppLauncherSettings(enabled: boolean, killOnExit: boolean, runProcessOnce: boolean): Promise<void>;
         GetFileBase64(path: string): Promise<string | null>;
         TryOpenInstanceInVrc(launchUrl: string): Promise<boolean>;
+        JoinNexvrInstance(instanceId: string): Promise<boolean>;
 
         // Image Upload (Cef Only)
         MD5File(blob: string): Promise<string>;

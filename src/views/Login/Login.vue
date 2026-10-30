@@ -162,6 +162,12 @@
 
         <div class="flex max-w-3xl flex-col gap-1 pt-12 pb-8 text-center text-xs text-muted-foreground">
             <p>
+                Based on
+                <a
+                    class="cursor-pointer text-foreground hover:underline"
+                    @click="openExternalLink('https://github.com/vrcx-team/VRCX')"
+                    >VRCX</a
+                >
                 &copy; 2019-2026
                 <a
                     class="cursor-pointer text-foreground hover:underline"

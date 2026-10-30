@@ -14,7 +14,10 @@ import {
     loadStoredNavConfig,
     NAV_CONFIG_KEY
 } from '../navConfigUtils';
-import { normalizeHiddenKeys, sanitizeLayout } from '../navMenuUtils';
+import { normalizeHiddenKeys, sanitizeLayout, withoutNavKeys } from '../navMenuUtils';
+
+const NEXY_NAV_RESTORED_KEY = 'Nexy_navRestoredEntriesPlaced';
+const NEXY_RESTORED_NAV_KEYS = ['game-log', 'player-list', 'charts-instance', 'charts-hot-worlds'];
 
 export function useNavLayout({ t, locale, router, dashboardStore, dashboards, directAccessPaste, triggerTool }) {
     const navLayout = ref([]);
@@ -175,6 +178,14 @@ export function useNavLayout({ t, locale, router, dashboardStore, dashboards, di
             });
             layoutData = loaded.layout;
             hiddenKeysData = loaded.hiddenKeys;
+            // One-time Nexy fix-up: these were briefly unavailable, and when they
+            // came back the saved layout got them at the bottom (charts loose).
+            // Dropping them once lets sanitizeLayout put them back in their
+            // default places; later rearranging is left alone.
+            if (layoutData?.length && !(await configRepository.getBool(NEXY_NAV_RESTORED_KEY, false))) {
+                layoutData = withoutNavKeys(layoutData, NEXY_RESTORED_NAV_KEYS);
+                await configRepository.setBool(NEXY_NAV_RESTORED_KEY, true);
+            }
         } catch (error) {
             console.error('Failed to load custom nav', error);
         } finally {

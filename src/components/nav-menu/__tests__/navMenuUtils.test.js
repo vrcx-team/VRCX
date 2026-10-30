@@ -1,6 +1,12 @@
 import { describe, expect, test } from 'vitest';
 
-import { getFirstNavRoute, isEntryNotified, normalizeHiddenKeys, sanitizeLayout } from '../navMenuUtils';
+import {
+    getFirstNavRoute,
+    isEntryNotified,
+    normalizeHiddenKeys,
+    sanitizeLayout,
+    withoutNavKeys
+} from '../navMenuUtils';
 
 // Minimal nav definitions for testing
 const testDefinitions = [
@@ -262,5 +268,79 @@ describe('sanitizeLayout', () => {
         ];
         const result = runSanitize(layout);
         expect(result.find((e) => e.id === 'empty-folder')).toBeUndefined();
+    });
+
+    test('regroups the available charts into a folder when one chart is unavailable', () => {
+        // a saved layout that lost its charts folder while the charts were hidden
+        const definitions = testDefinitions.filter((d) => d.key !== 'charts-mutual');
+        const definitionMap = new Map(definitions.map((d) => [d.key, d]));
+        const result = sanitizeLayout(
+            [{ type: 'item', key: 'feed' }],
+            [],
+            definitionMap,
+            definitions,
+            mockT,
+            mockGenerateFolderId
+        );
+        const chartsFolder = result.find((e) => e.id === 'default-folder-charts');
+        expect(chartsFolder.items).toEqual(['charts-instance', 'charts-hot-worlds']);
+        expect(result.some((e) => e.type === 'item' && e.key.startsWith('charts-'))).toBe(false);
+    });
+
+    test('puts entries missing from a saved layout back in their default spot', () => {
+        const definitions = [
+            'feed',
+            'friends-locations',
+            'game-log',
+            'player-list',
+            'search',
+            'notification',
+            'charts-instance',
+            'charts-hot-worlds',
+            'tools',
+            'direct-access'
+        ].map((key) => ({ key, routeName: key }));
+        const definitionMap = new Map(definitions.map((d) => [d.key, d]));
+        // saved while game-log, player-list and the charts were unavailable
+        const saved = ['feed', 'friends-locations', 'search', 'notification', 'tools', 'direct-access'].map((key) => ({
+            type: 'item',
+            key
+        }));
+        const result = sanitizeLayout(saved, [], definitionMap, definitions, mockT, mockGenerateFolderId);
+        expect(result.map((e) => (e.type === 'folder' ? e.id : e.key))).toEqual([
+            'feed',
+            'friends-locations',
+            'game-log',
+            'player-list',
+            'search',
+            'notification',
+            'default-folder-charts',
+            'tools',
+            'direct-access'
+        ]);
+    });
+
+    test('leaves charts the user hid out of the regrouped folder', () => {
+        const result = runSanitize([{ type: 'item', key: 'feed' }], ['charts-mutual']);
+        const chartsFolder = result.find((e) => e.id === 'default-folder-charts');
+        expect(chartsFolder.items).toEqual(['charts-instance', 'charts-hot-worlds']);
+    });
+});
+
+// ─── withoutNavKeys ──────────────────────────────────────────────────
+
+describe('withoutNavKeys', () => {
+    test('drops the keys at the top level and inside folders', () => {
+        const layout = [
+            { type: 'item', key: 'feed' },
+            { type: 'item', key: 'game-log' },
+            { type: 'folder', id: 'f', items: ['charts-instance', 'search'] }
+        ];
+        expect(withoutNavKeys(layout, ['game-log', 'charts-instance'])).toEqual([
+            { type: 'item', key: 'feed' },
+            { type: 'folder', id: 'f', items: ['search'] }
+        ]);
+        // the input is left untouched
+        expect(layout[2].items).toEqual(['charts-instance', 'search']);
     });
 });

@@ -27,7 +27,7 @@ namespace VRCX
         {
             if (string.IsNullOrEmpty(AppDataDirectory))
                 AppDataDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "VRCX");
+                    "Nexy");
 
             BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             ConfigLocation = Path.Join(AppDataDirectory, "VRCX.sqlite3");
@@ -72,14 +72,14 @@ namespace VRCX
                 // look for trailing git hash "-22bcd96" to indicate nightly build
                 var version = versionFile.Split('-');
                 if (version.Length > 0 && version[^1].Length == 7)
-                    Version = $"VRCX Nightly {versionFile}";
+                    Version = $"Nexy Nightly {versionFile}";
                 else
-                    Version = $"VRCX {versionFile}";
+                    Version = $"Nexy {versionFile}";
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Failed to read version file");
-                Version = "VRCX Nightly Build";
+                Version = "Nexy Nightly Build";
             }
         }
 

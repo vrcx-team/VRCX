@@ -282,7 +282,7 @@
     const customNavDialogVisible = ref(false);
 
     const hasNotifications = computed(() => notifiedMenus.value.length > 0);
-    const version = computed(() => appVersion.value?.split('VRCX ')?.[1] || '-');
+    const version = computed(() => appVersion.value?.split('Nexy ')?.[1] || '-');
     const vrcxLogo = new URL('../../../images/VRCX.png', import.meta.url).href;
 
     const isEntryNotified = (entry) => checkEntryNotified(entry, notifiedMenus.value);
@@ -322,7 +322,7 @@
     };
 
     const openGithub = () => {
-        openExternalLink('https://github.com/vrcx-team/VRCX');
+        openExternalLink(links.github);
     };
 
     const handleSupportLink = (id) => {

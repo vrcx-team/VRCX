@@ -165,11 +165,11 @@ namespace VRCX
                 if (enabled)
                 {
                     var path = Application.ExecutablePath;
-                    key.SetValue("VRCX", $"\"{path}\" --startup");
+                    key.SetValue("Nexy", $"\"{path}\" --startup");
                 }
                 else
                 {
-                    key.DeleteValue("VRCX", false);
+                    key.DeleteValue("Nexy", false);
                 }
             }
             catch (Exception e)

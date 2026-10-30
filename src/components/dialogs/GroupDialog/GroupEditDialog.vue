@@ -21,7 +21,7 @@
                         </FieldContent>
                     </Field>
 
-                    <Field>
+                    <Field v-if="showVrchatOnlyFields">
                         <FieldLabel>{{ t('dialog.group_edit.short_code') }}</FieldLabel>
                         <FieldContent>
                             <InputGroupField
@@ -67,7 +67,7 @@
                         </FieldContent>
                     </Field>
 
-                    <template v-if="!isEditMode">
+                    <template v-if="showVrchatOnlyFields && !isEditMode">
                         <Field>
                             <FieldLabel>{{ t('dialog.group_edit.privacy') }}</FieldLabel>
                             <FieldContent>
@@ -118,7 +118,7 @@
                         </Field>
                     </template>
 
-                    <template v-else>
+                    <template v-else-if="showVrchatOnlyFields">
                         <Field>
                             <FieldLabel>{{ t('dialog.group_edit.language') }}</FieldLabel>
                             <FieldContent>
@@ -216,7 +216,7 @@
                         </Field>
                     </template>
 
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div v-if="showVrchatOnlyFields" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <Field>
                             <FieldLabel>{{ t('dialog.group_edit.banner') }}</FieldLabel>
                             <FieldContent class="space-y-2">
@@ -333,6 +333,10 @@
         isIconGallerySelectDialog: false
     });
 
+    // NexVR groups have no short code, privacy, role template, languages,
+    // links, join prompt or VRChat-gallery icon and banner
+    const showVrchatOnlyFields = false;
+
     const isEditMode = computed(() => groupEditDialog.value.mode === 'edit');
     const canSubmit = computed(() => {
         const D = groupEditDialog.value;
@@ -340,7 +344,7 @@
             !D.loading &&
             !D.roleTemplatesLoading &&
             D.name.trim().length >= 3 &&
-            /^[A-Z0-9]{3,6}$/.test(D.shortCode) &&
+            (!showVrchatOnlyFields || /^[A-Z0-9]{3,6}$/.test(D.shortCode)) &&
             isJoinState(D.joinState) &&
             (isEditMode.value || (isPrivacy(D.privacy) && isRoleTemplate(D.roleTemplate)))
         );

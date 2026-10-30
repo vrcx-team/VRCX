@@ -2,7 +2,6 @@ import { reactive } from 'vue';
 import { toast } from 'vue-sonner';
 
 import {
-    useFriendStore,
     useGalleryStore,
     useInstanceStore,
     useNotificationStore,
@@ -10,11 +9,14 @@ import {
     useUiStore,
     useUserStore
 } from '../stores';
-import { applyUser, applyCurrentUser } from '../coordinators/userCoordinator';
+import { applyUser, applyCurrentUser, getCurrentUser } from '../coordinators/userCoordinator';
 import { onGroupLeft, applyGroup, handleGroupMember } from '../coordinators/groupCoordinator';
 import { handleFriendAdd, handleFriendDelete } from '../coordinators/friendRelationshipCoordinator';
 import { debounce, parseLocation } from '../shared/utils';
 import { AppDebug } from './appConfig';
+import { presenceState, presenceToUser, toVrcNotification } from './nexvr/mappers';
+import { realtime } from './nexvr/realtime';
+import { startGameSession } from './nexvr/gameSession';
 import { groupRequest } from '../api';
 import { request } from './request';
 import { runUpdateFriendFlow } from '../coordinators/friendPresenceCoordinator';
@@ -23,8 +25,14 @@ import { watchState } from './watchState';
 
 import * as workerTimers from 'worker-timers';
 
-let webSocket = null;
-let lastWebSocketMessage = '';
+const PING_INTERVAL = 120000; // NexVR shows users offline after 5 minutes unseen
+
+let realtimeAttached = false;
+/** @type {(() => void)[]} */
+let detachRealtime = [];
+/** @type {Set<string>} */
+let knownNotificationIds = new Set();
+let pingTimer = null;
 let webSocketClosedGracefully = true;
 
 const refreshOwnedItems = debounce(() => useUserStore().getAllProductPurchases(), 5000);
@@ -41,18 +49,15 @@ export const wsState = reactive({
 });
 
 export function initWebsocket() {
-    if (!watchState.isFriendsLoaded || webSocket !== null) {
+    if (!watchState.isFriendsLoaded || realtimeAttached) {
         return;
     }
     return request('auth', {
         method: 'GET'
     })
         .then((json) => {
-            const args = {
-                json
-            };
-            if (args.json.ok) {
-                connectWebSocket(args.json.token);
+            if (json.ok) {
+                connectWebSocket(json.token);
             }
         })
         .catch((err) => {
@@ -61,112 +66,211 @@ export function initWebsocket() {
 }
 
 /**
+ * Attaches to the NexVR realtime socket (opened at login for the friends
+ * snapshot) and replays its updates as the VRChat pipeline events that
+ * handlePipeline already understands.
+ *
  * @param {string} token
- * @returns {void}
+ * @returns {Promise<void>}
  */
-function connectWebSocket(token) {
+async function connectWebSocket(token) {
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
-    const friendStore = useFriendStore();
-    if (webSocket !== null) {
+    if (realtimeAttached) {
         return;
     }
-    const socket = new WebSocket(`${AppDebug.websocketDomain}/?auth=${token}`);
-    socket.onopen = () => {
-        wsState.connected = true;
-        if (!webSocketClosedGracefully && watchState.isLoggedIn && watchState.isFriendsLoaded) {
-            console.warn('WebSocket reconnected after unexpected closure');
-            webSocketClosedGracefully = true;
-            notificationStore.refreshNotifications();
-            friendStore.refreshFriends();
-        }
-        if (AppDebug.debugWebSocket) {
-            console.log('WebSocket connected');
-        }
-    };
-    socket.onclose = ({ code, reason }) => {
-        wsState.connected = false;
-        const isCurrentSocket = webSocket === socket;
-        if (isCurrentSocket) {
-            webSocket = null;
-        }
-        try {
-            socket.close();
-        } catch (err) {
-            console.error('Error closing WebSocket:', err);
-        }
-        webSocketClosedGracefully = code === 1000 || code === 1001; // Normal Closure or Going Away
-        if (!webSocketClosedGracefully || AppDebug.debugWebSocket) {
-            console.log('WebSocket closed', { code, reason });
-        }
-        workerTimers.setTimeout(() => {
-            if (watchState.isLoggedIn && watchState.isFriendsLoaded && webSocket === null) {
-                initWebsocket();
-            }
-        }, 5000);
-    };
-    socket.onerror = () => {
-        if (AppDebug.errorNoty) {
-            toast.dismiss(AppDebug.errorNoty);
-        }
-        AppDebug.errorNoty = toast.error('WebSocket Error');
-        socket.onclose(
-            new CloseEvent('close', {
-                code: 1006, // Abnormal Closure
-                reason: 'WebSocket Error'
-            })
-        );
-    };
-    socket.onmessage = ({ data }) => {
-        try {
+    realtimeAttached = true;
+    knownNotificationIds = new Set(realtime.notifications.map((n) => n.id));
+    detachRealtime = [
+        realtime.on('friends', handleRealtimeFriends),
+        realtime.on('notifications', handleRealtimeNotifications),
+        realtime.on('message', (bytes) => {
             wsState.messageCount++;
-            wsState.bytesReceived += data.length;
-            if (lastWebSocketMessage === data) {
-                // pls no spam
-                return;
+            wsState.bytesReceived += bytes;
+        }),
+        realtime.on('close', ({ code, reason }) => {
+            wsState.connected = false;
+            stopPing();
+            webSocketClosedGracefully = code === 1000 || code === 1001; // Normal Closure or Going Away
+            if (!webSocketClosedGracefully || AppDebug.debugWebSocket) {
+                console.log('WebSocket closed', { code, reason });
             }
-            lastWebSocketMessage = data;
-            let json;
-            try {
-                json = JSON.parse(data);
-                json.content = JSON.parse(json.content);
-            } catch {
-                // ignore parse error
-            }
-            handlePipeline({
-                json
-            });
-            if (AppDebug.debugWebSocket && json.content) {
-                let displayName = '';
-                const user = userStore.cachedUsers.get(json.content.userId);
-                if (user) {
-                    displayName = user.displayName;
-                }
-                console.log('WebSocket', json.type, displayName, json.content);
-            }
-        } catch (err) {
-            console.error(err);
+            detachRealtimeListeners();
+            scheduleReconnect();
+        })
+    ];
+    const ok = await realtime.connect(token, userStore.currentUser.id);
+    if (!ok) {
+        if (!realtime.ws) {
+            // rejected before the close listener could fire; getCurrentUser
+            // refreshes an expired token before the retry asks for it again
+            detachRealtimeListeners();
+            webSocketClosedGracefully = false;
+            getCurrentUser().catch(() => {});
+            scheduleReconnect();
         }
-    };
-    webSocket = socket;
+        return;
+    }
+    wsState.connected = true;
+    startPing();
+    // Game Log and Player List from the NexVR session; stopped with the other listeners
+    detachRealtime.push(startGameSession());
+    if (!webSocketClosedGracefully && watchState.isLoggedIn && watchState.isFriendsLoaded) {
+        console.warn('WebSocket reconnected after unexpected closure');
+        webSocketClosedGracefully = true;
+        notificationStore.refreshNotifications();
+    }
+    if (AppDebug.debugWebSocket) {
+        console.log('WebSocket connected');
+    }
+}
+
+function scheduleReconnect() {
+    workerTimers.setTimeout(() => {
+        if (watchState.isLoggedIn && watchState.isFriendsLoaded && !realtimeAttached) {
+            initWebsocket();
+        }
+    }, 5000);
+}
+
+function detachRealtimeListeners() {
+    for (const off of detachRealtime) {
+        off();
+    }
+    detachRealtime = [];
+    realtimeAttached = false;
+}
+
+function startPing() {
+    stopPing();
+    const ping = () => request('users/me/ping', { method: 'POST' }).catch(() => {});
+    ping();
+    pingTimer = workerTimers.setInterval(ping, PING_INTERVAL);
+}
+
+function stopPing() {
+    if (pingTimer !== null) {
+        workerTimers.clearInterval(pingTimer);
+        pingTimer = null;
+    }
+}
+
+/**
+ * @param {string} type
+ * @param {any} content
+ */
+function emitPipeline(type, content) {
+    if (AppDebug.debugWebSocket) {
+        const user = useUserStore().cachedUsers.get(content?.userId);
+        console.log('WebSocket', type, user?.displayName ?? '', content);
+    }
+    try {
+        handlePipeline({ json: { type, content } });
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+/**
+ * @param {{ snapshot: boolean; changed: [any, any][]; removed: any[] }} update
+ */
+function handleRealtimeFriends({ snapshot, changed, removed }) {
+    if (snapshot) {
+        // the login snapshot was already consumed through auth/user
+        return;
+    }
+    const currentUserId = useUserStore().currentUser.id;
+    for (const [prev, next] of changed) {
+        const now = presenceState(next);
+        if (next.userId === currentUserId) {
+            if (!prev || presenceState(prev).location !== now.location) {
+                emitPipeline('user-location', {
+                    userId: currentUserId,
+                    location: now.state === 'online' ? now.location : 'offline',
+                    travelingToLocation: ''
+                });
+            }
+            continue;
+        }
+        const user = presenceToUser(next, useUserStore().cachedUsers.get(next.userId)?.tags);
+        if (!prev) {
+            emitPipeline('friend-add', { userId: next.userId, user });
+            continue;
+        }
+        const before = presenceState(prev);
+        if (now.state !== before.state) {
+            if (now.state === 'offline') {
+                emitPipeline('friend-offline', { userId: next.userId, platform: '' });
+            } else if (now.state === 'active') {
+                emitPipeline('friend-active', { userId: next.userId, platform: 'web', user });
+            } else {
+                emitPipeline('friend-online', {
+                    userId: next.userId,
+                    platform: 'standalonewindows',
+                    location: now.location,
+                    worldId: now.worldId,
+                    travelingToLocation: '',
+                    user
+                });
+            }
+        } else if (now.location !== before.location) {
+            emitPipeline('friend-location', {
+                userId: next.userId,
+                location: now.location,
+                worldId: now.worldId,
+                travelingToLocation: '',
+                user
+            });
+        } else {
+            emitPipeline('friend-update', { userId: next.userId, user });
+        }
+    }
+    for (const prev of removed) {
+        if (prev.userId !== currentUserId) {
+            emitPipeline('friend-delete', { userId: prev.userId });
+        }
+    }
+}
+
+/**
+ * NexVR pushes the whole list on every change; diff it into the add and hide
+ * events VRChat sent one at a time.
+ *
+ * @param {any[]} list
+ */
+function handleRealtimeNotifications(list) {
+    const userStore = useUserStore();
+    const ids = new Set();
+    for (const notification of list) {
+        ids.add(notification.id);
+        if (knownNotificationIds.has(notification.id)) {
+            continue;
+        }
+        const json = toVrcNotification(notification);
+        if (!json.senderUsername) {
+            json.senderUsername =
+                realtime.friends.get(json.senderUserId)?.displayName ??
+                userStore.cachedUsers.get(json.senderUserId)?.displayName ??
+                '';
+        }
+        emitPipeline('notification', json);
+    }
+    for (const id of knownNotificationIds) {
+        if (!ids.has(id)) {
+            emitPipeline('hide-notification', id);
+        }
+    }
+    knownNotificationIds = ids;
 }
 
 /**
  * @returns {void}
  */
 export function closeWebSocket() {
-    const socket = webSocket;
-    if (socket === null) {
-        return;
-    }
-    socket.onclose = null;
-    webSocket = null;
+    stopPing();
+    detachRealtimeListeners();
+    realtime.disconnect();
     wsState.connected = false;
-    try {
-        socket.close();
-    } catch (err) {
-        console.error('Error closing WebSocket:', err);
-    }
 }
 
 /**

@@ -25,7 +25,6 @@
         "resources": "ZASOBY",
         "wiki": "Wiki",
         "get_help": "UZYSKAJ POMOC",
-        "github": "VRCX na GitHubie",
         "discord": "Dołącz do naszego Discorda",
         "changelog": "Co nowego?",
         "custom_nav": {
@@ -118,7 +117,7 @@
                 "search_placeholder": "Szukaj",
                 "filter_placeholder": "Filtruj",
                 "chatbox_blacklist": "Zablokowane czaty",
-                "status_tooltip": "Status VRCX"
+                "status_tooltip": "Status Nexy"
             }
         },
         "search": {
@@ -284,7 +283,7 @@
                 "next_day": "Następny dzień",
                 "refresh": "Odśwież",
                 "tips": {
-                    "online_time": "Online time refers to the game time recorded by VRCX for the current day.",
+                    "online_time": "Online time refers to the game time recorded by Nexy for the current day.",
                     "click_Y_axis": "Click Y-axis label to navigate to the instance details or open User dialog.",
                     "click_instance_name": "Click instance name to open Previous Instance Info dialog."
                 },
@@ -349,7 +348,7 @@
             "export": {
                 "header": "Eksportuj",
                 "export_notes": "Eksportuj notatki użytkowników",
-                "export_notes_description": "Eksportuj notatki VRCX użytkowników do notatek VRChat",
+                "export_notes_description": "Eksportuj notatki Nexy użytkowników do notatek VRChat",
                 "discord_names": "Nazwy Discord",
                 "export_friend_list": "Eksportuj listę znajomych",
                 "export_own_avatars": "Eksportuj własne awatary"
@@ -374,7 +373,6 @@
         },
         "profile": {
             "profile": {
-                "vrchat_credits": "Kredyty VRChat",
                 "refresh": "Kliknij, aby odświeżyć"
             },
             "game_info": {
@@ -408,7 +406,7 @@
                     "support": "Pomoc"
                 },
                 "vrcx_updater": {
-                    "header": "Aktualizacje VRCX",
+                    "header": "Aktualizacje Nexy",
                     "change_build": "Zmień wersję",
                     "update_action": "Akcja przy aktualizacji",
                     "auto_update_off": "Wył.",
@@ -423,13 +421,13 @@
                     "minimized": "Uruchamiaj zminimalizowane",
                     "tray": "Zamykaj do zasobnika",
                     "disable_gpu_acceleration": "Wyłącz akcelerację GPU",
-                    "disable_gpu_acceleration_tooltip": "Zmieniaj to ustawienie tylko, jeżeli wiesz co robisz. Może pomóc z błędami UI. Wymaga restartu VRCX",
+                    "disable_gpu_acceleration_tooltip": "Zmieniaj to ustawienie tylko, jeżeli wiesz co robisz. Może pomóc z błędami UI. Wymaga restartu Nexy",
                     "disable_vr_overlay_gpu_acceleration": "Wyłącz akcelerację GPU nakładki VR",
                     "proxy": "Ustawienia proxy",
-                    "startup_linux": "Dodaj argument \"--startup\" dop pliku VRCX.desktop, aby uruchamiać VRCX po starcie systemu"
+                    "startup_linux": "Dodaj argument \"--startup\" dop pliku Nexy.desktop, aby uruchamiać Nexy po starcie systemu"
                 },
                 "favorites": {
-                    "header": "Ulubieni znajomi VRCX",
+                    "header": "Ulubieni znajomi Nexy",
                     "group_placeholder": "Wybierz grupy"
                 },
                 "logging": {
@@ -449,13 +447,10 @@
                     "auto_invite_request_accept": "Automatycznie akceptuj prośby o dołączenie",
                     "auto_invite_request_accept_tooltip": "Automatycznie akceptuj prośby o dołączenie od ulubionych znajomych",
                     "auto_invite_request_accept_favs": "Wszyscy ulubieni",
-                    "auto_invite_request_accept_selected_favs": "Ulubieni VRCX"
+                    "auto_invite_request_accept_selected_favs": "Ulubieni Nexy"
                 },
                 "legal_notice": {
                     "header": "Informacje prawne",
-                    "info": "VRCX to aplikacja pomocnicza dla VRChat, która dostarcza informacje i pomaga w zarządzaniu znajomymi. Ta aplikacja korzysta z nieoficjalnego VRChat API SDK.",
-                    "disclaimer1": "VRCX nie jest w żaden sposób wspierane przez VRChat, ani nie odzwierciedla poglądów lub opinii VRChat, ani nikogo oficjalnie zaangażowanego w produkcję lub zarządzanie własnoścami VRChat. VRChat oraz wszystkie powiązane własności są znakami towarowymi lub zastrzeżonymi znakami towarowymi VRChat Inc. VRChat © VRChat Inc.",
-                    "disclaimer2": "pypy i Natsumi nie są odpowiedzialni za żadne problemy spowodowane przez VRCX. Używaj na własne ryzyko!",
                     "open_source_software_notice": "Informacja o otwartym oprogramowaniu"
                 },
                 "contributors": {
@@ -512,7 +507,7 @@
                 "user_dialog": {
                     "header": "Podgląd użytkownika",
                     "vrchat_notes": "Notatki VRChat",
-                    "vrcx_memos": "Notatki VRCX"
+                    "vrcx_memos": "Notatki Nexy"
                 },
                 "user_colors": {
                     "header": "Kolory użytkowników",
@@ -661,7 +656,7 @@
                     },
                     "delete_all_screenshot_metadata": {
                         "button": "Usuń metadane zrzutów ekranu",
-                        "ask": "Czy na pewno chcesz usunąć wszystkie metadane zrzutów ekranu VRC i VRCX ze swojego folderu obrazków VRChat? Dotyczy to wszsytkich odbitek, podfolderów i innych niepowiązanych obrazków w twoim folderze obrazków VRChat. Jeśli te zdjęcia są dla ciebie cenne, przed kontynuowaniem wykonaj kopię zapasową.",
+                        "ask": "Czy na pewno chcesz usunąć wszystkie metadane zrzutów ekranu VRC i Nexy ze swojego folderu obrazków VRChat? Dotyczy to wszsytkich odbitek, podfolderów i innych niepowiązanych obrazków w twoim folderze obrazków VRChat. Jeśli te zdjęcia są dla ciebie cenne, przed kontynuowaniem wykonaj kopię zapasową.",
                         "confirm": "Usunięcie wszystkich metadanych zrzutów ekranu jest nieodwracalne! ",
                         "confirm_yes": "Tak",
                         "confirm_no": "Nie"
@@ -693,7 +688,7 @@
                         "header": "Komendy uruchomieniowe (Głębokie linkowanie)",
                         "docs": "Otwórz dokumentację",
                         "show_confirmation_on_switch_avatar_enable": "Pokaż okno dialogowe potwierdzenia przed zmianą awatara",
-                        "show_confirmation_on_switch_avatar_tooltip": "Gdy opcja jest wyłączona, VRCX nie pojawi się na pierwszym planie podczas zmiany awatarów i nie poprosi o potwierdzenie.",
+                        "show_confirmation_on_switch_avatar_tooltip": "Gdy opcja jest wyłączona, Nexy nie pojawi się na pierwszym planie podczas zmiany awatarów i nie poprosi o potwierdzenie.",
                         "website_userscript": "Skrypt dla strony VRC"
                     },
                     "screenshot_helper": {
@@ -713,7 +708,7 @@
                         "run_process_once": "Otwieraj jedną instancję aplikacji"
                     },
                     "cache_debug": {
-                        "header": "Pamięć i debug danych VRCX",
+                        "header": "Pamięć i debug danych Nexy",
                         "udon_exception_logging": "Logowanie wyjątków Udona",
                         "disable_gamelog": "Wyłącz logi gry",
                         "disable_gamelog_notice": "(prawdopodobnie popsuje rzeczy)",
@@ -853,8 +848,8 @@
                 "instance_creator": "Twórca instancji",
                 "note": "Notatka",
                 "note_placeholder": "Kliknij, aby dodać notatkę",
-                "memo": "Notatka VRCX",
-                "memo_placeholder": "Kliknij, aby dodać notatkę VRCX",
+                "memo": "Notatka Nexy",
+                "memo_placeholder": "Kliknij, aby dodać notatkę Nexy",
                 "avatar_info": "Informacje o awatarze",
                 "represented_group": "Reprezentowana grupa",
                 "bio": "Bio",
@@ -995,8 +990,8 @@
             },
             "info": {
                 "header": "Informacje",
-                "memo": "Notatka VRCX",
-                "memo_placeholder": "Kliknij, aby dodać notatkę VRCX",
+                "memo": "Notatka Nexy",
+                "memo_placeholder": "Kliknij, aby dodać notatkę Nexy",
                 "id": "ID świata",
                 "id_tooltip": "Skopiuj do schowka",
                 "copy_id": "Kopiuj ID",
@@ -1076,8 +1071,8 @@
                 "version": "Wersja",
                 "platform": "Platforma",
                 "time_spent": "Spędzony czas",
-                "memo": "Notatka VRCX",
-                "memo_placeholder": "Kliknij, aby dodać notatkę VRCX",
+                "memo": "Notatka Nexy",
+                "memo_placeholder": "Kliknij, aby dodać notatkę Nexy",
                 "listings": "Oferty",
                 "gallery": "Galeria"
             },
@@ -1420,14 +1415,14 @@
         },
         "note_export": {
             "header": "Eksport notatki",
-            "description1": "Wyeksportuj wszystkie Twoje notatki VRCX i zaimportuj je do notatek VRChat.",
+            "description1": "Wyeksportuj wszystkie Twoje notatki Nexy i zaimportuj je do notatek VRChat.",
             "description2": "Należy pamiętać o następujących ograniczeniach:",
             "description3": "- Punkt końcowy API ma limit użytkowania, który wymaga dużego opóźnienia pomiędzy żądaniami.",
             "description4": "- Limit 256 znaków na notatkę.",
             "description5": "- Filtrowanie wulgaryzmów.",
             "description6": "- Bez nowych linii (zostaną zastąpione spacjami).",
             "description7": "- Wszystkie istniejące notatki VRChat dla tych użytkowników zostaną nadpisane.",
-            "description8": "- Wszelkie dokonane tutaj zmiany nie wpływają na notatki VRCX, ale wpłyną na notatki VRChat po wyeksportowaniu.",
+            "description8": "- Wszelkie dokonane tutaj zmiany nie wpływają na notatki Nexy, ale wpłyną na notatki VRChat po wyeksportowaniu.",
             "refresh": "Odśwież",
             "export": "Eksportuj",
             "cancel": "Anuluj",
@@ -1701,23 +1696,23 @@
             "add_item": "Dodaj element"
         },
         "vrcx_updater": {
-            "header": "Aktualizacje VRCX",
-            "latest_version": "VRCX jest aktualny.",
-            "ready_for_update": "Gotowy do instalacji, zrestartuj VRCX.",
+            "header": "Aktualizacje Nexy",
+            "latest_version": "Nexy jest aktualny.",
+            "ready_for_update": "Gotowy do instalacji, zrestartuj Nexy.",
             "download": "Pobierz",
             "install": "Instaluj",
             "cancel": "Anuluj"
         },
         "change_log": {
             "header": "Lista zmian",
-            "description": "Rozważ darowiznę na rzecz przyszłego rozwoju VRCX",
+            "description": "Rozważ darowiznę na rzecz przyszłego rozwoju Nexy",
             "close": "Zamknij",
             "donate": "Wesprzyj nas",
             "github": "GitHub"
         },
         "open_source": {
             "header": "Informacja o otwartym oprogramowaniu",
-            "description": "VRCX opiera się na oprogramowaniu open source. Było to możliwe ze względu na ich wkład."
+            "description": "Nexy opiera się na oprogramowaniu open source. Było to możliwe ze względu na ich wkład."
         },
         "primary_password": {
             "header": "Wymagane hasło podstawowe",
@@ -1738,7 +1733,7 @@
             "action": "Akcja",
             "auto_backup": "Cotygodniowa automatyczna kopia zapasowa",
             "ask_to_restore": "Zapytaj o przywrócenie, gdy nie znaleziono ustawień rejestru VRChat",
-            "restore_prompt": "VRCX zauważył, że automatyczna kopia zapasowa ustawień rejestru VRC jest włączona, ale ten komputer go nie posiada, jeśli chcesz przywrócić z kopii zapasowej, możesz to zrobić tutaj."
+            "restore_prompt": "Nexy zauważył, że automatyczna kopia zapasowa ustawień rejestru VRC jest włączona, ale ten komputer go nie posiada, jeśli chcesz przywrócić z kopii zapasowej, możesz to zrobić tutaj."
         },
         "avatar_database_provider": {
             "header": "Dostawca bazy danych awatarów",
@@ -1888,7 +1883,7 @@
             "input_error": "Wymagana jest prawidłowa liczba"
         },
         "auto_clear_cache": {
-            "header": "Wyczyść zegar pamięci podręcznej VRCX",
+            "header": "Wyczyść zegar pamięci podręcznej Nexy",
             "description": "Wprowadź liczbę godzin, większe wartości mogą wpłynąć na zużycie RAM (domyślnie: 24, wyłącz: 0)",
             "cancel": "Anuluj",
             "ok": "Ok",

@@ -90,53 +90,44 @@ describe('Tools.vue', () => {
         getString.mockResolvedValue('{}');
     });
 
-    test('clicking screenshot tool navigates to screenshot metadata', async () => {
+    test('hides VRChat-only tools and the categories they leave empty', async () => {
         const wrapper = mount(Tools);
         await flushPromises();
 
-        const screenshotItem = findToolItemByTitle(wrapper, 'view.tools.pictures.screenshot');
-
-        expect(screenshotItem).toBeTruthy();
-        await screenshotItem.trigger('click');
-
-        expect(push).toHaveBeenCalledWith({ name: 'screenshot-metadata' });
-    });
-
-    test('clicking gallery tool calls showGalleryPage', async () => {
-        const wrapper = mount(Tools);
-        await flushPromises();
-
-        const galleryItem = findToolItemByTitle(wrapper, 'view.tools.pictures.gallery');
-
-        expect(galleryItem).toBeTruthy();
-        await galleryItem.trigger('click');
-
-        expect(push).toHaveBeenCalledWith({ name: 'gallery' });
+        expect(findToolItemByTitle(wrapper, 'view.tools.pictures.screenshot')).toBeFalsy();
+        expect(findToolItemByTitle(wrapper, 'view.tools.pictures.gallery')).toBeFalsy();
+        expect(findCategoryHeaderByTitle(wrapper, 'view.tools.pictures.header')).toBeFalsy();
     });
 
     test('toggle category persists collapsed state', async () => {
         const wrapper = mount(Tools);
         await flushPromises();
 
-        const imageCategoryHeader = findCategoryHeaderByTitle(wrapper, 'view.tools.pictures.header');
+        const shortcutsCategoryHeader = findCategoryHeaderByTitle(wrapper, 'view.tools.shortcuts.header');
 
-        expect(imageCategoryHeader).toBeTruthy();
-        await imageCategoryHeader.trigger('click');
+        expect(shortcutsCategoryHeader).toBeTruthy();
+        await shortcutsCategoryHeader.trigger('click');
 
-        expect(setString).toHaveBeenCalledWith('VRCX_toolsCategoryCollapsed', expect.stringContaining('"image":true'));
+        expect(setString).toHaveBeenCalledWith(
+            'VRCX_toolsCategoryCollapsed',
+            expect.stringContaining('"shortcuts":true')
+        );
     });
 
     test('loads stored collapsed state before toggling category', async () => {
-        getString.mockResolvedValue('{"image":true}');
+        getString.mockResolvedValue('{"shortcuts":true}');
 
         const wrapper = mount(Tools);
         await flushPromises();
 
-        const imageCategoryHeader = findCategoryHeaderByTitle(wrapper, 'view.tools.pictures.header');
+        const shortcutsCategoryHeader = findCategoryHeaderByTitle(wrapper, 'view.tools.shortcuts.header');
 
-        expect(imageCategoryHeader).toBeTruthy();
-        await imageCategoryHeader.trigger('click');
+        expect(shortcutsCategoryHeader).toBeTruthy();
+        await shortcutsCategoryHeader.trigger('click');
 
-        expect(setString).toHaveBeenCalledWith('VRCX_toolsCategoryCollapsed', expect.stringContaining('"image":false'));
+        expect(setString).toHaveBeenCalledWith(
+            'VRCX_toolsCategoryCollapsed',
+            expect.stringContaining('"shortcuts":false')
+        );
     });
 });

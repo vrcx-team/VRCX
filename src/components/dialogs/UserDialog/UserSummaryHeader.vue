@@ -171,18 +171,22 @@
                     </Badge>
                 </TooltipWrapper>
                 <TooltipWrapper
-                    v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
+                    v-for="badge in nexvrBadges"
+                    :key="badge.kind + badge.label"
                     side="top"
-                    :content="t('dialog.user.tags.age_verified')">
+                    :content="badge.title">
                     <Badge
                         variant="outline"
-                        class="h-5 px-1.5 text-[11px] leading-none text-[#3b82f6] border-[#3b82f6]!">
-                        <template v-if="userDialog.ref.ageVerificationStatus === '18+'">
-                            <IdCard class="h-2.5 w-2.5" /> 18+
-                        </template>
-                        <template v-else>
-                            <IdCard class="h-2.5 w-2.5" />
-                        </template>
+                        class="h-5 px-1.5 text-[11px] leading-none"
+                        :class="[
+                            nexvrBadgeToneClass[badge.tone] ?? nexvrBadgeToneClass.primary,
+                            { 'font-mono': badge.mono }
+                        ]">
+                        <component
+                            :is="nexvrBadgeIcons[badge.icon]"
+                            v-if="nexvrBadgeIcons[badge.icon]"
+                            class="h-2.5 w-2.5" />
+                        {{ badge.label }}
                     </Badge>
                 </TooltipWrapper>
                 <TooltipWrapper
@@ -359,7 +363,7 @@
             </div>
 
             <div
-                v-if="currentUser.id === userDialog.id"
+                v-if="showVrchatOnlySections && currentUser.id === userDialog.id"
                 class="border-t border-muted-foreground/20 flex flex-col gap-1.5">
                 <div
                     class="flex justify-between items-center text-xs cursor-pointer hover:text-foreground mt-1.5"
@@ -415,7 +419,7 @@
         </div>
     </div>
 
-    <div class="rounded-xl bg-(--profile-card) p-3 flex flex-col mt-2">
+    <div v-if="showVrchatOnlySections" class="rounded-xl bg-(--profile-card) p-3 flex flex-col mt-2">
         <div
             class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-muted-foreground/20"
             :style="{ color: userDialog.theme.subtextColor }">
@@ -446,7 +450,7 @@
         </div>
     </div>
 
-    <div class="rounded-xl bg-(--profile-card) p-3 flex flex-col mt-2">
+    <div v-if="showVrchatOnlySections" class="rounded-xl bg-(--profile-card) p-3 flex flex-col mt-2">
         <div
             class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-muted-foreground/20"
             :style="{ color: userDialog.theme.subtextColor }">
@@ -499,7 +503,6 @@
         Apple,
         BadgeCheck,
         ChevronDown,
-        IdCard,
         Image,
         Info,
         Monitor,
@@ -514,6 +517,7 @@
         XCircle,
         VolumeX,
         MessageCircle,
+        Sparkles,
         User
     } from 'lucide-vue-next';
     import { computed, ref, watch } from 'vue';
@@ -579,6 +583,24 @@
     const { showFullscreenImageDialog } = useGalleryStore();
     const { userStatusClass } = useUserDisplay();
     const { showEditProfileDialog } = useUserStore();
+
+    // VRChat account toggles (avatar cloning, booping...), avatar info and
+    // represented group have no NexVR equivalent
+    const showVrchatOnlySections = false;
+
+    // NexVR profile badges, as nexvr.net shows them next to the name
+    const nexvrBadges = computed(() => userDialog.value.ref?.$nexvr?.badges ?? []);
+    const nexvrBadgeIcons = {
+        'shield-check': ShieldCheck,
+        'badge-check': BadgeCheck,
+        shield: Shield,
+        sparkles: Sparkles
+    };
+    const nexvrBadgeToneClass = {
+        success: 'text-green-500 border-green-500!',
+        primary: 'text-[#3b82f6] border-[#3b82f6]!',
+        info: 'text-sky-400 border-sky-400!'
+    };
 
     const profileImageError = ref(false);
     const userIconError = ref(false);

@@ -3,7 +3,7 @@
         <div class="title-bar-content">
             <div class="traffic-lights-spacer"></div>
             <div class="title-bar-center">
-                <span class="app-title">VRCX</span>
+                <span class="app-title">Nexy</span>
             </div>
             <div class="title-bar-right"></div>
         </div>

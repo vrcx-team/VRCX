@@ -85,7 +85,7 @@
                 "search_placeholder": "Buscar",
                 "filter_placeholder": "Filtrar",
                 "chatbox_blacklist": "Lista Negra del Chatbox",
-                "status_tooltip": "Estado del Compañero VRCX"
+                "status_tooltip": "Estado del Compañero Nexy"
             }
         },
         "search": {
@@ -228,7 +228,7 @@
                 "next_day": "Día Siguiente",
                 "refresh": "Actualizar",
                 "tips": {
-                    "online_time": "El tiempo en línea se refiere al tiempo de juego registrado por VRCX para el día actual.",
+                    "online_time": "El tiempo en línea se refiere al tiempo de juego registrado por Nexy para el día actual.",
                     "click_Y_axis": "Haz clic en la etiqueta del eje Y para navegar a los detalles de la instancia o abrir el diálogo de Usuario.",
                     "click_instance_name": "Haz clic en el nombre de la instancia para abrir el diálogo de Información de Instancia Anterior."
                 },
@@ -250,7 +250,6 @@
         },
         "profile": {
             "profile": {
-                "vrchat_credits": "Créditos de VRChat",
                 "refresh": "Haz clic para actualizar"
             },
             "game_info": {
@@ -283,7 +282,7 @@
                     "support": "Soporte"
                 },
                 "vrcx_updater": {
-                    "header": "Actualizador de VRCX",
+                    "header": "Actualizador de Nexy",
                     "change_build": "Cambiar compilación",
                     "update_action": "Acción de actualización",
                     "auto_update_off": "Apagado",
@@ -297,12 +296,12 @@
                     "minimized": "Iniciar minimizado",
                     "tray": "Minimizar a la bandeja al cerrar",
                     "disable_gpu_acceleration": "Deshabilitar Aceleración GPU",
-                    "disable_gpu_acceleration_tooltip": "Solo cambia esta opción si sabes lo que estás haciendo, rompe la superposición de SteamVR, puede solucionar problemas con la UI, requiere reiniciar VRCX",
+                    "disable_gpu_acceleration_tooltip": "Solo cambia esta opción si sabes lo que estás haciendo, rompe la superposición de SteamVR, puede solucionar problemas con la UI, requiere reiniciar Nexy",
                     "disable_vr_overlay_gpu_acceleration": "Deshabilitar Aceleración GPU de Superposición VR",
                     "proxy": "Configuraciones de Proxy"
                 },
                 "favorites": {
-                    "header": "Amigos Favoritos de VRCX",
+                    "header": "Amigos Favoritos de Nexy",
                     "group_placeholder": "Elegir Grupos"
                 },
                 "logging": {
@@ -322,13 +321,10 @@
                     "auto_invite_request_accept": "Aceptar Solicitudes de Invitación Automáticamente",
                     "auto_invite_request_accept_tooltip": "Aceptar automáticamente las solicitudes de invitación de amigos favoritos",
                     "auto_invite_request_accept_favs": "Todos los Favoritos",
-                    "auto_invite_request_accept_selected_favs": "Favoritos de VRCX"
+                    "auto_invite_request_accept_selected_favs": "Favoritos de Nexy"
                 },
                 "legal_notice": {
                     "header": "Aviso Legal",
-                    "info": "VRCX es una aplicación asistente para VRChat que proporciona información sobre y gestión de amistades. Esta aplicación utiliza el SDK de la API no oficial de VRChat.",
-                    "disclaimer1": "VRCX no está respaldado por VRChat y no refleja las opiniones o puntos de vista de VRChat ni de nadie oficialmente involucrado en la producción o gestión de las propiedades de VRChat. VRChat y todas las propiedades asociadas son marcas comerciales o marcas registradas de VRChat Inc. VRChat © VRChat Inc.",
-                    "disclaimer2": "pypy & Natsumi no son responsables de ningún problema causado por VRCX. ¡Úselo bajo su propio riesgo!",
                     "open_source_software_notice": "Aviso de Software de Código Abierto"
                 },
                 "contributors": {
@@ -379,7 +375,7 @@
                 "user_dialog": {
                     "header": "Diálogo de Usuario",
                     "vrchat_notes": "Notas de VRChat",
-                    "vrcx_memos": "Memos de VRCX"
+                    "vrcx_memos": "Memos de Nexy"
                 },
                 "user_colors": {
                     "header": "Colores de Usuario",
@@ -522,7 +518,7 @@
                         "header": "Comandos de Lanzamiento (Enlaces Profundos)",
                         "docs": "Documentación de Comandos de Lanzamiento",
                         "show_confirmation_on_switch_avatar_enable": "Mostrar diálogo de confirmación antes de cambiar avatares",
-                        "show_confirmation_on_switch_avatar_tooltip": "Cuando está deshabilitado, VRCX no se pondrá al frente al cambiar avatares y no pedirá confirmación",
+                        "show_confirmation_on_switch_avatar_tooltip": "Cuando está deshabilitado, Nexy no se pondrá al frente al cambiar avatares y no pedirá confirmación",
                         "website_userscript": "Userscript del Sitio Web de VRC"
                     },
                     "screenshot_helper": {
@@ -541,7 +537,7 @@
                         "auto_close": "Cerrar aplicaciones automáticamente"
                     },
                     "cache_debug": {
-                        "header": "Caché/Depuración de Instancias de VRCX",
+                        "header": "Caché/Depuración de Instancias de Nexy",
                         "udon_exception_logging": "Registro de Excepciones de Udon",
                         "disable_gamelog": "Deshabilitar GameLog",
                         "disable_gamelog_notice": "(probablemente romperá cosas)",
@@ -1198,14 +1194,14 @@
         },
         "note_export": {
             "header": "Exportar Notas",
-            "description1": "Este proceso exportará todos tus memos de VRCX e importará en las notas de VRChat.",
+            "description1": "Este proceso exportará todos tus memos de Nexy e importará en las notas de VRChat.",
             "description2": "Ten en cuenta las siguientes limitaciones:",
             "description3": "- El punto final de la API tiene un límite de tasa que requiere un gran retraso entre solicitudes.",
             "description4": "- Límite de caracteres de 256 por nota.",
             "description5": "- Filtro de palabras malsonantes (no se permite diversión).",
             "description6": "- No se permiten nuevas líneas (se reemplazarán con un espacio).",
             "description7": "- Esto sobrescribirá cualquier nota existente de VRChat para estos usuarios.",
-            "description8": "- Cualquier edición hecha aquí no afectará a los memos de VRCX pero sí afectará a las notas de VRChat una vez exportadas.",
+            "description8": "- Cualquier edición hecha aquí no afectará a los memos de Nexy pero sí afectará a las notas de VRChat una vez exportadas.",
             "refresh": "Actualizar",
             "export": "Exportar",
             "cancel": "Cancelar",
@@ -1412,23 +1408,23 @@
             "add_item": "Añadir Elemento"
         },
         "vrcx_updater": {
-            "header": "Actualizador de VRCX",
-            "latest_version": "VRCX está actualizado.",
-            "ready_for_update": "Listo para instalar, reinicia VRCX para aplicar.",
+            "header": "Actualizador de Nexy",
+            "latest_version": "Nexy está actualizado.",
+            "ready_for_update": "Listo para instalar, reinicia Nexy para aplicar.",
             "download": "Descargar",
             "install": "Instalar",
             "cancel": "Cancelar"
         },
         "change_log": {
             "header": "Registro de Cambios",
-            "description": "Considera donar para apoyar el desarrollo futuro de VRCX",
+            "description": "Considera donar para apoyar el desarrollo futuro de Nexy",
             "close": "Cerrar",
             "donate": "Donar",
             "github": "GitHub"
         },
         "open_source": {
             "header": "Aviso de Software de Código Abierto",
-            "description": "VRCX se basa en software de código abierto. Fue posible gracias a su contribución."
+            "description": "Nexy se basa en software de código abierto. Fue posible gracias a su contribución."
         },
         "primary_password": {
             "header": "Contraseña Principal Requerida",
@@ -1448,7 +1444,7 @@
             "date": "Fecha",
             "action": "Acción",
             "auto_backup": "Copia de Seguridad Automática Semanal",
-            "restore_prompt": "VRCX ha notado que la copia de seguridad automática de las configuraciones del registro de VRC está habilitada, pero esta computadora no tiene ninguna. Si deseas restaurar desde la copia de seguridad, puedes hacerlo desde aquí."
+            "restore_prompt": "Nexy ha notado que la copia de seguridad automática de las configuraciones del registro de VRC está habilitada, pero esta computadora no tiene ninguna. Si deseas restaurar desde la copia de seguridad, puedes hacerlo desde aquí."
         },
         "avatar_database_provider": {
             "header": "Proveedor de Base de Datos de Avatares",
@@ -1598,7 +1594,7 @@
             "input_error": "Se requiere un número válido"
         },
         "auto_clear_cache": {
-            "header": "Temporizador de Limpieza de Caché de VRCX",
+            "header": "Temporizador de Limpieza de Caché de Nexy",
             "description": "Introduce la cantidad de horas, valores más grandes pueden impactar el uso de RAM y el rendimiento (predeterminado: 24, deshabilitado: 0)",
             "cancel": "Cancelar",
             "ok": "OK",

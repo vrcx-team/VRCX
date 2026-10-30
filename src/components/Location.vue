@@ -349,7 +349,7 @@
     function handleShareLocation() {
         const L = parsedLocation.value;
         if (!L.worldId) return;
-        copyToClipboard(`https://vrchat.com/home/world/${L.worldId}`, t('message.world.url_copied'));
+        copyToClipboard(`https://nexvr.net/worlds/${L.worldId}`, t('message.world.url_copied'));
     }
 
     function handleNewInstance() {

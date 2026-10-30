@@ -64,7 +64,7 @@
                 "search_placeholder": "Vyhledat",
                 "filter_placeholder": "Filtrovat",
                 "chatbox_blacklist": "Černá listina herního chatu",
-                "status_tooltip": "Stav VRCX Companion"
+                "status_tooltip": "Stav Nexy Companion"
             }
         },
         "search": {
@@ -191,7 +191,7 @@
                     "support": "Podpora"
                 },
                 "vrcx_updater": {
-                    "header": "VRCX Aktualizátor",
+                    "header": "Nexy Aktualizátor",
                     "change_build": "Změnit verzi",
                     "update_action": "Aktualizace",
                     "auto_update_off": "Vypnuto",
@@ -205,12 +205,12 @@
                     "minimized": "Spustit minimalizované",
                     "tray": "Minimalizovat do systémové lišty při zavření",
                     "disable_gpu_acceleration": "Vypnout GPU Akceleraci",
-                    "disable_gpu_acceleration_tooltip": "Tuto možnost změnte pouze, pokud víte co děláte, narušujete SteamVR Overlay, může opravit UI problémy, vyžaduje restart VRCX",
+                    "disable_gpu_acceleration_tooltip": "Tuto možnost změnte pouze, pokud víte co děláte, narušujete SteamVR Overlay, může opravit UI problémy, vyžaduje restart Nexy",
                     "disable_vr_overlay_gpu_acceleration": "Vypnout GPU akceleraci VR Overlay",
                     "proxy": "Nastavení proxy"
                 },
                 "favorites": {
-                    "header": "VRCX Oblíbení přátelé",
+                    "header": "Nexy Oblíbení přátelé",
                     "group_placeholder": "Vybrat skupiny"
                 },
                 "logging": {
@@ -230,13 +230,10 @@
                     "auto_invite_request_accept": "Automaticky přijímat žádosti o pozvání",
                     "auto_invite_request_accept_tooltip": "Automaticky přijímat žádosti o pozvání od oblíbených přátel",
                     "auto_invite_request_accept_favs": "Všichni oblíbení",
-                    "auto_invite_request_accept_selected_favs": "VRCX oblíbení"
+                    "auto_invite_request_accept_selected_favs": "Nexy oblíbení"
                 },
                 "legal_notice": {
                     "header": "Právní oznámení",
-                    "info": "VRCX je asistenční aplikace pro VRChat, která poskytuje informace o přátelství a jeho správě. Tato aplikace využívá neoficiální SDK API VRChat.",
-                    "disclaimer1": "VRCX není schváleno VRChatem a neodráží názory nebo stanoviska VRChatu ani kohokoli oficiálně zapojeného do tvorby nebo správy vlastností VRChat. VRChat a všechny související vlastnosti jsou ochranné známky nebo registrované ochranné známky společnosti VRChat Inc. VRChat © VRChat Inc.",
-                    "disclaimer2": "Pypy a Natsumi nenesou odpovědnost za jakékoli problémy způsobené VRCX. Používáte na vlastní riziko!",
                     "open_source_software_notice": "Oznámení o open source softwaru"
                 },
                 "contributors": {
@@ -287,7 +284,7 @@
                 "user_dialog": {
                     "header": "Dialog uživatele",
                     "vrchat_notes": "VRChat poznámky",
-                    "vrcx_memos": "VRCX poznámky"
+                    "vrcx_memos": "Nexy poznámky"
                 },
                 "user_colors": {
                     "header": "Uživatelské barvy",
@@ -437,7 +434,7 @@
                         "auto_close": "Auto close apps"
                     },
                     "cache_debug": {
-                        "header": "VRCX Instance Cache/Debug",
+                        "header": "Nexy Instance Cache/Debug",
                         "udon_exception_logging": "Udon Exception Logging",
                         "disable_gamelog": "Disable GameLog",
                         "disable_gamelog_notice": "(will likely break things)",
@@ -1090,14 +1087,14 @@
         },
         "note_export": {
             "header": "Note Export",
-            "description1": "This process will export all of your VRCX memos and import them into VRChat notes.",
+            "description1": "This process will export all of your Nexy memos and import them into VRChat notes.",
             "description2": "Be warned of the following limitations:",
             "description3": "- API endpoint has a rate limit that requires a large delay between requests.",
             "description4": "- Character limit of 256 per note.",
             "description5": "- Swear words filter (no fun allowed).",
             "description6": "- No new lines (they will replaced with a space).",
             "description7": "- This will overwrite any existing VRChat notes for these users.",
-            "description8": "- Any edits made here wont affect VRCX memos but will affect VRChat notes once exported.",
+            "description8": "- Any edits made here wont affect Nexy memos but will affect VRChat notes once exported.",
             "refresh": "Refresh",
             "export": "Export",
             "cancel": "Cancel",
@@ -1303,22 +1300,22 @@
             "add_item": "Add Item"
         },
         "vrcx_updater": {
-            "header": "VRCX Updater",
-            "latest_version": "VRCX is up to date.",
-            "ready_for_update": "Ready for install, restart VRCX to apply.",
+            "header": "Nexy Updater",
+            "latest_version": "Nexy is up to date.",
+            "ready_for_update": "Ready for install, restart Nexy to apply.",
             "download": "Download",
             "install": "Install"
         },
         "change_log": {
             "header": "Change Log",
-            "description": "Consider donating to support future development of VRCX",
+            "description": "Consider donating to support future development of Nexy",
             "close": "Close",
             "donate": "Donate",
             "github": "GitHub"
         },
         "open_source": {
             "header": "Open Source Software Notice",
-            "description": "VRCX is based on open source software. It was possible because of their contribution."
+            "description": "Nexy is based on open source software. It was possible because of their contribution."
         },
         "primary_password": {
             "header": "Primary Password Required",
@@ -1338,7 +1335,7 @@
             "date": "Date",
             "action": "Action",
             "auto_backup": "Weekly Auto Backup",
-            "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
+            "restore_prompt": "Nexy has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
         },
         "avatar_database_provider": {
             "header": "Avatar Database Provider",
@@ -1488,7 +1485,7 @@
             "input_error": "Valid number is required"
         },
         "auto_clear_cache": {
-            "header": "Clear VRCX Cache Timer",
+            "header": "Clear Nexy Cache Timer",
             "description": "Enter amount of hours, larger values may impact RAM usage and performance (default: 24, disabled: 0)",
             "cancel": "Cancel",
             "ok": "OK",

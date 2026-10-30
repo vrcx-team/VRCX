@@ -89,7 +89,6 @@
         "resources": "ERŐFORRÁSOK",
         "wiki": "Wiki",
         "get_help": "SEGÍTSÉG",
-        "github": "VRCX a GitHubon",
         "discord": "Csatlakozz a Discordhoz",
         "changelog": "Változásnapló",
         "update_available": "Frissítés elérhető",
@@ -542,7 +541,7 @@
                 "next_day": "Következő nap",
                 "refresh": "Frissítés",
                 "tips": {
-                    "online_time": "Az online idő a VRCX által az adott napra rögzített játékidőt jelenti.",
+                    "online_time": "Az online idő a Nexy által az adott napra rögzített játékidőt jelenti.",
                     "click_Y_axis": "Kattints az Y-tengely címkéjére a helyzet részleteinek megnyitásához vagy a felhasználói párbeszédablak megnyitásához.",
                     "click_instance_name": "Kattints a helyzet nevére az Előző helyzet infó párbeszédablak megnyitásához."
                 },
@@ -676,7 +675,7 @@
             "export": {
                 "header": "Exportálás",
                 "export_notes": "Felhasználói memók exportálása",
-                "export_notes_description": "VRCX felhasználói memók exportálása VRChat megjegyzésekbe",
+                "export_notes_description": "Nexy felhasználói memók exportálása VRChat megjegyzésekbe",
                 "discord_names": "Discord nevek",
                 "export_friend_list": "Barátlista exportálása",
                 "export_own_avatars": "Saját avatarok exportálása"
@@ -697,8 +696,8 @@
             },
             "shortcuts": {
                 "header": "Gyorselérések",
-                "vrcx_data": "VRCX adatok",
-                "vrcx_data_description": "VRCX adatmappa megnyitása",
+                "vrcx_data": "Nexy adatok",
+                "vrcx_data_description": "Nexy adatmappa megnyitása",
                 "vrchat_data": "VRChat adatok",
                 "vrchat_data_description": "VRChat adatmappa megnyitása",
                 "crash_dumps": "Összeomlási naplók",
@@ -720,7 +719,6 @@
         },
         "profile": {
             "profile": {
-                "vrchat_credits": "VRChat kreditek",
                 "refresh": "Kattints ide a frissítéshez"
             },
             "game_info": {
@@ -814,7 +812,7 @@
                     "support": "Támogatás"
                 },
                 "vrcx_updater": {
-                    "header": "VRCX frissítő",
+                    "header": "Nexy frissítő",
                     "change_build": "Build váltása",
                     "update_action": "Frissítési művelet",
                     "auto_update_off": "Kikapcsolva",
@@ -829,10 +827,10 @@
                     "minimized": "Indítás tálcára kicsinyítve",
                     "tray": "Bezárás a tálcára",
                     "disable_gpu_acceleration": "GPU gyorsítás letiltása",
-                    "disable_gpu_acceleration_tooltip": "Csak akkor változtasd meg ezt a beállítást, ha tudod mit csinálsz. Megoldhat UI-problémákat, de a VRCX újraindítása szükséges.",
+                    "disable_gpu_acceleration_tooltip": "Csak akkor változtasd meg ezt a beállítást, ha tudod mit csinálsz. Megoldhat UI-problémákat, de a Nexy újraindítása szükséges.",
                     "disable_vr_overlay_gpu_acceleration": "VR átfedés GPU gyorsítás letiltása",
                     "proxy": "Proxy beállítások",
-                    "startup_linux": "Add hozzá a \"--startup\" argumentumot a VRCX.desktop indítófájlhoz, hogy a VRCX minimalizálva induljon el a rendszerindításkor"
+                    "startup_linux": "Add hozzá a \"--startup\" argumentumot a Nexy.desktop indítófájlhoz, hogy a Nexy minimalizálva induljon el a rendszerindításkor"
                 },
                 "favorites": {
                     "header": "Kedvenc csoport szűrő",
@@ -871,9 +869,6 @@
                 },
                 "legal_notice": {
                     "header": "Jogi nyilatkozat",
-                    "info": "A VRCX egy asszisztens alkalmazás a VRChat-hez, mely adatokat szolgáltat barátságokról, illetve lehetővé teszi azok kezelését. Ez az alkalmazás kihasználja a nem hivatalos VRChat API SDK-t.",
-                    "disclaimer1": "A VRCX-et nem hagyta jóvá a VRChat és nem tükrözi a VRChat, vagy bárki, aki hivatalosan részt vesz a gyártásában vagy kezelésében, nézeteit vagy véleményét. A VRChat és az összes kapcsolódó tulajdon a VRChat Inc. védjegye vagy bejegyzett védjegye. VRChat © VRChat Inc.",
-                    "disclaimer2": "pypy és Natsumi, valamint az összes közreműködő nem vállal felelősséget bármilyen problémáért, amit a VRCX okoz. Használd saját felelősségre!",
                     "open_source_software_notice": "Nyílt forráskódú szoftverre vonatkozó megjegyzés"
                 },
                 "contributors": {
@@ -995,8 +990,8 @@
                     "header": "Felhasználói ablak",
                     "vrchat_notes": "VRChat jegyzetek",
                     "vrchat_notes_description": "VRChat-ben tárolt jegyzetek megjelenítése",
-                    "vrcx_memos": "VRCX memók",
-                    "vrcx_memos_description": "VRCX-ben helyileg mentett jegyzetek megjelenítése",
+                    "vrcx_memos": "Nexy memók",
+                    "vrcx_memos_description": "Nexy-ben helyileg mentett jegyzetek megjelenítése",
                     "recent_action_cooldown": "Közelmúltbeli művelet ikon",
                     "recent_action_cooldown_description": "Óra ikon megjelenítése a közelmúltbeli meghívó és kérelem műveleteken.",
                     "recent_action_cooldown_minutes": "Várakozási idő (perc)"
@@ -1127,7 +1122,7 @@
                         "header": "VRChat"
                     },
                     "vrcx_settings": {
-                        "header": "VRCX"
+                        "header": "Nexy"
                     },
                     "primary_password": {
                         "header": "Elsődleges jelszó",
@@ -1151,11 +1146,11 @@
                     },
                     "anonymous_error_reporting": {
                         "header": "Névtelen hibajelentés (csak éjszakai verzióban)",
-                        "description": "Segíts fejleszteni a VRCX-et névtelen összeomlási és hibajelentések küldésével. Személyes vagy VRChat adatok nem kerülnek gyűjtésre.",
+                        "description": "Segíts fejleszteni a Nexy-et névtelen összeomlási és hibajelentések küldésével. Személyes vagy VRChat adatok nem kerülnek gyűjtésre.",
                         "consent_title": "Névtelen hibajelentés",
-                        "consent_description": "Engedélyezed a névtelen hibajelentést a VRCX fejlesztéséhez?\n\n• Csak összeomlási és hibaadatok\n• Sem személyes, sem VRChat adatok\n• Csak éjszakai verziókban\n• Letiltható a Haladó beállításokban",
-                        "enabled_restart_description": "Hibajelentés engedélyezve. Újraindítod a VRCX-et a módosítások alkalmazásához?",
-                        "disabled_restart_description": "Hibajelentés letiltva. Újraindítod a VRCX-et a módosítások alkalmazásához?"
+                        "consent_description": "Engedélyezed a névtelen hibajelentést a Nexy fejlesztéséhez?\n\n• Csak összeomlási és hibaadatok\n• Sem személyes, sem VRChat adatok\n• Csak éjszakai verziókban\n• Letiltható a Haladó beállításokban",
+                        "enabled_restart_description": "Hibajelentés engedélyezve. Újraindítod a Nexy-et a módosítások alkalmazásához?",
+                        "disabled_restart_description": "Hibajelentés letiltva. Újraindítod a Nexy-et a módosítások alkalmazásához?"
                     },
                     "save_instance_prints_to_file": {
                         "header": "Helyzet nyomatainak mentése fájlba",
@@ -1176,7 +1171,7 @@
                     },
                     "delete_all_screenshot_metadata": {
                         "button": "Képernyőkép metaadatok eltávolítása",
-                        "ask": "Biztosan törölni szeretnéd az összes VRC és VRCX képernyőkép metaadatot a VRChat Képek mappájából?",
+                        "ask": "Biztosan törölni szeretnéd az összes VRC és Nexy képernyőkép metaadatot a VRChat Képek mappájából?",
                         "confirm": "Az összes képernyőkép metaadat törlése rendkívül romboló hatású és nem vonható vissza! Ez tartalmazza az összes nyomatot, almappát és egyéb irrelevant képet a VRChat Képek mappájában. Ha ezek a fotók fontosak számodra, kérjük mentést csinálj a folytatás előtt.",
                         "confirm_yes": "Igen",
                         "confirm_no": "Nem"
@@ -1209,7 +1204,7 @@
                         "header": "Indítási parancsok (mélyhivatkozások)",
                         "docs": "Indítási parancsok dokumentációja",
                         "show_confirmation_on_switch_avatar_enable": "Megerősítés avatar váltás előtt",
-                        "show_confirmation_on_switch_avatar_tooltip": "Ha le van tiltva, a VRCX nem kér megerősítést avatar váltás előtt.",
+                        "show_confirmation_on_switch_avatar_tooltip": "Ha le van tiltva, a Nexy nem kér megerősítést avatar váltás előtt.",
                         "website_userscript": "VRC weboldal felhasználói szkript"
                     },
                     "screenshot_helper": {
@@ -1229,7 +1224,7 @@
                         "run_process_once": "Csak egy helyzetben nyissa meg az alkalmazást"
                     },
                     "cache_debug": {
-                        "header": "VRCX helyzet gyorsítótár/hibakeresés",
+                        "header": "Nexy helyzet gyorsítótár/hibakeresés",
                         "udon_exception_logging": "Udon kivétel naplózás",
                         "disable_gamelog": "Játéknapló kikapcsolása",
                         "disable_gamelog_notice": "(ez valószínűleg hibákat okoz majd)",
@@ -1279,7 +1274,7 @@
                         "purge_confirm_title": "Avatar feed adatok végleges törlése",
                         "purge_confirm_description_1": "Ez véglegesen törli az avatar változási rekordokat az adatbázisból és felszabadítja a lemezterületet.",
                         "purge_confirm_description_2": "Ez a művelet nem vonható vissza!",
-                        "purge_confirm_description_3": "A VRCX újraindul a művelet befejezése után.",
+                        "purge_confirm_description_3": "A Nexy újraindul a művelet befejezése után.",
                         "purge_confirm_alert": "Erősen javasolt az adatbázis fájl biztonsági mentése a folytatás előtt!",
                         "purge_confirm_button": "Törlés és újraindítás",
                         "purge_in_progress": "Avatar adatok törlése folyamatban...",
@@ -1398,8 +1393,8 @@
             },
             "info": {
                 "header": "Infó",
-                "vrcx_info": "VRCX infó",
-                "vrcx_info_tooltip": "A VRCX infó pontatlan lehet",
+                "vrcx_info": "Nexy infó",
+                "vrcx_info_tooltip": "A Nexy infó pontatlan lehet",
                 "launch_invite_tooltip": "Indítás/meghívás",
                 "self_invite_tooltip": "Önmeghívás",
                 "open_in_vrchat_tooltip": "Megnyitás VRChat-ben",
@@ -2261,14 +2256,14 @@
         },
         "note_export": {
             "header": "Megjegyzések exportálása",
-            "description1": "Ez a folyamat exportálja az összes VRCX memódat és beimportálja őket a VRChat megjegyzésekbe.",
+            "description1": "Ez a folyamat exportálja az összes Nexy memódat és beimportálja őket a VRChat megjegyzésekbe.",
             "description2": "Vedd figyelembe a következő korlátozásokat:",
             "description3": "- Az API sebességkorlátozással rendelkezik, ami miatt késleltetés várható a kérések között.",
             "description4": "- Megjegyzésenként 256 karakter a limit.",
             "description5": "- Káromkodásszűrő (nincs szórakozás).",
             "description6": "- Nincsenek új sorok (szóközzel lesznek helyettesítve).",
             "description7": "- Ez felülírja a felhasználókhoz tartozó meglévő VRChat megjegyzéseket.",
-            "description8": "- Az itt végzett szerkesztések nem érintik a VRCX memókat, csak a VRChat megjegyzéseket az exportálás után.",
+            "description8": "- Az itt végzett szerkesztések nem érintik a Nexy memókat, csak a VRChat megjegyzéseket az exportálás után.",
             "refresh": "Frissítés",
             "export": "Exportálás",
             "cancel": "Mégse",
@@ -2596,9 +2591,9 @@
             "add_item": "Elem hozzáadása"
         },
         "vrcx_updater": {
-            "header": "VRCX frissítő",
-            "latest_version": "A VRCX naprakész.",
-            "ready_for_update": "Telepítésre kész, indítsd újra a VRCX-et az alkalmazáshoz.",
+            "header": "Nexy frissítő",
+            "latest_version": "A Nexy naprakész.",
+            "ready_for_update": "Telepítésre kész, indítsd újra a Nexy-et az alkalmazáshoz.",
             "branch_stable": "Stabil",
             "branch_nightly": "Éjszakai",
             "nightly_title": "Éjszakai verziók",
@@ -2610,14 +2605,14 @@
         },
         "change_log": {
             "header": "Változásnapló",
-            "description": "Fontold meg a támogatást a VRCX jövőbeli fejlesztése érdekében",
+            "description": "Fontold meg a támogatást a Nexy jövőbeli fejlesztése érdekében",
             "close": "Bezárás",
             "donate": "Támogatás",
             "github": "GitHub"
         },
         "open_source": {
             "header": "Nyílt forráskódú szoftverre vonatkozó megjegyzés",
-            "description": "A VRCX nyílt forráskódú szoftvereken alapul. Az ő hozzájárulásuk tette ezt lehetővé.",
+            "description": "A Nexy nyílt forráskódú szoftvereken alapul. Az ő hozzájárulásuk tette ezt lehetővé.",
             "loading": "Generált harmadik fél értesítések betöltése...",
             "unavailable": "Nem érhető el generált harmadik fél értesítési manifest ebben a buildben. Futtass production buildet az újrageneráláshoz.",
             "search_placeholder": "Csomagok, verziók vagy licencek keresése",
@@ -2649,7 +2644,7 @@
             "action": "Művelet",
             "auto_backup": "Automatikus mentés 3 naponta (2 hét után törlődik)",
             "ask_to_restore": "Kérdezzen rá a visszaállításra, ha nincs VRC rendszerleíró beállítás",
-            "restore_prompt": "A VRCX észlelte, hogy az automatikus mentés engedélyezve van, de ezen a számítógépen nincsenek adatok. Ha szeretnéd visszaállítani egy mentésből, itt megteheted."
+            "restore_prompt": "A Nexy észlelte, hogy az automatikus mentés engedélyezve van, de ezen a számítógépen nincsenek adatok. Ha szeretnéd visszaállítani egy mentésből, itt megteheted."
         },
         "avatar_database_provider": {
             "header": "Avatar adatbázis szolgáltató",
@@ -2840,7 +2835,7 @@
             "input_error": "Érvényes szám megadása kötelező"
         },
         "auto_clear_cache": {
-            "header": "VRCX gyorsítótár ürítési időzítő",
+            "header": "Nexy gyorsítótár ürítési időzítő",
             "description": "Add meg az órák számát. A nagyobb értékek befolyásolhatják a RAM használatot és a teljesítményt (alapértelmezett: 24, kikapcsolva: 0)",
             "cancel": "Mégse",
             "ok": "OK",
@@ -2954,8 +2949,8 @@
         "database": {
             "upgrade_complete": "Adatbázis-frissítés kész",
             "upgrade_in_progress_title": "Adatbázis-frissítés folyamatban",
-            "upgrade_in_progress_description": "Az adatbázis frissítése {from}-ről {to}-ra. Kérlek, ne zárd be a VRCX-et.",
-            "upgrade_in_progress_initializing": "Adatbázis-frissítés inicializálása. Kérlek, ne zárd be a VRCX-et.",
+            "upgrade_in_progress_description": "Az adatbázis frissítése {from}-ről {to}-ra. Kérlek, ne zárd be a Nexy-et.",
+            "upgrade_in_progress_initializing": "Adatbázis-frissítés inicializálása. Kérlek, ne zárd be a Nexy-et.",
             "upgrade_in_progress_wait": "A felhasználói műveletek ideiglenesen le vannak tiltva, amíg a frissítés be nem fejeződik.",
             "upgrade_failed_title": "Adatbázis-frissítés sikertelen",
             "upgrade_failed_description": "Az adatbázis-frissítés sikertelen. Ellenőrizd a konzolt a részletekért.",
@@ -3032,7 +3027,7 @@
             "delete_failed": "Nem sikerült törölni a képernyőkép metaadatokat"
         },
         "crash": {
-            "vrcx_reload": "A VRCX stabilitási okokból újratöltődött"
+            "vrcx_reload": "A Nexy stabilitási okokból újratöltődött"
         },
         "image": {
             "downloading": "Kép letöltése...",
@@ -3318,7 +3313,7 @@
     },
     "onboarding": {
         "welcome": {
-            "title": "Üdvözöl a VRCX",
+            "title": "Üdvözöl a Nexy",
             "subtitle": "Íme néhány dolog, amit talán nem fedezel fel magadtól.",
             "features": {
                 "user_profiles": {
@@ -3341,13 +3336,13 @@
             "cta": "Kezdjük el"
         },
         "whatsnew": {
-            "title": "Mi újság a VRCX-ben",
+            "title": "Mi újság a Nexy-ben",
             "subtitle": "Ezek változtak ebben a frissítésben.",
             "cta": "Értem",
             "common": {
                 "got_it": "Értem",
                 "view_changelog": "Összes változás megtekintése",
-                "support": "VRCX támogatása"
+                "support": "Nexy támogatása"
             },
             "releases": {
                 "2026_05_03": {

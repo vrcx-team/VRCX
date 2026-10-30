@@ -288,7 +288,7 @@ describe('useWorldDialogInfo', () => {
 
             copyWorldUrl();
             await vi.waitFor(() => {
-                expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://vrchat.com/home/world/wrld_123');
+                expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://nexvr.net/worlds/wrld_123');
             });
         });
 

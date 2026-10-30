@@ -10,7 +10,8 @@ const {
     dialog,
     Notification: ElectronNotification,
     nativeImage,
-    nativeTheme
+    nativeTheme,
+    session
 } = require('electron');
 const { spawnSync } = require('child_process');
 const fs = require('fs');
@@ -38,7 +39,7 @@ function dotnetSetup() {
 
     if (!isDotNetInstalled()) {
         app.whenReady().then(() => {
-            dialog.showErrorBox('VRCX', 'Please install .NET 10.0 Runtime "dotnet-runtime-10.0" to run VRCX.');
+            dialog.showErrorBox('Nexy', 'Please install .NET 10.0 Runtime "dotnet-runtime-10.0" to run Nexy.');
             app.quit();
         });
     }
@@ -77,7 +78,6 @@ if (app.isPackaged && process.defaultApp && process.platform !== 'win32') {
 
 const version = getVersion();
 const homePath = getHomePath();
-tryCopyFromWinePrefix();
 const userDataPath = getElectronUserDataPath();
 console.log('Electron userData path:', userDataPath);
 if (!fs.existsSync(userDataPath)) {
@@ -523,7 +523,7 @@ function createTray() {
             }
         },
         {
-            label: 'Quit VRCX',
+            label: 'Quit Nexy',
             type: 'normal',
             click: function () {
                 appIsQuitting = true;
@@ -531,7 +531,7 @@ function createTray() {
             }
         }
     ]);
-    tray.setToolTip('VRCX');
+    tray.setToolTip('Nexy');
     tray.setContextMenu(contextMenu);
 
     tray.on('click', () => {
@@ -561,13 +561,13 @@ async function installVRCX() {
         return;
     }
 
-    // rename AppImage to VRCX.AppImage
+    // rename AppImage to Nexy.AppImage
     const currentName = path.basename(appImagePath);
-    const expectedName = 'VRCX.AppImage';
+    const expectedName = 'Nexy.AppImage';
     if (currentName !== expectedName) {
         const newPath = path.join(path.dirname(appImagePath), expectedName);
         try {
-            // remove existing VRCX.AppImage
+            // remove existing Nexy.AppImage
             if (fs.existsSync(newPath)) {
                 fs.unlinkSync(newPath);
             }
@@ -576,19 +576,19 @@ async function installVRCX() {
             appImagePath = newPath;
         } catch (err) {
             console.error(`Error renaming AppImage ${newPath}`, err);
-            dialog.showErrorBox('VRCX', `Failed to rename AppImage ${newPath}`);
+            dialog.showErrorBox('Nexy', `Failed to rename AppImage ${newPath}`);
             return;
         }
     }
 
     // ask to move AppImage to ~/Applications
-    const appImageHomePath = `${homePath}/Applications/VRCX.AppImage`;
+    const appImageHomePath = `${homePath}/Applications/Nexy.AppImage`;
     if (!hasAskedToMoveAppImage && appImagePath !== appImageHomePath) {
         const result = dialog.showMessageBoxSync(mainWindow, {
             type: 'question',
-            title: 'VRCX',
-            message: 'Do you want to install VRCX?',
-            detail: 'VRCX will be moved to your ~/Applications folder.',
+            title: 'Nexy',
+            message: 'Do you want to install Nexy?',
+            detail: 'Nexy will be moved to your ~/Applications folder.',
             buttons: ['No', 'Yes']
         });
         if (result === 0) {
@@ -605,7 +605,7 @@ async function installVRCX() {
                 if (!fs.existsSync(applicationsPath)) {
                     fs.mkdirSync(applicationsPath);
                 }
-                // remove existing VRCX.AppImage
+                // remove existing Nexy.AppImage
                 if (fs.existsSync(appImageHomePath)) {
                     fs.unlinkSync(appImageHomePath);
                 }
@@ -615,7 +615,7 @@ async function installVRCX() {
                 await updateDesktopFile();
             } catch (err) {
                 console.error(`Error moving AppImage ${appImageHomePath}`, err);
-                dialog.showErrorBox('VRCX', `Failed to move AppImage ${appImageHomePath}`);
+                dialog.showErrorBox('Nexy', `Failed to move AppImage ${appImageHomePath}`);
                 return;
             }
         }
@@ -642,7 +642,7 @@ function updateDesktopFile() {
     }
 
     const applicationsDir = path.join(homePath, '.local/share/applications');
-    const existingDesktopFilePath = path.join(applicationsDir, 'VRCX.desktop');
+    const existingDesktopFilePath = path.join(applicationsDir, 'Nexy.desktop');
 
     // note that when using spawnSync you DO NOT quote any paths as they are passed directly to the process
     try {
@@ -655,13 +655,13 @@ function updateDesktopFile() {
             ]);
 
             if (editResult.error) {
-                console.log('Error trying to update VRCX.desktop file: ', editResult.error.message);
+                console.log('Error trying to update Nexy.desktop file: ', editResult.error.message);
             } else {
                 console.log(`Updated desktop file: ${existingDesktopFilePath} to exec ${appImagePath}`);
             }
         } else {
             const exeDir = path.dirname(app.getPath('exe'));
-            const packageAppImagePath = path.join(exeDir, 'VRCX.desktop');
+            const packageAppImagePath = path.join(exeDir, 'Nexy.desktop');
 
             var installResult = spawnSync('desktop-file-install', [
                 '--set-key=Exec',
@@ -672,14 +672,14 @@ function updateDesktopFile() {
             ]);
 
             if (installResult.error) {
-                console.log('Error trying to install VRCX.desktop file: ', installResult.error.message);
+                console.log('Error trying to install Nexy.desktop file: ', installResult.error.message);
             } else {
                 console.log(`Installed desktop file to: ${applicationsDir} using exec ${appImagePath}`);
             }
         }
     } catch (err) {
         console.error('Error creating desktop file:', err);
-        dialog.showErrorBox('VRCX', 'Failed to create desktop entry.');
+        dialog.showErrorBox('Nexy', 'Failed to create desktop entry.');
         return;
     }
 }
@@ -690,28 +690,28 @@ function getElectronUserDataPath() {
         return path.join(getVRCXPath(), electronUserData);
     }
     if (process.platform === 'darwin') {
-        return path.join(process.env.HOME, 'Library/Caches/VRCX', electronUserData);
+        return path.join(process.env.HOME, 'Library/Caches/Nexy', electronUserData);
     }
     // Linux or other
     let cacheHome = process.env.XDG_CACHE_HOME;
     if (!cacheHome) {
         cacheHome = path.join(process.env.HOME, '.cache');
     }
-    return path.join(cacheHome, 'VRCX', electronUserData);
+    return path.join(cacheHome, 'Nexy', electronUserData);
 }
 
 function getVRCXPath() {
     if (process.platform === 'win32') {
-        return path.join(process.env.APPDATA, 'VRCX');
+        return path.join(process.env.APPDATA, 'Nexy');
     } else if (process.platform === 'darwin') {
-        return path.join(process.env.HOME, 'Library/Application Support/VRCX');
+        return path.join(process.env.HOME, 'Library/Application Support/Nexy');
     }
     // Linux or other
     let configHome = process.env.XDG_CONFIG_HOME;
     if (!configHome) {
         configHome = path.join(process.env.HOME, '.config');
     }
-    return path.join(configHome, 'VRCX');
+    return path.join(configHome, 'Nexy');
 }
 
 function getHomePath() {
@@ -733,13 +733,13 @@ function getVersion() {
         const version = versionFile.split('-');
         console.log('Version:', versionFile);
         if (version.length > 0 && version[version.length - 1].length == 7) {
-            return `VRCX (Linux) Nightly ${versionFile}`;
+            return `Nexy Nightly ${versionFile}`;
         } else {
-            return `VRCX (Linux) ${versionFile}`;
+            return `Nexy ${versionFile}`;
         }
     } catch (err) {
         console.error('Error reading Version:', err);
-        return 'VRCX (Linux) Nightly Build';
+        return 'Nexy Nightly Build';
     }
 }
 
@@ -771,32 +771,6 @@ function isDotNetInstalled() {
     return result.stdout?.includes('.NETCore.App 10.0');
 }
 
-function tryCopyFromWinePrefix() {
-    try {
-        if (!fs.existsSync(getVRCXPath())) {
-            // try copy from old wine path
-            const userName = process.env.USER || process.env.USERNAME;
-            const oldPath = path.join(homePath, '.local/share/vrcx/drive_c/users', userName, 'AppData/Roaming/VRCX');
-            const newPath = getVRCXPath();
-            if (fs.existsSync(oldPath)) {
-                fs.mkdirSync(newPath, { recursive: true });
-                const files = fs.readdirSync(oldPath);
-                for (const file of files) {
-                    const oldFilePath = path.join(oldPath, file);
-                    const newFilePath = path.join(newPath, file);
-                    if (fs.lstatSync(oldFilePath).isDirectory()) {
-                        continue;
-                    }
-                    fs.copyFileSync(oldFilePath, newFilePath);
-                }
-            }
-        }
-    } catch (err) {
-        console.error('Error copying from wine prefix:', err);
-        dialog.showErrorBox('VRCX', 'Failed to copy database from wine prefix.');
-    }
-}
-
 function applyWindowState() {
     if (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true' && startup) {
         if (getCloseToTray()) {
@@ -822,7 +796,24 @@ function applyWindowState() {
     }
 }
 
+/**
+ * NexVR's realtime socket turns away handshakes whose Origin isn't nexvr.net,
+ * and the app's pages come from localhost or file://. A native client sends no
+ * Origin at all, so drop it for that one endpoint.
+ */
+function allowNexvrRealtime() {
+    session.defaultSession.webRequest.onBeforeSendHeaders(
+        { urls: ['wss://nexvr.net/api/realtime*'] },
+        (details, callback) => {
+            const requestHeaders = { ...details.requestHeaders };
+            delete requestHeaders.Origin;
+            callback({ requestHeaders });
+        }
+    );
+}
+
 app.whenReady().then(() => {
+    allowNexvrRealtime();
     createWindow();
     createTray();
     installVRCX();

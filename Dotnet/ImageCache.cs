@@ -19,7 +19,8 @@ internal static class ImageCache
         "api.vrchat.cloud",
         "files.vrchat.cloud",
         "d348imysud55la.cloudfront.net",
-        "assets.vrchat.com"
+        "assets.vrchat.com",
+        "cdn.nexvr.net"
     ];
 
     static ImageCache()
