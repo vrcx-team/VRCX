@@ -315,7 +315,15 @@ function updateTrustColorClasses(trustColor) {
     let newCSS = '';
     for (const rank in trustColor) {
         newCSS += `.x-tag-${rank} { color: ${trustColor[rank]} !important; border-color: ${trustColor[rank]} !important; } `;
+        if (/^rank(E|D|C|B|A|S|SPlus)$/.test(rank)) {
+            // Badge faces have a 30% tint of the rank colour; names stay solid.
+            newCSS += `.nexvr-rank-badge.x-tag-${rank} { background-color: color-mix(in srgb, ${trustColor[rank]} 30%, transparent) !important; } `;
+        }
     }
+    // S+ is always the brand's ion gradient with dark lettering, in both themes.
+    // Its flat light/dark colour is reserved for names and other text.
+    newCSS +=
+        '.nexvr-rank-badge.x-tag-rankSPlus { background: linear-gradient(110deg, #6EE0FF 0%, #2F7BFF 50%, #8A6FFF 100%) !important; color: #0A1024 !important; border-color: transparent !important; }';
     style.innerHTML = newCSS;
     document.getElementsByTagName('head')[0].appendChild(style);
 }

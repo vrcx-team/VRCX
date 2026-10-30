@@ -27,15 +27,15 @@ export function sanitizeUserJson(json, robotUrl) {
 
 const NEXVR_RANK_TAG_PREFIX = 'nexvr_rank_';
 
-// Ranks reuse the trust-level colour slots so user colour settings still apply
+// Each NexVR social rank has its own configurable colour, separate from legacy trust levels.
 const NEXVR_RANK_TIERS = {
-    E: { colorKey: 'untrusted', sortNum: 1 },
-    D: { colorKey: 'basic', sortNum: 2 },
-    C: { colorKey: 'known', sortNum: 3 },
-    B: { colorKey: 'trusted', sortNum: 4 },
-    A: { colorKey: 'veteran', sortNum: 5 },
-    S: { colorKey: 'veteran', sortNum: 5.5 },
-    'S+': { colorKey: 'veteran', sortNum: 5.8 }
+    E: { colorKey: 'rankE', sortNum: 1 },
+    D: { colorKey: 'rankD', sortNum: 2 },
+    C: { colorKey: 'rankC', sortNum: 3 },
+    B: { colorKey: 'rankB', sortNum: 4 },
+    A: { colorKey: 'rankA', sortNum: 5 },
+    S: { colorKey: 'rankS', sortNum: 5.5 },
+    'S+': { colorKey: 'rankSPlus', sortNum: 5.8 }
 };
 
 /**
