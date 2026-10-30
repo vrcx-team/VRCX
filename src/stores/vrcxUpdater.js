@@ -7,6 +7,7 @@ import { logWebRequest } from '../services/appConfig';
 import { branches } from '../shared/constants';
 import { getWhatsNewRelease, normalizeReleaseVersion } from '../shared/constants/whatsNewReleases';
 import { changeLogRemoveLinks } from '../shared/utils';
+import { getNexyAsset, getNexyReleases, isNexyReleaseNewer } from '../shared/utils/nexyUpdater';
 
 import configRepository from '../services/config';
 
@@ -60,8 +61,8 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         if (isMacOS.value) {
             noUpdater.value = true;
         }
-        // Nexy has no release feed yet; the inherited one would install VRCX
-        noUpdater.value = true;
+        // macOS currently has no supported in-app installation path.
+        // Windows and Linux use Nexy's GitHub release feed unless explicitly disabled.
 
         const [VRCX_autoUpdateVRCX, VRCX_id] = await Promise.all([
             configRepository.getString('VRCX_autoUpdateVRCX', 'Auto Download'),
@@ -225,43 +226,14 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
     }
     function getAssetOfInterest(assets) {
-        let downloadUrl = '';
-        let hashString = '';
-        let size = 0;
-        for (const asset of assets) {
-            if (asset.state !== 'uploaded') {
-                continue;
-            }
-            if (
-                WINDOWS &&
-                (asset.name.endsWith('Setup_x64.exe') || asset.name.endsWith('Setup.exe')) &&
-                (asset.content_type === 'application/x-msdownload' ||
-                    asset.content_type === 'application/x-msdos-program')
-            ) {
-                downloadUrl = asset.browser_download_url;
-                if (asset.digest && asset.digest.startsWith('sha256:')) {
-                    hashString = asset.digest.replace('sha256:', '');
-                }
-                size = asset.size;
-                break;
-            }
-            if (
-                LINUX &&
-                asset.name.endsWith(`${arch.value}.AppImage`) &&
-                asset.content_type === 'application/octet-stream'
-            ) {
-                downloadUrl = asset.browser_download_url;
-                if (asset.digest && asset.digest.startsWith('sha256:')) {
-                    hashString = asset.digest.replace('sha256:', '');
-                }
-                size = asset.size;
-                break;
-            }
-        }
-        return { downloadUrl, hashString, size };
+        return getNexyAsset(assets, WINDOWS ? 'win32' : LINUX ? 'linux' : 'darwin', arch.value);
+    }
+    function availableReleases(data) {
+        return getNexyReleases(data, branch.value, WINDOWS ? 'win32' : LINUX ? 'linux' : 'darwin', arch.value);
     }
     async function checkForVRCXUpdate() {
         if (
+            noUpdater.value ||
             !currentVersion.value ||
             currentVersion.value === 'Nexy Nightly Build' ||
             currentVersion.value === 'Nexy Build'
@@ -306,10 +278,11 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
         pendingVRCXUpdate.value = false;
         logWebRequest('[EXTERNAL GET]', url, `(${response.status})`, json);
-        if (json === Object(json) && json.name && json.published_at) {
-            changeLogDialog.value.buildName = json.name;
-            changeLogDialog.value.changeLog = changeLogRemoveLinks(json.body);
-            const releaseName = json.name;
+        const latest = availableReleases(json)[0];
+        if (latest) {
+            changeLogDialog.value.buildName = latest.name || latest.tag_name;
+            changeLogDialog.value.changeLog = changeLogRemoveLinks(latest.body || '');
+            const releaseName = latest.name || latest.tag_name;
             setLatestAppVersion(releaseName);
             VRCXUpdateDialog.value.updatePendingIsLatest = false;
             if (autoUpdateVRCX.value === 'Off') {
@@ -318,8 +291,8 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             if (releaseName === pendingVRCXInstall.value) {
                 // update already downloaded
                 VRCXUpdateDialog.value.updatePendingIsLatest = true;
-            } else if (releaseName > currentVersion.value) {
-                const { downloadUrl, hashString, size } = getAssetOfInterest(json.assets);
+            } else if (isNexyReleaseNewer(latest, currentVersion.value)) {
+                const { downloadUrl, hashString, size } = getAssetOfInterest(latest.assets);
                 if (!downloadUrl) {
                     return true;
                 }
@@ -386,8 +359,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             return;
         }
         logWebRequest('[EXTERNAL GET]', url, `(${response.status})`, json);
-        const releases = [];
-        if (typeof json !== 'object' || json.message) {
+        if (!Array.isArray(json)) {
             toast.error(
                 t('message.vrcx_updater.failed', {
                     message: json.message
@@ -395,17 +367,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             );
             return;
         }
-        for (const release of json) {
-            if (release.prerelease) {
-                continue;
-            }
-            assetLoop: for (const asset of release.assets) {
-                if (asset.state === 'uploaded') {
-                    releases.push(release);
-                    break assetLoop;
-                }
-            }
-        }
+        const releases = availableReleases(json);
         D.releases = releases;
         D.release = releases[0]?.name ?? '';
         VRCXUpdateDialog.value.updatePendingIsLatest = false;
