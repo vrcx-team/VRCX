@@ -1,4 +1,4 @@
-name: VRCX
+name: Nexy
 
 on:
   - workflow_dispatch
@@ -102,9 +102,9 @@ jobs:
           additional-plugin-paths: Installer/Plugins
       - name: Rename setup
         run: |
-          file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup_x64.exe"
+          file_name="Nexy_${{ needs.set_version.outputs.version }}_Setup_x64.exe"
           echo "Setup FileName: ${file_name}"
-          mv Installer/VRCX_Setup_x64.exe $file_name
+          mv Installer/Nexy_Setup_x64.exe $file_name
       - name: Sign Cef setup
         uses: azure/trusted-signing-action@v1
         if: steps.check_sign.outputs.sign == 'true'
@@ -119,7 +119,7 @@ jobs:
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
           timestamp-digest: SHA256
           files: |
-            ${{ github.workspace }}\VRCX_${{ needs.set_version.outputs.version }}_Setup_x64.exe
+            ${{ github.workspace }}\Nexy_${{ needs.set_version.outputs.version }}_Setup_x64.exe
 
       - name: Upload Cef dotnet artifacts
         uses: actions/upload-artifact@v7
@@ -130,7 +130,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: Cef-Setup
-          path: VRCX_${{ needs.set_version.outputs.version }}_Setup_x64.exe
+          path: Nexy_${{ needs.set_version.outputs.version }}_Setup_x64.exe
 
   build_dotnet_linux:
     runs-on: ubuntu-latest
@@ -215,7 +215,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: Electron-AppImage-x64
-          path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.AppImage'
+          path: 'build/Nexy_${{ needs.set_version.outputs.version }}_x64.AppImage'
 
       - name: Download Electron arm64 dotnet artifacts
         uses: actions/download-artifact@v8
@@ -228,7 +228,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: Electron-AppImage-arm64
-          path: 'build/VRCX_${{ needs.set_version.outputs.version }}_arm64.AppImage'
+          path: 'build/Nexy_${{ needs.set_version.outputs.version }}_arm64.AppImage'
 
   build_macos:
     runs-on: macos-latest
@@ -270,7 +270,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: Electron-MacDmg-x64
-          path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.dmg'
+          path: 'build/Nexy_${{ needs.set_version.outputs.version }}_x64.dmg'
 
       - name: Cleanup
         run: |
@@ -290,7 +290,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: Electron-MacDmg-arm64
-          path: 'build/VRCX_${{ needs.set_version.outputs.version }}_arm64.dmg'
+          path: 'build/Nexy_${{ needs.set_version.outputs.version }}_arm64.dmg'
 
   create_setup:
     runs-on: ubuntu-latest
@@ -313,7 +313,7 @@ jobs:
 
       - name: Make zip
         run: |
-          file_name="VRCX_${{ needs.set_version.outputs.version }}.zip"
+          file_name="Nexy_${{ needs.set_version.outputs.version }}.zip"
           cd build/Cef
           7z a -tzip ${file_name} * -mx=7 -xr0!*.log
           mv ${file_name} ../../${file_name}
@@ -322,4 +322,4 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: VRCX-Zip
-          path: 'VRCX_${{ needs.set_version.outputs.version }}.zip'
+          path: 'Nexy_${{ needs.set_version.outputs.version }}.zip'
