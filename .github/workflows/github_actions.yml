@@ -1,15 +1,21 @@
-name: Nexy
+name: Build Nexy
 
 on:
-  - workflow_dispatch
+  workflow_dispatch: {}
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref to build (release tag or branch)
+        required: true
+        type: string
 
 concurrency:
-  group: ${{ github.ref }}
+  group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
   cancel-in-progress: true
 
 permissions:
   id-token: write
-  contents: write
+  contents: read
 
 jobs:
   set_version:
@@ -19,6 +25,8 @@ jobs:
       date: ${{ steps.version.outputs.date }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
       - id: version
         run: |
           export FILENAME="$(cat Version)"
@@ -34,6 +42,8 @@ jobs:
     needs: [set_version, build_node]
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v5
         with:
@@ -121,15 +131,15 @@ jobs:
           files: |
             ${{ github.workspace }}\Nexy_${{ needs.set_version.outputs.version }}_Setup_x64.exe
 
-      - name: Upload Cef dotnet artifacts
+      - name: Upload NexVR setup files
         uses: actions/upload-artifact@v7
         with:
-          name: Cef-Release
+          name: NexVR-Setup
           path: build/Cef
-      - name: Upload setup artifact
+      - name: Upload Windows installer artifact
         uses: actions/upload-artifact@v7
         with:
-          name: Cef-Setup
+          name: NexVR-Installer
           path: Nexy_${{ needs.set_version.outputs.version }}_Setup_x64.exe
 
   build_dotnet_linux:
@@ -137,6 +147,8 @@ jobs:
     needs: set_version
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
       - uses: ./.github/actions/build-electron
         with:
           nexy-version: '${{ needs.set_version.outputs.version }}'
@@ -144,6 +156,8 @@ jobs:
           runtime-identifier: linux-x64
 
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
       - uses: ./.github/actions/build-electron
         with:
           nexy-version: '${{ needs.set_version.outputs.version }}'
@@ -155,6 +169,8 @@ jobs:
     needs: set_version
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
       - uses: ./.github/actions/build-electron
         with:
           nexy-version: '${{ needs.set_version.outputs.version }}'
@@ -162,6 +178,8 @@ jobs:
           runtime-identifier: osx-x64
 
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
       - uses: ./.github/actions/build-electron
         with:
           nexy-version: '${{ needs.set_version.outputs.version }}'
@@ -173,6 +191,8 @@ jobs:
     needs: [set_version, build_dotnet_linux]
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
       - name: Set version
         run: |
           echo "${{ needs.set_version.outputs.version }}" > Version
@@ -235,6 +255,8 @@ jobs:
     needs: [set_version, build_dotnet_macos]
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
       - name: Set version
         run: |
           echo "${{ needs.set_version.outputs.version }}" > Version
@@ -296,14 +318,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: [set_version, build_dotnet_windows, build_dotnet_linux, build_dotnet_macos, build_node, build_macos]
     steps:
-      - name: Download Cef-Setup artifacts
+      - name: Download Windows installer artifact
         uses: actions/download-artifact@v8
         with:
-          name: Cef-Setup
-      - name: Download Cef dotnet artifacts
+          name: NexVR-Installer
+      - name: Download NexVR setup files
         uses: actions/download-artifact@v8
         with:
-          name: Cef-Release
+          name: NexVR-Setup
           path: build/Cef
       - name: Download html artifacts
         uses: actions/download-artifact@v8
