@@ -98,7 +98,7 @@
         useUserStore
     } from '../../../stores';
     import { copyToClipboard } from '../../../shared/utils';
-    import { formatJsonVars } from '../../../shared/utils/base/ui';
+    import { getRawPresence, getRawResponse, presentSections } from '../../../services/nexvr/rawResponses';
     import { miscRequest } from '../../../api';
     import { useUserDialogCommands } from './useUserDialogCommands';
     import { showAvatarDialog, showAvatarAuthorDialog } from '../../../coordinators/avatarCoordinator';
@@ -274,20 +274,15 @@
         return t('dialog.user.status.offline');
     }
 
+    // What NexVR sent, not Nexy's VRChat-shaped copy: the profile, the live
+    // presence for friends, and for yourself the signed-in account
     function refreshUserDialogTreeData() {
         const D = userDialog.value;
-        if (D.id === currentUser.value.id) {
-            treeData.value = {
-                currentUser: formatJsonVars(currentUser.value),
-                user: formatJsonVars(D.ref),
-                profile: formatJsonVars(D.publicProfileRef)
-            };
-            return;
-        }
-        treeData.value = {
-            user: formatJsonVars(D.ref),
-            profile: formatJsonVars(D.publicProfileRef)
-        };
+        treeData.value = presentSections({
+            me: D.id === currentUser.value.id ? getRawResponse('/auth/me') : undefined,
+            user: getRawResponse(`/users/${D.id}`),
+            presence: getRawPresence(D.id)
+        });
     }
 
     /**

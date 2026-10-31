@@ -31,6 +31,11 @@ import configRepository from '../services/config';
 
 import * as workerTimers from 'worker-timers';
 
+// Marks that friend numbers were assigned from the friends list order. VRCX used
+// '-5'; Nexy's own value makes accounts numbered before Nexy listed NexVR friends
+// oldest first (friendsSince) get renumbered once.
+const FRIEND_ORDER_APPLIED = 'nexy-friends-since';
+
 export const useFriendStore = defineStore('Friend', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const generalSettingsStore = useGeneralSettingsStore();
@@ -967,7 +972,7 @@ export const useFriendStore = defineStore('Friend', () => {
 
     async function tryApplyFriendOrder() {
         const lastUpdate = await configRepository.getString(`VRCX_lastStoreTime_${userStore.currentUser.id}`);
-        if (lastUpdate === '-5') {
+        if (lastUpdate === FRIEND_ORDER_APPLIED) {
             // this means we're done
             return;
         }
@@ -991,7 +996,7 @@ export const useFriendStore = defineStore('Friend', () => {
         }
         console.log('Applied friend order from API', state.friendNumber);
         await configRepository.setInt(`VRCX_friendNumber_${userStore.currentUser.id}`, state.friendNumber);
-        await configRepository.setString(`VRCX_lastStoreTime_${userStore.currentUser.id}`, '-5');
+        await configRepository.setString(`VRCX_lastStoreTime_${userStore.currentUser.id}`, FRIEND_ORDER_APPLIED);
     }
 
     /**

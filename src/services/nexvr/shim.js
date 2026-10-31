@@ -7,10 +7,16 @@
 import {
     VRC_STATUS_TO_PREFERENCE,
     instanceIdFromLocation,
+    presenceState,
     presenceToUser,
     toVrcCurrentUser,
     toVrcGroup,
+    toVrcGroupMember,
+    toVrcGroupPost,
+    toVrcGroupRules,
     toVrcInstance,
+    toVrcMembershipStatus,
+    toVrcMyMember,
     toVrcNotification,
     toVrcPlayerModeration,
     toVrcPublicProfile,
@@ -19,6 +25,7 @@ import {
 } from './mappers';
 import { clearTokens, getAccessToken, refreshTokens, setTokens } from './session';
 import { AppDebug } from '../appConfig';
+import { keepRawResponse } from './rawResponses';
 import { realtime } from './realtime';
 
 const SNAPSHOT_TIMEOUT = 8000;
@@ -111,6 +118,9 @@ async function nexvr(path, { method = 'GET', body, query, auth = true } = {}) {
     if (res.status < 200 || res.status >= 300) {
         const message = data?.message || data?.error || `HTTP ${res.status}`;
         throw new ShimError(res.status, typeof message === 'string' ? message : JSON.stringify(message));
+    }
+    if (method === 'GET') {
+        keepRawResponse(path, data);
     }
     return data;
 }
@@ -317,6 +327,97 @@ async function answerNotification(id, accept) {
     }
     notificationsById.delete(id);
     return { success: { message: accept ? 'Accepted' : 'Dismissed', status_code: 200 } };
+}
+
+const MEMBER_LIST_TTL = 30000;
+/** @type {Map<string, { at: number; members: Promise<any[]> }>} groupId → VRChat-shaped members */
+const memberLists = new Map();
+
+/**
+ * The caller's membership, or null when they aren't in the group (or can't
+ * see it).
+ *
+ * @param {string} groupId
+ */
+function groupMembership(groupId) {
+    return nexvr(`/groups/${encodeURIComponent(groupId)}/membership`).catch(() => null);
+}
+
+/**
+ * NexVR returns a group's whole member list at once; VRCX asks for it a page
+ * at a time, so the list is fetched once and paged from here.
+ *
+ * @param {string} groupId
+ * @returns {Promise<any[]>}
+ */
+function groupMembers(groupId) {
+    const cached = memberLists.get(groupId);
+    if (cached && Date.now() - cached.at < MEMBER_LIST_TTL) {
+        return cached.members;
+    }
+    const members = nexvr(`/groups/${encodeURIComponent(groupId)}/members`)
+        // pending requests and outstanding invites aren't members yet
+        .then((list) =>
+            list.filter((member) => member.status === 'active').map((member) => toVrcGroupMember(groupId, member))
+        )
+        .catch((err) => {
+            memberLists.delete(groupId);
+            throw err;
+        });
+    memberLists.set(groupId, { at: Date.now(), members });
+    return members;
+}
+
+/**
+ * @param {string} groupId
+ * @param {URLSearchParams} query N, offset, sort ('joinedAt:asc|desc') and roleId
+ */
+async function groupMembersPage(groupId, query) {
+    let members = await groupMembers(groupId);
+    const roleId = query.get('roleId');
+    if (roleId) {
+        members = members.filter((member) => member.roleIds.includes(roleId));
+    }
+    const sort = query.get('sort') || '';
+    if (sort.startsWith('joinedAt')) {
+        const direction = sort.endsWith(':asc') ? 1 : -1;
+        members = [...members].sort((a, b) => direction * (Date.parse(a.joinedAt || 0) - Date.parse(b.joinedAt || 0)));
+    }
+    const offset = Number(query.get('offset') || 0);
+    return members.slice(offset, offset + Number(query.get('n') || 100));
+}
+
+/**
+ * A group with what VRCX reads alongside it: whether the caller is a member
+ * (membershipStatus / myMember) and its rules.
+ *
+ * @param {string} groupId
+ */
+async function groupDetails(groupId) {
+    const id = encodeURIComponent(groupId);
+    const [group, membership, rules, members] = await Promise.all([
+        nexvr(`/groups/${id}`),
+        groupMembership(groupId),
+        nexvr(`/groups/${id}/rules`).catch(() => null),
+        groupMembers(groupId).catch(() => [])
+    ]);
+    const listed = members.find((member) => member.userId === realtime.userId);
+    // NexVR has no online count; this counts the members whose presence Nexy
+    // can see, which is the caller and their friends
+    const onlineMemberCount = members.filter((member) => {
+        const presence = realtime.friends.get(member.userId);
+        return presence && presenceState(presence).state !== 'offline';
+    }).length;
+    const vrcGroup = toVrcGroup(group);
+    return {
+        ...vrcGroup,
+        // the list can be fresher than the stored count; never show fewer than are listed
+        memberCount: Math.max(vrcGroup.memberCount, members.length),
+        onlineMemberCount,
+        membershipStatus: toVrcMembershipStatus(membership?.status),
+        myMember: toVrcMyMember(groupId, realtime.userId, membership, listed),
+        rules: toVrcGroupRules(rules)
+    };
 }
 
 const JOIN_POLICIES = {
@@ -545,12 +646,53 @@ const routes = [
                 await nexvr(`/groups/${encodeURIComponent(m[1])}`, { method: 'PATCH', body: toNexvrGroupBody(body) })
             )
     ],
-    ['GET', /^groups\/([^/]+)$/, async (m) => toVrcGroup(await nexvr(`/groups/${encodeURIComponent(m[1])}`))],
+    ['GET', /^groups\/([^/]+)$/, (m) => groupDetails(m[1])],
+    // must sit above groups/{id}/members/{userId}, which would take 'search' for a user id
+    [
+        'GET',
+        /^groups\/([^/]+)\/members\/search$/,
+        async (m, q) => {
+            const query = (q.get('query') || '').toLowerCase();
+            const members = await groupMembers(m[1]);
+            const results = members.filter((member) => member.user.displayName.toLowerCase().includes(query));
+            return { results: results.slice(0, Number(q.get('n') || 100)) };
+        }
+    ],
+    [
+        'GET',
+        /^groups\/([^/]+)\/members\/([^/]+)$/,
+        async (m) => {
+            const [groupId, userId] = [m[1], m[2]];
+            const listed = (await groupMembers(groupId)).find((member) => member.userId === userId);
+            if (userId === realtime.userId) {
+                const membership = await groupMembership(groupId);
+                const mine = toVrcMyMember(groupId, userId, membership, listed);
+                if (mine) {
+                    return { ...listed, ...mine };
+                }
+            }
+            if (!listed) {
+                throw new ShimError(404, 'Not a member of this group');
+            }
+            return listed;
+        }
+    ],
+    ['GET', /^groups\/([^/]+)\/members$/, (m, q) => groupMembersPage(m[1], q)],
+    [
+        'GET',
+        /^groups\/([^/]+)\/posts$/,
+        async (m, q) => {
+            const posts = (await nexvr(`/groups/${encodeURIComponent(m[1])}/announcements`)).map(toVrcGroupPost);
+            const offset = Number(q.get('offset') || 0);
+            return { posts: posts.slice(offset, offset + Number(q.get('n') || 100)), total: posts.length };
+        }
+    ],
     [
         'POST',
         /^groups\/([^/]+)\/(join|leave)$/,
         async (m) => {
             await nexvr(`/groups/${encodeURIComponent(m[1])}/${m[2]}`, { method: 'POST' });
+            memberLists.delete(m[1]);
             return { success: { message: m[2] === 'join' ? 'Joined group' : 'Left group', status_code: 200 } };
         }
     ],

@@ -21,6 +21,7 @@ function message(name) {
 export const ClientMessageSchema = message('ClientMessage');
 export const ServerMessageSchema = message('ServerMessage');
 export const GetNotificationsRequestSchema = message('GetNotificationsRequest');
+export const FriendPresenceSchema = message('FriendPresence');
 
 export const DataObjectType = Object.freeze({
     WORLD_INSTANCES: 1,

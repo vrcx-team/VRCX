@@ -173,6 +173,18 @@ describe('presence', () => {
         expect(me.tags.some((tag) => tag.startsWith('system_trust_'))).toBe(false);
         expect(me.developerType).toBe('none');
     });
+
+    test('friends are listed oldest friendship first, the order friend numbers come from', () => {
+        const friends = new Map([
+            ['me', { userId: 'me', status: PresenceStatus.ONLINE }],
+            // online and newest; must not jump the queue
+            ['new', { userId: 'new', status: PresenceStatus.ONLINE, friendsSince: '2026-10-01T00:00:00Z' }],
+            ['old', { userId: 'old', status: PresenceStatus.OFFLINE, friendsSince: '2026-01-01T00:00:00Z' }],
+            ['mid', { userId: 'mid', status: PresenceStatus.ASK_ME, friendsSince: '2026-05-01T00:00:00Z' }]
+        ]);
+        const me = toVrcCurrentUser({ id: 'me', username: 'me', displayName: 'Me' }, friends);
+        expect(me.friends).toEqual(['old', 'mid', 'new']);
+    });
 });
 
 describe('content', () => {

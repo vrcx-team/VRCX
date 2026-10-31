@@ -20,6 +20,21 @@
                 @click="showFullscreenImageDialog(userDialog.ref.bannerUrl)"
                 @error="profileImageError = true"
                 loading="lazy" />
+            <!-- NexVR's social rank card, top-right of the banner as on nexvr.net -->
+            <div
+                v-if="nexvrRank && !userDialog.loading"
+                class="absolute top-2.5 right-2.5 z-30 flex w-14 flex-col overflow-hidden rounded-md border-2 bg-[#0a1024]/80 shadow-lg backdrop-blur-sm"
+                :class="userDialog.ref.$trustClass">
+                <div
+                    class="nexvr-rank-badge flex h-11 items-center justify-center text-2xl font-bold"
+                    :class="userDialog.ref.$trustClass">
+                    {{ nexvrRank }}
+                </div>
+                <div
+                    class="px-1 py-1 text-center text-[8px] font-bold uppercase leading-tight tracking-wider text-white/75">
+                    {{ t('dialog.user.tags.trust_level') }}
+                </div>
+            </div>
             <div class="absolute bottom-0 pt-10 right-2.5 z-30 translate-y-1/2 flex gap-1.5">
                 <TooltipWrapper
                     v-if="userDialog.isBlock"
@@ -145,20 +160,14 @@
             </div>
 
             <div class="flex flex-wrap gap-1 text-[11px]" v-show="!userDialog.loading">
-                <TooltipWrapper side="top" :content="t('dialog.user.tags.trust_level')">
+                <!-- a NexVR rank shows as the card on the banner instead -->
+                <TooltipWrapper v-if="!nexvrRank" side="top" :content="t('dialog.user.tags.trust_level')">
                     <Badge
                         variant="outline"
                         class="name h-5 px-1.5 text-[11px] leading-none"
-                        :class="[
-                            userDialog.ref.$trustClass,
-                            { 'nexvr-rank-badge': userDialog.ref.$trustLevel?.startsWith('Rank ') }
-                        ]">
-                        <Shield v-if="!userDialog.ref.$trustLevel?.startsWith('Rank ')" class="h-2.5 w-2.5" />
-                        {{
-                            userDialog.ref.$trustLevel?.startsWith('Rank ')
-                                ? userDialog.ref.$trustLevel.slice(5)
-                                : userDialog.ref.$trustLevel
-                        }}
+                        :class="userDialog.ref.$trustClass">
+                        <Shield class="h-2.5 w-2.5" />
+                        {{ userDialog.ref.$trustLevel }}
                     </Badge>
                 </TooltipWrapper>
                 <TooltipWrapper
@@ -598,6 +607,11 @@
 
     // NexVR profile badges, as nexvr.net shows them next to the name
     const nexvrBadges = computed(() => userDialog.value.ref?.$nexvr?.badges ?? []);
+    // the rank letter (E … S+) when the user has a NexVR social rank, '' otherwise
+    const nexvrRank = computed(() => {
+        const level = userDialog.value.ref?.$trustLevel ?? '';
+        return level.startsWith('Rank ') ? level.slice(5) : '';
+    });
     const nexvrBadgeIcons = {
         'shield-check': ShieldCheck,
         'badge-check': BadgeCheck,

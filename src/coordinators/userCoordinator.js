@@ -516,6 +516,15 @@ export function showUserDialog(userId) {
                             D.unFriended = latestFriendedInfo.type === 'Unfriend';
                             D.dateFriended = latestFriendedInfo.created_at;
                         }
+                        // NexVR records when the current friendship began; the local log only
+                        // knows friendships Nexy saw happen, so the server's date wins
+                        if (D.isFriend && D.ref.$friendsSince) {
+                            D.unFriended = false;
+                            D.dateFriended = D.ref.$friendsSince;
+                            if (D.dateFriendedInfo.length === 0) {
+                                D.dateFriendedInfo = [{ type: 'Friend', created_at: D.ref.$friendsSince }];
+                            }
+                        }
                         displayNameMap.forEach((updated_at, displayName) => {
                             D.previousDisplayNames.push({
                                 displayName,

@@ -158,6 +158,24 @@ export function instanceIdFromLocation(location) {
 }
 
 /**
+ * Masks an email address the way VRChat's obfuscatedEmail does, keeping only
+ * the first letter of the name and of the domain, e.g. i****@v****.xyz.
+ *
+ * @param {string | null | undefined} email
+ * @returns {string}
+ */
+export function maskEmail(email) {
+    const [name, domain] = String(email || '').split('@');
+    if (!name || !domain) {
+        return '';
+    }
+    const dot = domain.lastIndexOf('.');
+    const host = dot > 0 ? domain.slice(0, dot) : domain;
+    const tld = dot > 0 ? domain.slice(dot) : '';
+    return `${name[0]}****@${host[0]}****${tld}`;
+}
+
+/**
  * @param {any} user NexVR public user, or the authenticated user
  * @returns {object} VRChat-style user fields shared by every user shape
  */
@@ -298,7 +316,7 @@ export function toVrcUser(user, presence) {
         last_activity: ''
     };
     if (presence) {
-        Object.assign(ref, presenceState(presence));
+        Object.assign(ref, presenceState(presence), { $friendsSince: presence.friendsSince || '' });
     }
     return ref;
 }
@@ -329,14 +347,20 @@ export function toVrcCurrentUser(me, friends) {
     }
     const location = self ? presenceState(self) : null;
     const inInstance = location?.state === 'online';
+    // VRChat lists friends oldest first, and VRCX numbers them in that order
+    // (the "friend number"); NexVR's friendsSince gives the same order
+    const friendsByAge = [...friends.values()]
+        .filter((presence) => presence.userId !== me.id)
+        .sort((a, b) => (a.friendsSince || '').localeCompare(b.friendsSince || '') || a.userId.localeCompare(b.userId))
+        .map((presence) => presence.userId);
     return {
         ...baseUser(me),
         emailVerified: me.emailVerified,
         hasEmail: Boolean(me.primaryEmail),
-        obfuscatedEmail: me.primaryEmail || '',
+        obfuscatedEmail: maskEmail(me.primaryEmail),
         status: PREFERENCE_STATUS[me.userPreferenceStatus] ?? 'active',
         state: 'online',
-        friends: [...onlineFriends, ...activeFriends, ...offlineFriends],
+        friends: friendsByAge,
         onlineFriends,
         activeFriends,
         offlineFriends,
@@ -537,6 +561,133 @@ export function toVrcGroup(group) {
             socialRank: group.socialRank,
             secondaryImageUrls: group.secondaryImageUrls || []
         }
+    };
+}
+
+const MEMBERSHIP_STATUS = {
+    active: 'member',
+    pending: 'requested',
+    invited: 'invited'
+};
+
+const MEMBER_VISIBILITY = {
+    public: 'visible',
+    'friends-only': 'friends',
+    hidden: 'hidden'
+};
+
+/**
+ * @param {string | null | undefined} status NexVR membership status
+ * @returns {string} VRChat membershipStatus ('inactive' when not a member)
+ */
+export function toVrcMembershipStatus(status) {
+    return MEMBERSHIP_STATUS[status] ?? 'inactive';
+}
+
+/**
+ * @param {string} groupId
+ * @param {any} member NexVR group member (from /groups/:id/members)
+ * @returns {object} VRChat GroupMember
+ */
+export function toVrcGroupMember(groupId, member) {
+    const image = member.user.profileImageUrl || '';
+    return {
+        id: `${groupId}:${member.user.id}`,
+        groupId,
+        userId: member.user.id,
+        user: {
+            id: member.user.id,
+            displayName: member.user.displayName || member.user.username,
+            iconUrl: image,
+            thumbnailUrl: image,
+            currentAvatarThumbnailImageUrl: image
+        },
+        roleIds: (member.roles || []).map((role) => role.roleId),
+        membershipStatus: toVrcMembershipStatus(member.status),
+        visibility: MEMBER_VISIBILITY[member.membershipVisibility] ?? 'visible',
+        joinedAt: member.joinedAt || null,
+        isRepresenting: false,
+        isSubscribedToAnnouncements: true,
+        managerNotes: ''
+    };
+}
+
+// NexVR permission → the VRChat ones VRCX checks. Only permissions whose VRCX
+// features run on NexVR data are mapped; the rest (bans, kicks, roles, invites)
+// would light up tools that call VRChat-only endpoints.
+const PERMISSION_MAP = {
+    'manage-members': ['group-members-viewall', 'group-members-manage']
+};
+
+/**
+ * @param {string[]} permissions NexVR permissions
+ * @returns {string[]} The NexVR names plus their VRChat equivalents
+ */
+export function toVrcGroupPermissions(permissions = []) {
+    return [...new Set([...permissions, ...permissions.flatMap((permission) => PERMISSION_MAP[permission] ?? [])])];
+}
+
+/**
+ * The caller's own membership as VRChat's group.myMember.
+ *
+ * @param {string} groupId
+ * @param {string} userId The caller
+ * @param {any} membership NexVR /groups/:id/membership
+ * @param {any} [listed] The caller's entry from the member list, for the join date
+ * @returns {object | null}
+ */
+export function toVrcMyMember(groupId, userId, membership, listed) {
+    if (!membership?.status) {
+        return null;
+    }
+    return {
+        id: `${groupId}:${userId}`,
+        groupId,
+        userId,
+        roleIds: membership.roles || [],
+        membershipStatus: toVrcMembershipStatus(membership.status),
+        visibility: MEMBER_VISIBILITY[membership.membershipVisibility] ?? 'visible',
+        isSubscribedToAnnouncements: !membership.muted,
+        isSubscribedToEventAnnouncements: !membership.muted,
+        isRepresenting: false,
+        joinedAt: listed?.joinedAt || null,
+        permissions: toVrcGroupPermissions(membership.permissions),
+        bannedAt: null
+    };
+}
+
+/**
+ * NexVR rules are markdown plus preset flags; VRCX shows one text block.
+ *
+ * @param {any} rules NexVR /groups/:id/rules
+ * @returns {string}
+ */
+export function toVrcGroupRules(rules) {
+    const flags = (rules?.flags || []).map((flag) => {
+        const text = flag.replace(/_/g, ' ');
+        return `• ${text.charAt(0).toUpperCase()}${text.slice(1)}`;
+    });
+    return [rules?.markdown?.trim(), flags.join('\n')].filter(Boolean).join('\n\n');
+}
+
+/**
+ * @param {any} announcement NexVR group announcement
+ * @returns {object} VRChat GroupPost
+ */
+export function toVrcGroupPost(announcement) {
+    return {
+        id: announcement.id,
+        groupId: announcement.groupId,
+        authorId: announcement.author?.id ?? '',
+        editorId: null,
+        title: announcement.title || '',
+        text: announcement.body || '',
+        imageUrl: '',
+        imageId: null,
+        roleIds: [],
+        visibility: 'group',
+        createdAt: announcement.createdAt,
+        updatedAt: announcement.createdAt
     };
 }
 

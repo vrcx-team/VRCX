@@ -420,7 +420,8 @@
                     {{ t('dialog.group.info.header') }}
                 </div>
                 <div class="flex flex-col gap-1.5">
-                    <div class="flex justify-between items-start gap-2 text-xs">
+                    <!-- NexVR groups have no short code -->
+                    <div v-if="groupDialog.ref.shortCode" class="flex justify-between items-start gap-2 text-xs">
                         <span class="text-muted-foreground shrink-0">{{ t('dialog.group.info.short_code') }}</span>
                         <span class="text-right text-muted-foreground">
                             {{ groupDialog.ref.shortCode }}.{{ groupDialog.ref.discriminator }}
@@ -706,7 +707,7 @@
     import { groupRequest, queryRequest } from '../../../api';
     import { queryKeys, refetchActiveEntityQuery } from '../../../queries';
     import { Badge } from '../../ui/badge';
-    import { formatJsonVars } from '../../../shared/utils/base/ui';
+    import { getRawResponse, presentSections } from '../../../services/nexvr/rawResponses';
 
     import DialogJsonTab from '../DialogJsonTab.vue';
     import GroupDialogInfoTab from './GroupDialogInfoTab.vue';
@@ -997,16 +998,16 @@
         groupTransferDialog.visible = true;
     }
 
+    // What NexVR sent for this group, not Nexy's VRChat-shaped copy
     function refreshGroupDialogTreeData() {
-        const D = groupDialog.value;
-        treeData.value = {
-            group: formatJsonVars(D.ref),
-            posts: D.posts,
-            instances: D.instances,
-            members: D.members,
-            galleries: D.galleries,
-            calendar: D.calendar
-        };
+        const base = `/groups/${groupDialog.value.id}`;
+        treeData.value = presentSections({
+            group: getRawResponse(base),
+            membership: getRawResponse(`${base}/membership`),
+            rules: getRawResponse(`${base}/rules`),
+            members: getRawResponse(`${base}/members`),
+            announcements: getRawResponse(`${base}/announcements`)
+        });
     }
 
     function updateGroupDialogData(obj) {
