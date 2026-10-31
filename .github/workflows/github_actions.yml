@@ -8,6 +8,11 @@ on:
         description: Git ref to build (release tag or branch)
         required: true
         type: string
+      version:
+        description: Version override (defaults to the Version file)
+        required: false
+        type: string
+        default: ''
 
 concurrency:
   group: ${{ github.workflow }}-${{ inputs.ref || github.ref }}
@@ -28,9 +33,11 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.ref }}
       - id: version
+        env:
+          VERSION_OVERRIDE: ${{ inputs.version }}
         run: |
-          export FILENAME="$(cat Version)"
-          export DATE="$(cat Version)"
+          export FILENAME="${VERSION_OVERRIDE:-$(cat Version)}"
+          export DATE="${FILENAME}"
           echo "version=${FILENAME}" >> $GITHUB_OUTPUT
           echo "date=${DATE}" >> $GITHUB_OUTPUT
 

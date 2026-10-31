@@ -1,0 +1,164 @@
+name: Nightly
+
+on:
+  schedule:
+    # Midnight UTC every day.
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Build even if master has not changed since the last nightly
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  # Number of nightly prereleases to keep; older ones are deleted with their tags.
+  NIGHTLY_KEEP: 7
+
+jobs:
+  prepare:
+    name: Prepare nightly
+    runs-on: ubuntu-24.04
+    outputs:
+      skip: ${{ steps.check.outputs.skip }}
+      sha: ${{ steps.check.outputs.sha }}
+      version: ${{ steps.check.outputs.version }}
+      tag: ${{ steps.check.outputs.tag }}
+    steps:
+      - name: Check for changes since last nightly
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          FORCE: ${{ inputs.force || false }}
+        run: |
+          sha="$(gh api "repos/$GH_REPO/commits/master" --jq '.sha')"
+          version="$(date -u +%Y.%m.%d)"
+          tag="${version}-nightly"
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+
+          last_tag="$(gh release list --limit 100 --json tagName,isPrerelease,createdAt \
+            --jq '[.[] | select(.isPrerelease and (.tagName | endswith("-nightly")))] | sort_by(.createdAt) | last | .tagName // ""')"
+          last_sha=""
+          if [ -n "$last_tag" ]; then
+            last_sha="$(gh api "repos/$GH_REPO/commits/$last_tag" --jq '.sha')"
+          fi
+          echo "master: ${sha}; last nightly: ${last_tag:-none} (${last_sha:-n/a})"
+
+          if [ "$FORCE" != "true" ] && [ "$sha" = "$last_sha" ]; then
+            echo "No new commits since ${last_tag}; skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  builds:
+    name: Build Nexy nightly packages
+    needs: prepare
+    if: needs.prepare.outputs.skip != 'true'
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/github_actions.yml
+    with:
+      ref: ${{ needs.prepare.outputs.sha }}
+      version: ${{ needs.prepare.outputs.version }}
+    secrets: inherit
+
+  publish:
+    name: Publish nightly prerelease
+    needs: [prepare, builds]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Extract Windows installer (.exe)
+        uses: actions/download-artifact@v8
+        with:
+          name: NexVR-Installer
+          path: release-assets
+
+      - name: Download Windows portable ZIP
+        uses: actions/download-artifact@v8
+        with:
+          name: Nexy-Zip
+          path: release-assets
+
+      - name: Download Linux AppImages
+        uses: actions/download-artifact@v8
+        with:
+          pattern: Electron-AppImage-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Download macOS DMGs
+        uses: actions/download-artifact@v8
+        with:
+          pattern: Electron-MacDmg-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Verify six release packages
+        shell: bash
+        run: |
+          shopt -s nullglob
+          expected=(
+            'Nexy_*_Setup_x64.exe'
+            'Nexy_*.zip'
+            'Nexy_*_x64.AppImage'
+            'Nexy_*_arm64.AppImage'
+            'Nexy_*_x64.dmg'
+            'Nexy_*_arm64.dmg'
+          )
+          for pattern in "${expected[@]}"; do
+            matches=(release-assets/$pattern)
+            if (( ${#matches[@]} != 1 )); then
+              echo "Expected one release asset matching $pattern; found ${#matches[@]}" >&2
+              exit 1
+            fi
+          done
+          assets=(release-assets/*)
+          if (( ${#assets[@]} != ${#expected[@]} )); then
+            echo "Expected six release assets; found ${#assets[@]}" >&2
+            exit 1
+          fi
+
+      - name: Create nightly prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.prepare.outputs.tag }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+          SHA: ${{ needs.prepare.outputs.sha }}
+        run: |
+          # A forced re-run on the same day replaces that day's nightly.
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release delete "$TAG" --yes --cleanup-tag
+          fi
+          gh release create "$TAG" release-assets/* \
+            --prerelease \
+            --target "$SHA" \
+            --title "Nexy Nightly ${VERSION}" \
+            --notes "Automated nightly build of master at ${SHA}. Nightly builds are untested and may be unstable."
+
+      - name: Prune old nightlies
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release list --limit 100 --json tagName,isPrerelease,createdAt \
+            --jq '[.[] | select(.isPrerelease and (.tagName | endswith("-nightly")))] | sort_by(.createdAt) | reverse | .['"$NIGHTLY_KEEP"':][] | .tagName' |
+          while read -r old_tag; do
+            echo "Deleting ${old_tag}"
+            gh release delete "$old_tag" --yes --cleanup-tag
+          done
