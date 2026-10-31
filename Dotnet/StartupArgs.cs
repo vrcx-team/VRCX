@@ -36,7 +36,7 @@ namespace VRCX
                 if (File.Exists(LaunchArguments.ConfigDirectory))
                 {
                     var message =
-                        "Move your \"VRCX.sqlite3\" into a folder then specify the folder in the launch parameter e.g.\n--config=\"C:\\VRCX\\\"";
+                        "Move your \"Nexy.sqlite3\" into a folder then specify the folder in the launch parameter e.g.\n--config=\"C:\\Nexy\\\"";
 #if !LINUX
                     MessageBox.Show(message, "--config is now a directory", MessageBoxButtons.OK, MessageBoxIcon.Error);
 #endif

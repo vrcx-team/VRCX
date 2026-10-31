@@ -12,7 +12,7 @@ namespace VRCX
         public static readonly VRCXStorage Instance;
 
         private static ConcurrentDictionary<string, string> _storage = new ConcurrentDictionary<string, string>();
-        private static readonly string JsonPath = Path.Join(Program.AppDataDirectory, "VRCX.json");
+        private static string JsonPath => Program.StorageLocation;
 
         private static readonly TimeSpan SaveDebounce = TimeSpan.FromMilliseconds(500);
         private static readonly Timer SaveTimer;

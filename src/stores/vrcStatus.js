@@ -100,10 +100,15 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
         lastStatusSummary.value = summary;
     }
 
+    // NexVR has no status page yet and VRChat's says nothing about NexVR, so
+    // nothing is polled; hasIssue stays false and the login banner stays hidden.
+    // Point vrcStatusApiUrl at a NexVR page and set this to bring it back.
+    const pollStatusPage = false;
+
     watch(
         () => vrcxStore.isBrowserFocused,
         (newValue) => {
-            if (newValue) {
+            if (pollStatusPage && newValue) {
                 if (Date.now() - lastTimeFetched.value > 60 * 1000) {
                     getVrcStatus();
                 }
@@ -124,7 +129,9 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
         }, fastPollingInterval.value);
     }
 
-    init();
+    if (pollStatusPage) {
+        init();
+    }
 
     return {
         lastStatus,

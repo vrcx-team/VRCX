@@ -114,49 +114,6 @@
                             </HoverCardContent>
                         </HoverCard>
 
-                        <HoverCard v-if="visibility.servers" v-model:open="serversHoverOpen">
-                            <HoverCardTrigger as-child>
-                                <TooltipWrapper
-                                    v-if="!vrcStatusStore.hasIssue"
-                                    :content="t('status_bar.servers_ok')"
-                                    side="top">
-                                    <div
-                                        class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent"
-                                        @click="vrcStatusStore.openStatusPage()">
-                                        <span class="inline-block size-2 rounded-full shrink-0 bg-status-online" />
-                                        <span class="text-foreground text-[11px]">{{ t('status_bar.servers') }}</span>
-                                    </div>
-                                </TooltipWrapper>
-                                <div
-                                    v-else
-                                    class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent"
-                                    @click="vrcStatusStore.openStatusPage()">
-                                    <span
-                                        class="inline-block size-2 rounded-full shrink-0"
-                                        :class="vrcStatusStore.isMajor ? 'bg-destructive' : 'bg-status-askme'" />
-                                    <span class="text-foreground text-[11px]">{{ t('status_bar.servers') }}</span>
-                                </div>
-                            </HoverCardTrigger>
-                            <HoverCardContent
-                                v-if="vrcStatusStore.hasIssue"
-                                class="w-[280px] px-3 py-2.5"
-                                side="top"
-                                align="start"
-                                :side-offset="4">
-                                <div class="flex items-center gap-1.5 mb-1.5">
-                                    <span
-                                        class="inline-block size-2 rounded-full shrink-0"
-                                        :class="vrcStatusStore.isMajor ? 'bg-destructive' : 'bg-status-askme'" />
-                                    <span class="font-semibold text-xs text-foreground">{{
-                                        t('status_bar.servers_issue')
-                                    }}</span>
-                                </div>
-                                <p class="text-[11px] text-muted-foreground m-0 leading-[1.4]">
-                                    {{ vrcStatusStore.statusText }}
-                                </p>
-                            </HoverCardContent>
-                        </HoverCard>
-
                         <TooltipWrapper v-if="visibility.ws" :content="wsTooltip" side="top">
                             <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
                                 <span
@@ -305,12 +262,6 @@
                     {{ t('status_bar.game') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
-                    :model-value="visibility.servers"
-                    @select.prevent
-                    @update:model-value="toggleVisibility('servers')">
-                    {{ t('status_bar.servers') }}
-                </ContextMenuCheckboxItem>
-                <ContextMenuCheckboxItem
                     v-if="!isMacOS"
                     :model-value="visibility.steamvr"
                     @select.prevent
@@ -404,14 +355,7 @@
         NumberFieldIncrement,
         NumberFieldInput
     } from '@/components/ui/number-field';
-    import {
-        useGameLogStore,
-        useGameStore,
-        useGeneralSettingsStore,
-        useUserStore,
-        useVrcStatusStore,
-        useVrcxStore
-    } from '@/stores';
+    import { useGameLogStore, useGameStore, useGeneralSettingsStore, useUserStore, useVrcxStore } from '@/stores';
     import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
     import { formatSeconds, timeToText } from '@/shared/utils';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -448,7 +392,6 @@
     const gameLogStore = useGameLogStore();
     const userStore = useUserStore();
     const vrcxStore = useVrcxStore();
-    const vrcStatusStore = useVrcStatusStore();
     const generalSettingsStore = useGeneralSettingsStore();
 
     const { nowPlaying } = storeToRefs(gameLogStore);
@@ -501,26 +444,6 @@
         if (gameStore.lastOfflineAt <= 0) return '-';
         return dayjs(gameStore.lastOfflineAt).format('MM/DD HH:mm');
     });
-
-    // --- Servers status HoverCard ---
-    const serversHoverOpen = ref(false);
-    let serversHoverTimer = null;
-
-    watch(
-        () => vrcStatusStore.hasIssue,
-        (hasIssue) => {
-            if (hasIssue && visibility.servers) {
-                serversHoverOpen.value = true;
-                clearTimeout(serversHoverTimer);
-                serversHoverTimer = setTimeout(() => {
-                    serversHoverOpen.value = false;
-                }, 5000);
-            } else {
-                serversHoverOpen.value = false;
-                clearTimeout(serversHoverTimer);
-            }
-        }
-    );
 
     const VISIBILITY_KEY = 'VRCX_statusBarVisibility';
 
@@ -721,7 +644,6 @@
     let cleanupWheel = null;
 
     onBeforeUnmount(() => {
-        clearTimeout(serversHoverTimer);
         if (cleanupWheel) {
             cleanupWheel();
         }

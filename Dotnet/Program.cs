@@ -23,6 +23,12 @@ namespace VRCX
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public static AppApi AppApiInstance { get; private set; }
 
+        private const string DatabaseFileName = "Nexy.sqlite3";
+        private const string StorageFileName = "Nexy.json";
+
+        /// <summary>Settings file read and written by VRCXStorage.</summary>
+        public static string StorageLocation { get; private set; }
+
         private static void SetProgramDirectories()
         {
             if (string.IsNullOrEmpty(AppDataDirectory))
@@ -30,26 +36,24 @@ namespace VRCX
                     "Nexy");
 
             BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            ConfigLocation = Path.Join(AppDataDirectory, "VRCX.sqlite3");
+            ConfigLocation = Path.Join(AppDataDirectory, DatabaseFileName);
+            StorageLocation = Path.Join(AppDataDirectory, StorageFileName);
 
             if (!Directory.Exists(AppDataDirectory))
             {
                 Directory.CreateDirectory(AppDataDirectory);
 
                 // Migrate config to AppData
-                if (File.Exists(Path.Join(BaseDirectory, "VRCX.json")))
+                if (File.Exists(Path.Join(BaseDirectory, StorageFileName)))
                 {
-                    File.Move(Path.Join(BaseDirectory, "VRCX.json"), Path.Join(AppDataDirectory, "VRCX.json"));
-                    File.Copy(Path.Join(AppDataDirectory, "VRCX.json"),
-                        Path.Join(AppDataDirectory, "VRCX-backup.json"));
+                    File.Move(Path.Join(BaseDirectory, StorageFileName), StorageLocation);
+                    File.Copy(StorageLocation, Path.Join(AppDataDirectory, "Nexy-backup.json"));
                 }
 
-                if (File.Exists(Path.Join(BaseDirectory, "VRCX.sqlite3")))
+                if (File.Exists(Path.Join(BaseDirectory, DatabaseFileName)))
                 {
-                    File.Move(Path.Join(BaseDirectory, "VRCX.sqlite3"),
-                        Path.Join(AppDataDirectory, "VRCX.sqlite3"));
-                    File.Copy(Path.Join(AppDataDirectory, "VRCX.sqlite3"),
-                        Path.Join(AppDataDirectory, "VRCX-backup.sqlite3"));
+                    File.Move(Path.Join(BaseDirectory, DatabaseFileName), ConfigLocation);
+                    File.Copy(ConfigLocation, Path.Join(AppDataDirectory, "Nexy-backup.sqlite3"));
                 }
             }
 
