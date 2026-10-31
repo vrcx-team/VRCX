@@ -7,11 +7,11 @@ const mocks = vi.hoisted(() => ({
         setString: vi.fn()
     },
     changeLogRemoveLinks: vi.fn((value) => value),
-    toast: {
+    toast: Object.assign(vi.fn(), {
         error: vi.fn(),
         success: vi.fn(),
         warning: vi.fn()
-    }
+    })
 }));
 
 vi.mock('../../services/config', () => ({
@@ -85,5 +85,65 @@ describe('useVRCXUpdaterStore.setAutoUpdateVRCX', () => {
         expect(store.autoUpdateVRCX).toBe('Notify');
         expect(store.pendingVRCXUpdate).toBe(true);
         expect(mocks.configRepository.setString).toHaveBeenCalledWith('VRCX_autoUpdateVRCX', 'Notify');
+    });
+
+    test('checks Nexy GitHub stable releases instead of the VRCX feed', async () => {
+        const asset = {
+            name: 'Nexy_2026.11.1_Setup_x64.exe',
+            state: 'uploaded',
+            size: 123,
+            browser_download_url:
+                'https://github.com/valzzu/Nexy/releases/download/v2026.11.1/Nexy_2026.11.1_Setup_x64.exe'
+        };
+        globalThis.webApiService = {
+            execute: vi.fn().mockResolvedValue({
+                status: 200,
+                data: JSON.stringify([
+                    {
+                        name: 'Nexy 2026.11.1',
+                        tag_name: 'v2026.11.1',
+                        published_at: '2026-11-01T12:00:00Z',
+                        prerelease: false,
+                        assets: [asset],
+                        body: 'Nexy release notes'
+                    },
+                    {
+                        name: 'VRCX 2026.12.1',
+                        tag_name: '2026.12.1',
+                        published_at: '2026-12-01T12:00:00Z',
+                        prerelease: false,
+                        assets: [
+                            {
+                                ...asset,
+                                name: 'VRCX_2026.12.1_Setup_x64.exe'
+                            }
+                        ]
+                    }
+                ])
+            })
+        };
+
+        const store = useVRCXUpdaterStore();
+        await store.setAutoUpdateVRCX('Notify');
+        expect(await store.checkForVRCXUpdate()).toBe(true);
+        expect(globalThis.webApiService.execute).toHaveBeenCalledWith(
+            expect.objectContaining({
+                url: 'https://api.github.com/repos/valzzu/Nexy/releases?per_page=100'
+            })
+        );
+        expect(store.latestAppVersion).toBe('Nexy 2026.11.1');
+        expect(store.pendingVRCXUpdate).toBe(true);
+        expect(mocks.toast).toHaveBeenCalled();
+    });
+
+    test('handles no published Nexy releases without offering an update', async () => {
+        globalThis.webApiService = {
+            execute: vi.fn().mockResolvedValue({ status: 200, data: '[]' })
+        };
+        const store = useVRCXUpdaterStore();
+        await store.setAutoUpdateVRCX('Notify');
+        expect(await store.checkForVRCXUpdate()).toBe(false);
+        expect(store.pendingVRCXUpdate).toBe(false);
+        expect(mocks.toast).not.toHaveBeenCalled();
     });
 });

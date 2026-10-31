@@ -13,23 +13,20 @@ const VRChatCameraResolutions = [
     { name: '7680x4320 (8K)', width: 7680, height: 4320 }
 ];
 
+// Use the release list for both channels: /latest excludes prereleases and returns
+// 404 until the first stable release is published.
+const nexyReleasesUrl = 'https://api.github.com/repos/valzzu/Nexy/releases?per_page=100';
 const branches = {
     Stable: {
         name: 'Stable',
-        urlReleases: 'https://api0.vrcx.app/releases/stable',
-        urlLatest: 'https://api0.vrcx.app/releases/stable/latest'
+        urlReleases: nexyReleasesUrl,
+        urlLatest: nexyReleasesUrl
     },
     Nightly: {
         name: 'Nightly',
-        urlReleases: 'https://api0.vrcx.app/releases/nightly',
-        urlLatest: 'https://api0.vrcx.app/releases/nightly/latest'
+        urlReleases: nexyReleasesUrl,
+        urlLatest: nexyReleasesUrl
     }
-    // LinuxTest: {
-    //     name: 'LinuxTest',
-    //     urlReleases: 'https://api.github.com/repos/rs189/VRCX/releases',
-    //     urlLatest:
-    //         'https://api.github.com/repos/rs189/VRCX/releases/latest'
-    // }
 };
 
 const TABLE_MAX_SIZE_MIN = 100;
