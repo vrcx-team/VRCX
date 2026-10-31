@@ -407,8 +407,6 @@
                         "desktop": "Modo Escritorio",
                         "inside_vr": "Dentro de VR",
                         "outside_vr": "Fuera de VR",
-                        "inside_vrchat": "Dentro de VRChat",
-                        "outside_vrchat": "Fuera de VRChat",
                         "always": "Siempre"
                     },
                     "desktop_notifications": {
@@ -429,7 +427,6 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "Superposición de Muñeca de SteamVR",
-                    "description": "* Se ejecuta automáticamente mientras VRChat está en funcionamiento.",
                     "grip": "Agarre: Vive u Otros Controladores, Botones X/A de Oculus",
                     "menu": "Menú: Menú de Vive, B de Index, Botones Y/B de Oculus",
                     "steamvr_overlay": "Superposición de SteamVR",

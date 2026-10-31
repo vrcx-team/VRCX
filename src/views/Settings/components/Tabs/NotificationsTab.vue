@@ -19,7 +19,9 @@
             </SettingsItem>
         </SettingsGroup>
 
-        <SettingsGroup :title="t('view.settings.notifications.notifications.inventory_notifications.header')">
+        <SettingsGroup
+            v-if="showVrchatOnlySettings"
+            :title="t('view.settings.notifications.notifications.inventory_notifications.header')">
             <SettingsItem
                 :label="
                     t(
@@ -208,6 +210,9 @@
     import SettingsItem from '../SettingsItem.vue';
 
     const { t } = useI18n();
+
+    // Inventory and store notifications come from VRChat
+    const showVrchatOnlySettings = false;
 
     const notificationsSettingsStore = useNotificationsSettingsStore();
 

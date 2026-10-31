@@ -98,7 +98,10 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.appearance.user_dialog.header')">
-            <SettingsItem :label="t('view.settings.appearance.appearance.vrc_profile_themes')" toggle>
+            <SettingsItem
+                v-if="showVrchatOnlySettings"
+                :label="t('view.settings.appearance.appearance.vrc_profile_themes')"
+                toggle>
                 <Switch
                     :model-value="displayVRCProfileThemes"
                     :ariaLabel="t('view.settings.appearance.appearance.vrc_profile_themes')"
@@ -109,6 +112,7 @@
             </SettingsItem>
 
             <SettingsItem
+                v-if="showVrchatOnlySettings"
                 :label="t('view.settings.appearance.appearance.vrc_profile_backgrounds')"
                 :description="t('view.settings.appearance.appearance.vrc_profile_backgrounds_description')"
                 toggle>
@@ -121,7 +125,7 @@
                     " />
             </SettingsItem>
 
-            <template v-if="displayVRCProfileBackgrounds">
+            <template v-if="showVrchatOnlySettings && displayVRCProfileBackgrounds">
                 <SettingsItem
                     :label="t('view.settings.appearance.appearance.vrc_profile_backgrounds_opacity')"
                     :description="t('view.settings.appearance.appearance.vrc_profile_backgrounds_opacity_description')">
@@ -143,6 +147,7 @@
             </template>
 
             <SettingsItem
+                v-if="showVrchatOnlySettings"
                 :label="t('view.settings.appearance.appearance.vrc_profile_cosmetics')"
                 :description="t('view.settings.appearance.appearance.cosmetics_description')"
                 toggle>
@@ -156,6 +161,7 @@
             </SettingsItem>
 
             <SettingsItem
+                v-if="showVrchatOnlySettings"
                 :label="t('view.settings.appearance.user_dialog.vrchat_notes')"
                 :description="t('view.settings.appearance.user_dialog.vrchat_notes_description')"
                 toggle>
@@ -433,7 +439,6 @@
                 <div class="flex flex-col gap-2 py-2">
                     <div v-for="colorEntry in trustColorEntries" :key="colorEntry.key" class="flex items-center gap-3">
                         <span
-                            v-if="colorEntry.label"
                             :class="[
                                 colorEntry.tagClass,
                                 'nexvr-rank-badge inline-flex min-w-8 items-center justify-center rounded border px-2 py-1 text-xs font-semibold'
@@ -442,10 +447,9 @@
                             :title="colorEntry.label"
                             >{{ colorEntry.label.slice(5) }}</span
                         >
-                        <span v-else :class="colorEntry.tagClass">{{ t(colorEntry.labelKey) }}</span>
                         <ColorPickerButton
                             :model-value="trustColor[colorEntry.key]"
-                            :presets="colorEntry.presets ?? rankColorPresets(colorEntry.key)"
+                            :presets="rankColorPresets(colorEntry.key)"
                             @change="updateTrustColor(colorEntry.key, $event)" />
                     </div>
                 </div>
@@ -511,6 +515,9 @@
     import SettingsItem from '../SettingsItem.vue';
 
     const { t } = useI18n();
+
+    // Profile themes, backgrounds, cosmetics and notes are VRChat profile features
+    const showVrchatOnlySettings = false;
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { saveOpenVROption, updateVRConfigVars } = useVrStore();
@@ -586,49 +593,10 @@
         { key: 'rankB', tagClass: 'x-tag-rankB', label: 'Rank B' },
         { key: 'rankA', tagClass: 'x-tag-rankA', label: 'Rank A' },
         { key: 'rankS', tagClass: 'x-tag-rankS', label: 'Rank S' },
-        { key: 'rankSPlus', tagClass: 'x-tag-rankSPlus', label: 'Rank S+' },
-        {
-            key: 'untrusted',
-            tagClass: 'x-tag-untrusted',
-            labelKey: 'view.settings.appearance.user_colors.trust_levels.visitor',
-            presets: ['#CCCCCC']
-        },
-        {
-            key: 'basic',
-            tagClass: 'x-tag-basic',
-            labelKey: 'view.settings.appearance.user_colors.trust_levels.new_user',
-            presets: ['#1778ff']
-        },
-        {
-            key: 'known',
-            tagClass: 'x-tag-known',
-            labelKey: 'view.settings.appearance.user_colors.trust_levels.user',
-            presets: ['#2bcf5c']
-        },
-        {
-            key: 'trusted',
-            tagClass: 'x-tag-trusted',
-            labelKey: 'view.settings.appearance.user_colors.trust_levels.known_user',
-            presets: ['#ff7b42']
-        },
-        {
-            key: 'veteran',
-            tagClass: 'x-tag-veteran',
-            labelKey: 'view.settings.appearance.user_colors.trust_levels.trusted_user',
-            presets: ['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']
-        },
-        {
-            key: 'vip',
-            tagClass: 'x-tag-vip',
-            labelKey: 'view.settings.appearance.user_colors.trust_levels.vrchat_team',
-            presets: ['#ff2626']
-        },
-        {
-            key: 'troll',
-            tagClass: 'x-tag-troll',
-            labelKey: 'view.settings.appearance.user_colors.trust_levels.nuisance',
-            presets: ['#782f2f']
-        }
+        { key: 'rankSPlus', tagClass: 'x-tag-rankSPlus', label: 'Rank S+' }
+        // VRChat's trust levels (Visitor … VRChat Team, Nuisance) are left out:
+        // every NexVR user carries a social rank, and their colours only remain
+        // as defaults for users not loaded yet
     ];
 
     const fontDropdownDisplayText = computed(() => {

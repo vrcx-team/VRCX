@@ -1016,8 +1016,6 @@
                         "desktop": "デスクトップモード",
                         "inside_vr": "VRの起動中",
                         "outside_vr": "VR以外でプレイ中",
-                        "inside_vrchat": "VRChat のプレイ中",
-                        "outside_vrchat": "VRChat 以外をプレイ中",
                         "always": "常に表示する"
                     },
                     "desktop_notifications": {
@@ -1039,7 +1037,6 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "SteamVR 手首オーバーレイ",
-                    "description": "VRChat が起動しているときに自動的に動作します。",
                     "grip": "グリップ: Vive コントローラー等での「グラブ」、Oculus コントローラー等での「X/Aボタン」",
                     "menu": "メニュー: Vive コントローラーでの「メニューボタン」、Index コントローラーでの「Bボタン」、Oculus コントローラーでの「Y/Bボタン」",
                     "steamvr_overlay": "SteamVR オーバーレイ",
@@ -1094,9 +1091,7 @@
                 "advanced": {
                     "launch_options": "VRChat の起動オプション",
                     "vrc_registry_backup": "VRChat のレジストリバックアップ",
-                    "vrchat_settings": {
-                        "header": "VRChat"
-                    },
+                    "vrchat_settings": {},
                     "vrcx_settings": {
                         "header": "Nexy"
                     },
@@ -1117,14 +1112,11 @@
                         "description": "VRChat の終了時に、旧バージョンのキャッシュを自動で削除する"
                     },
                     "self_invite": {
-                        "header": "自分を招待",
-                        "description": "VRChat でインスタンスを表示する代わりに、自分を招待する"
+                        "header": "自分を招待"
                     },
                     "anonymous_error_reporting": {
                         "header": "匿名エラーレポート(ナイトリービルドのみ)",
-                        "description": "クラッシュやエラーの匿名レポートは、Nexy の改善に役立ちます。個人情報や VRChat のデータは含まれません",
                         "consent_title": "匿名エラーレポート",
-                        "consent_description": "匿名エラーレポートを有効にしますか？匿名レポートは、Nexy の改善に役立ちます。\n\n・クラッシュやエラーのデータのみ。\n\n・個人情報や VRChatのデータは含まれません。\n\n・詳細設定でいつでも無効化できます。",
                         "enabled_restart_description": "エラーレポートが有効化されました。Nexy を再起動して変更を適用しますか？",
                         "disabled_restart_description": "エラーレポートが無効化されました。Nexy を再起動して変更を適用しますか？"
                     },

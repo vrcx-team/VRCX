@@ -20,9 +20,6 @@
                 <template #vr>
                     <VrTab />
                 </template>
-                <template #media>
-                    <MediaTab />
-                </template>
                 <template #integrations>
                     <IntegrationsTab />
                 </template>
@@ -42,7 +39,6 @@
     import AdvancedTab from './components/Tabs/AdvancedTab.vue';
     import InterfaceTab from './components/Tabs/InterfaceTab.vue';
     import IntegrationsTab from './components/Tabs/IntegrationsTab.vue';
-    import MediaTab from './components/Tabs/MediaTab.vue';
     import NotificationsTab from './components/Tabs/NotificationsTab.vue';
     import SocialTab from './components/Tabs/SocialTab.vue';
     import SystemTab from './components/Tabs/SystemTab.vue';
@@ -55,7 +51,7 @@
         { value: 'social', label: t('view.settings.category.social') },
         { value: 'notifications', label: t('view.settings.category.notifications') },
         { value: 'vr', label: t('view.settings.category.vr') },
-        { value: 'media', label: t('view.settings.category.media') },
+        // Media (screenshots, prints, stickers, emoji) is all VRChat content
         { value: 'integrations', label: t('view.settings.category.integrations') },
         { value: 'advanced', label: t('view.settings.category.advanced') }
     ]);

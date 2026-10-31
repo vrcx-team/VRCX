@@ -317,7 +317,6 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "SteamVR 손목 오버레이",
-                    "description": "* Runs automatically while VRChat is running.",
                     "grip": "그립(Grip): 바이브 혹은 기타 컨트롤러 쥐기 동작, 오큘러스 X/A 버튼",
                     "menu": "메뉴(Menu): 바이브 메뉴, 인덱스 B 버튼, 오큘러스 Y/B 버튼",
                     "steamvr_overlay": "SteamVR 오버레이 사용",

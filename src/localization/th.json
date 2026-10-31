@@ -796,8 +796,6 @@
                         "desktop": "โหมดเดสก์ท็อป",
                         "inside_vr": "ขณะอยู่ใน VR",
                         "outside_vr": "ขณะอยู่นอก VR",
-                        "inside_vrchat": "ขณะอยู่ใน VRChat",
-                        "outside_vrchat": "ขณะอยู่นอก VRChat",
                         "always": "เสมอ"
                     },
                     "desktop_notifications": {
@@ -821,7 +819,6 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "โอเวอร์เลย์บนข้อมือของ SteamVR",
-                    "description": "* ทำงานอัตโนมัติขณะที่ VRChat กำลังทำงาน",
                     "grip": "Grip: ปุ่ม Grab ของ Vive หรือคอนโทรลเลอร์อื่น, ปุ่ม X/A ของ Oculus",
                     "menu": "Menu: ปุ่ม Menu ของ Vive, ปุ่ม B ของ Index, ปุ่ม Y/B ของ Oculus",
                     "steamvr_overlay": "โอเวอร์เลย์ของ SteamVR",
@@ -989,21 +986,16 @@
                         "set_folder": "ตั้งค่าโฟลเดอร์",
                         "reset_override": "รีเซ็ต"
                     },
-                    "vrchat_settings": {
-                        "header": "VRChat +"
-                    },
+                    "vrchat_settings": {},
                     "vrcx_settings": {
                         "header": "VRC+"
                     },
                     "self_invite": {
-                        "header": "การดำเนินการเชิญตัวเอง (Self Invite)",
-                        "description": "ใช้ระบบส่งคำเชิญให้ตัวเองแทนการเปิดตัวเกม VRChat โดยตรง"
+                        "header": "การดำเนินการเชิญตัวเอง (Self Invite)"
                     },
                     "anonymous_error_reporting": {
                         "header": "รายงานข้อผิดพลาดแบบไม่ระบุตัวตน (รุ่นทดสอบเท่านั้น)",
-                        "description": "ช่วยพัฒนา Nexy โดยการส่งรายงานการแครชและรายงานข้อผิดพลาดแบบไม่ระบุตัวตน โดยจะไม่มีการเก็บรวบรวมข้อมูลส่วนบุคคลหรือข้อมูล VRChat ใดๆ",
                         "consent_title": "การรายงานข้อผิดพลาดแบบไม่ระบุตัวตน",
-                        "consent_description": "อนุญาตให้ส่งรายงานข้อผิดพลาดแบบไม่ระบุตัวตนเพื่อช่วยปรับปรุง Nexy หรือไม่?\n\n• ข้อมูลการแครชและข้อผิดพลาดเท่านั้น\n• ไม่มีข้อมูลส่วนบุคคลหรือข้อมูล VRChat\n• ใช้ได้กับรุ่นทดสอบ (Nightly) เท่านั้น\n• สามารถปิดใช้งานได้ภายหลังใน ตั้งค่าขั้นสูง",
                         "enabled_restart_description": "เปิดใช้งานการรายงานข้อผิดพลาดแล้ว เริ่มต้น Nexy ใหม่เพื่อใช้การเปลี่ยนแปลง?",
                         "disabled_restart_description": "ปิดใช้งานการรายงานข้อผิดพลาดแล้ว เริ่มต้น Nexy ใหม่เพื่อใช้การเปลี่ยนแปลง?"
                     },

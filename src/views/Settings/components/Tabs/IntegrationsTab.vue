@@ -1,7 +1,9 @@
 <template>
     <div class="flex flex-col gap-10 py-2">
         <!-- Discord Rich Presence -->
-        <SettingsGroup :title="t('view.settings.discord_presence.discord_presence.header')">
+        <SettingsGroup
+            v-if="showVrchatOnlySettings"
+            :title="t('view.settings.discord_presence.discord_presence.header')">
             <template #description>
                 <p class="m-0">{{ t('view.settings.discord_presence.discord_presence.description') }}</p>
                 <p class="m-0 cursor-pointer hover:text-foreground transition-colors" @click="showVRChatConfig">
@@ -147,7 +149,7 @@
         </SettingsGroup>
 
         <!-- YouTube API -->
-        <SettingsGroup :title="t('view.settings.advanced.advanced.youtube_api.header')">
+        <SettingsGroup v-if="showVrchatOnlySettings" :title="t('view.settings.advanced.advanced.youtube_api.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.youtube_api.enable')"
                 :description="t('view.settings.advanced.advanced.youtube_api.enable_tooltip')"
@@ -166,7 +168,9 @@
         </SettingsGroup>
 
         <!-- Remote Database -->
-        <SettingsGroup :title="t('view.settings.advanced.advanced.remote_database.header')">
+        <SettingsGroup
+            v-if="showVrchatOnlySettings"
+            :title="t('view.settings.advanced.advanced.remote_database.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.remote_database.enable')"
                 :description="t('view.settings.advanced.advanced.remote_database.enable_description')"
@@ -212,6 +216,11 @@
     import SettingsItem from '../SettingsItem.vue';
 
     const { t } = useI18n();
+
+    // Discord presence posts VRChat's world under VRCX's Discord app (the NexVR client
+    // has its own); the YouTube API titles videos from VRChat's log; the remote
+    // avatar database looks up VRChat avatars
+    const showVrchatOnlySettings = false;
 
     const advancedSettingsStore = useAdvancedSettingsStore();
     const { updateVRLastLocation, updateOpenVR } = useVrStore();

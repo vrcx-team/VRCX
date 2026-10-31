@@ -1040,8 +1040,6 @@
                         "desktop": "Csak asztali módban",
                         "inside_vr": "VR-on belül",
                         "outside_vr": "VR-on kívül",
-                        "inside_vrchat": "VRChat-en belül",
-                        "outside_vrchat": "VRChat-en kívül",
                         "always": "Mindig"
                     },
                     "desktop_notifications": {
@@ -1063,7 +1061,6 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "SteamVR csukló átfedés",
-                    "description": "* Automatikusan fut, amíg a VRChat fut.",
                     "grip": "Grip: Vive vagy egyéb vezérlők markolata, Oculus X/A gombok",
                     "menu": "Menü: Vive menü, Index B, Oculus Y/B gombok",
                     "steamvr_overlay": "SteamVR átfedés",
@@ -1118,9 +1115,7 @@
                 "advanced": {
                     "launch_options": "Indítási opciók",
                     "vrc_registry_backup": "VRC rendszerleíró adatbázis mentése",
-                    "vrchat_settings": {
-                        "header": "VRChat"
-                    },
+                    "vrchat_settings": {},
                     "vrcx_settings": {
                         "header": "Nexy"
                     },
@@ -1141,14 +1136,11 @@
                         "description": "Régi gyorsítótár adatok automatikus törlése a VRChat bezárásakor."
                     },
                     "self_invite": {
-                        "header": "Önmeghívás művelet",
-                        "description": "Önmeghívás használata a VRChat-ban való megnyitás helyett."
+                        "header": "Önmeghívás művelet"
                     },
                     "anonymous_error_reporting": {
                         "header": "Névtelen hibajelentés (csak éjszakai verzióban)",
-                        "description": "Segíts fejleszteni a Nexy-et névtelen összeomlási és hibajelentések küldésével. Személyes vagy VRChat adatok nem kerülnek gyűjtésre.",
                         "consent_title": "Névtelen hibajelentés",
-                        "consent_description": "Engedélyezed a névtelen hibajelentést a Nexy fejlesztéséhez?\n\n• Csak összeomlási és hibaadatok\n• Sem személyes, sem VRChat adatok\n• Csak éjszakai verziókban\n• Letiltható a Haladó beállításokban",
                         "enabled_restart_description": "Hibajelentés engedélyezve. Újraindítod a Nexy-et a módosítások alkalmazásához?",
                         "disabled_restart_description": "Hibajelentés letiltva. Újraindítod a Nexy-et a módosítások alkalmazásához?"
                     },

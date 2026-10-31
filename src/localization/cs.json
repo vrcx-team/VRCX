@@ -315,8 +315,6 @@
                         "desktop": "Desktop Mode",
                         "inside_vr": "Inside VR",
                         "outside_vr": "Outside VR",
-                        "inside_vrchat": "Inside VRChat",
-                        "outside_vrchat": "Outside VRChat",
                         "always": "Always"
                     },
                     "desktop_notifications": {
@@ -337,7 +335,6 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "SteamVR Wrist Overlay",
-                    "description": "* Runs automatically while VRChat is running.",
                     "grip": "Grip: Vive or Other Controllers Grab, Oculus X/A Buttons",
                     "menu": "Menu: Vive Menu, Index B, Oculus Y/B Buttons",
                     "steamvr_overlay": "SteamVR Overlay",

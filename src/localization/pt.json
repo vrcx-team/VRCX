@@ -950,8 +950,6 @@
                         "desktop": "Modo Desktop",
                         "inside_vr": "Dentro do VR",
                         "outside_vr": "Fora do VR",
-                        "inside_vrchat": "Dentro do VRChat",
-                        "outside_vrchat": "Fora do VRChat",
                         "always": "Sempre"
                     },
                     "desktop_notifications": {
@@ -972,7 +970,6 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "Overlay de Pulso do SteamVR",
-                    "description": "* Executa automaticamente enquanto o VRChat está em execução.",
                     "grip": "Grip: Controladores Vive ou Outros, Botões X/A do Oculus",
                     "menu": "Menu: Menu Vive, Index B, Botões Y/B do Oculus",
                     "steamvr_overlay": "Overlay do SteamVR",
@@ -1027,9 +1024,7 @@
                 "advanced": {
                     "launch_options": "Opções de Inicialização",
                     "vrc_registry_backup": "Backup de Registro do VRC",
-                    "vrchat_settings": {
-                        "header": "VRChat"
-                    },
+                    "vrchat_settings": {},
                     "vrcx_settings": {
                         "header": "Nexy"
                     },
@@ -1050,14 +1045,11 @@
                         "description": "Excluir Versões Antigas do Cache Automaticamente"
                     },
                     "self_invite": {
-                        "header": "Auto-Convite",
-                        "description": "Auto-Convidar em Vez de Abrir a Instância no VRChat"
+                        "header": "Auto-Convite"
                     },
                     "anonymous_error_reporting": {
                         "header": "Relatório de Erros Anônimo (Apenas Nightly)",
-                        "description": "Ajude a melhorar o Nexy enviando relatórios anônimos de falhas e erros. Nenhum dado pessoal ou do VRChat é coletado.",
                         "consent_title": "Relatório de Erros Anônimo",
-                        "consent_description": "Permitir relatório de erros anônimo para ajudar a melhorar o Nexy?\n\n• Apenas dados de falhas e erros\n• Sem dados pessoais ou do VRChat\n• Apenas builds Nightly\n• Pode ser desativado nas Configurações Avançadas",
                         "enabled_restart_description": "Relatório de erros ativado. Reiniciar o Nexy para aplicar as alterações?",
                         "disabled_restart_description": "Relatório de erros desativado. Reiniciar o Nexy para aplicar as alterações?"
                     },

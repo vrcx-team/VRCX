@@ -1021,8 +1021,6 @@
                         "desktop": "桌面模式",
                         "inside_vr": "在 VR 裡",
                         "outside_vr": "在 VR 外",
-                        "inside_vrchat": "在 VRChat 中",
-                        "outside_vrchat": "在 VRChat 外",
                         "always": "總是"
                     },
                     "desktop_notifications": {
@@ -1044,7 +1042,6 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "SteamVR 手腕嵌入介面",
-                    "description": "* 當 VRChat 啟動時後自動執行",
                     "grip": "握持：Vive 或其它控制器的握持鍵、Oculus X / A 按鍵",
                     "menu": "選單：Vive 選單鍵、Index B、Oculus Y / B 按鍵",
                     "steamvr_overlay": "SteamVR 嵌入介面",
@@ -1099,9 +1096,7 @@
                 "advanced": {
                     "launch_options": "啟動選項",
                     "vrc_registry_backup": "VRC 註冊表備份",
-                    "vrchat_settings": {
-                        "header": "VRChat"
-                    },
+                    "vrchat_settings": {},
                     "vrcx_settings": {
                         "header": "Nexy"
                     },
@@ -1122,14 +1117,11 @@
                         "description": "自動從快取中刪除舊版本"
                     },
                     "self_invite": {
-                        "header": "自我邀請",
-                        "description": "以自我邀請方式進入房間，而非在 VRChat 中開啟房間"
+                        "header": "自我邀請"
                     },
                     "anonymous_error_reporting": {
                         "header": "匿名錯誤回報（僅限測試版）",
-                        "description": "透過傳送匿名的當機與錯誤回報來協助改善 Nexy。不會收集任何個人或 VRChat 資料",
                         "consent_title": "匿名錯誤回報",
-                        "consent_description": "是否允許匿名錯誤回報以協助改善 Nexy？\n\n• 僅包含當機與錯誤資料\n• 不包含任何個人或 VRChat 資料 \n• 僅適用於測試版 \n• 可於進階設定中停用",
                         "enabled_restart_description": "已啟用錯誤回報。是否重新啟動 Nexy 以套用變更？",
                         "disabled_restart_description": "已停用錯誤回報。是否重新啟動 Nexy 以套用變更？"
                     },

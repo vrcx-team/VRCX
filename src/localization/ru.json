@@ -447,8 +447,6 @@
                         "desktop": "Десктоп‑режим",
                         "inside_vr": "В VR",
                         "outside_vr": "Вне VR",
-                        "inside_vrchat": "Внутри VRChat",
-                        "outside_vrchat": "Снаружи VRChat",
                         "always": "Всегда"
                     },
                     "desktop_notifications": {
@@ -469,7 +467,6 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "Оверлей SteamVR на запястье",
-                    "description": "* Запускается автоматически при запуске VRChat.",
                     "grip": "Грип: Vive или других контроллеров, X/A кнопки Oculus",
                     "menu": "Меню: Vive меню, Index B, Oculus Y/B кнопки",
                     "steamvr_overlay": "Оверлей SteamVR",

@@ -2,6 +2,7 @@
     <div class="flex flex-col gap-10 py-2">
         <SettingsGroup :title="t('view.settings.advanced.advanced.vrchat_settings.header')">
             <SettingsItem
+                v-if="showVrchatOnlySettings"
                 :label="t('view.settings.advanced.advanced.relaunch_vrchat.header')"
                 :description="t('view.settings.advanced.advanced.relaunch_vrchat.description')"
                 toggle>
@@ -12,6 +13,7 @@
             </SettingsItem>
 
             <SettingsItem
+                v-if="showVrchatOnlySettings"
                 :label="t('view.settings.advanced.advanced.vrchat_quit_fix.header')"
                 :description="t('view.settings.advanced.advanced.vrchat_quit_fix.description')"
                 toggle>
@@ -22,6 +24,7 @@
             </SettingsItem>
 
             <SettingsItem
+                v-if="showVrchatOnlySettings"
                 :label="t('view.settings.advanced.advanced.auto_cache_management.header')"
                 :description="t('view.settings.advanced.advanced.auto_cache_management.description')"
                 toggle>
@@ -56,14 +59,20 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.general.logging.header')">
-            <SettingsItem :label="t('view.settings.advanced.advanced.cache_debug.udon_exception_logging')" toggle>
+            <SettingsItem
+                v-if="showVrchatOnlySettings"
+                :label="t('view.settings.advanced.advanced.cache_debug.udon_exception_logging')"
+                toggle>
                 <Switch
                     :model-value="udonExceptionLogging"
                     :ariaLabel="t('view.settings.advanced.advanced.cache_debug.udon_exception_logging')"
                     @update:modelValue="setUdonExceptionLogging" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.general.logging.resource_load')" toggle>
+            <SettingsItem
+                v-if="showVrchatOnlySettings"
+                :label="t('view.settings.general.logging.resource_load')"
+                toggle>
                 <Switch
                     :model-value="logResourceLoad"
                     :ariaLabel="t('view.settings.general.logging.resource_load')"
@@ -120,7 +129,9 @@
             </SettingsGroup>
         </template>
 
-        <SettingsGroup :title="t('view.settings.advanced.advanced.launch_commands.header')">
+        <SettingsGroup
+            v-if="showVrchatOnlySettings"
+            :title="t('view.settings.advanced.advanced.launch_commands.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.launch_commands.show_confirmation_on_switch_avatar_enable')"
                 class="mb-2"
@@ -268,7 +279,9 @@
             </div>
         </SettingsGroup>
 
-        <SettingsGroup :title="t('view.settings.advanced.advanced.database_cleanup.header')">
+        <SettingsGroup
+            v-if="showVrchatOnlySettings"
+            :title="t('view.settings.advanced.advanced.database_cleanup.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.database_cleanup.auto_cleanup')"
                 :description="t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_description')">
@@ -419,7 +432,7 @@
         </template>
 
         <RegistryBackupDialog />
-        <PhotonSettings v-if="photonLoggingEnabled" />
+        <PhotonSettings v-if="showVrchatOnlySettings && photonLoggingEnabled" />
     </div>
 </template>
 
@@ -461,6 +474,10 @@
     import SettingsItem from '../SettingsItem.vue';
 
     const { t } = useI18n();
+
+    // Crash relaunch, quit fix, VRChat cache sweep, Udon logging, deep links and the
+    // avatar feed act on VRChat's process, log and data; NexVR has none of them
+    const showVrchatOnlySettings = false;
 
     const advancedSettingsStore = useAdvancedSettingsStore();
     const { enablePrimaryPasswordChange } = useAuthStore();

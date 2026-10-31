@@ -306,7 +306,6 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "SteamVR Wrist Overlay",
-                    "description": "* Runs automatically while VRChat is running.",
                     "grip": "Grip: Vive hoặc tay cầm khác Grab, Oculus nút bấm X/A",
                     "menu": "Menu: Vive Menu, Index B, Oculus nút bấm Y/B",
                     "steamvr_overlay": "SteamVR Overlay",

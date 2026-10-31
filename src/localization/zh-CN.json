@@ -1040,8 +1040,6 @@
                         "desktop": "在桌面模式时",
                         "inside_vr": "在 VR 里时",
                         "outside_vr": "在 VR 外时",
-                        "inside_vrchat": "VRChat 运行时",
-                        "outside_vrchat": "VRChat 未运行时",
                         "always": "总是"
                     },
                     "desktop_notifications": {
@@ -1063,7 +1061,6 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "SteamVR 手腕叠加界面",
-                    "description": "* 当 VRChat 运行时它会自动运行",
                     "grip": "握持：Vive 或其它控制器的握持键、Oculus X/A 按键",
                     "menu": "菜单：Vive 菜单键、Index B、Oculus Y/B 按键",
                     "steamvr_overlay": "SteamVR 叠加界面",
@@ -1118,9 +1115,7 @@
                 "advanced": {
                     "launch_options": "启动选项",
                     "vrc_registry_backup": "VRC 设置数据备份工具",
-                    "vrchat_settings": {
-                        "header": "VRChat"
-                    },
+                    "vrchat_settings": {},
                     "vrcx_settings": {
                         "header": "Nexy"
                     },
@@ -1141,14 +1136,11 @@
                         "description": "退出游戏时自动从缓存中删除过期数据"
                     },
                     "self_invite": {
-                        "header": "自我邀请",
-                        "description": "直接给自己发送邀请，而不是在游戏中打开房间页面"
+                        "header": "自我邀请"
                     },
                     "anonymous_error_reporting": {
                         "header": "匿名错误报告",
-                        "description": "通过发送匿名的崩溃和错误报告来帮助改进 Nexy。不会收集任何有关个人或 VRChat 的相关数据。",
                         "consent_title": "匿名错误报告",
-                        "consent_description": "要启用匿名错误报告以帮助改进 Nexy 吗？\n\n• 我们仅收集有关 Nexy 的崩溃和错误报告数据\n• 不会收集任何有关个人或 VRChat 的相关数据\n• 匿名错误报告仅限测试版可用\n• 并且可在高级设置中禁用",
                         "enabled_restart_description": "错误报告目前已启用，要重启 Nexy 以便禁用它吗？",
                         "disabled_restart_description": "错误报告目前已禁用，要重启 Nexy 以便启用它吗？"
                     },

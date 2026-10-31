@@ -43,7 +43,7 @@
             </SettingsItem>
         </SettingsGroup>
 
-        <SettingsGroup :title="t('view.settings.social.favorites.header')">
+        <SettingsGroup v-if="showVrchatOnlySettings" :title="t('view.settings.social.favorites.header')">
             <SettingsItem
                 :label="t('view.settings.general.favorites.header')"
                 :description="t('view.settings.general.favorites.header_tooltip')">
@@ -106,6 +106,9 @@
     import SettingsItem from '../SettingsItem.vue';
 
     const { t } = useI18n();
+
+    // The favorite groups filter uses VRChat favorites, which NexVR has no equivalent of
+    const showVrchatOnlySettings = false;
 
     const generalSettingsStore = useGeneralSettingsStore();
     const favoriteStore = useFavoriteStore();

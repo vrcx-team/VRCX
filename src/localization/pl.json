@@ -540,8 +540,6 @@
                         "desktop": "Tryb PC",
                         "inside_vr": "W VR",
                         "outside_vr": "Poza VR",
-                        "inside_vrchat": "W VRChat",
-                        "outside_vrchat": "Poza VRChat",
                         "always": "Zawsze"
                     },
                     "desktop_notifications": {
@@ -562,7 +560,6 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "Nakładka SteamVR na nadgarstku",
-                    "description": "* Działa automatycznie, gdy uruchomiony jest VRChat.",
                     "grip": "Chwyt: chwyt Vive lub innego kontrolera, przyciski Oculus X/A",
                     "menu": "Menu: przyciski menu Vive, Index B, Oculus Y/B",
                     "steamvr_overlay": "Nakładka SteamVR",
@@ -634,8 +631,7 @@
                         "description": "Automatyczne usuwaj stare wersje z pamięci podręcznej"
                     },
                     "self_invite": {
-                        "header": "Samozapraszanie",
-                        "description": "Samozapraszaj zamiast otwierać nową instację w VRChat"
+                        "header": "Samozapraszanie"
                     },
                     "save_instance_prints_to_file": {
                         "header": "Zapisz odbitki z instancji do plików",

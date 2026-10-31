@@ -563,8 +563,6 @@
                         "desktop": "Mode bureau",
                         "inside_vr": "Durant la VR",
                         "outside_vr": "En dehors de la VR",
-                        "inside_vrchat": "Dans VRChat",
-                        "outside_vrchat": "En dehors de VRChat",
                         "always": "En permanence"
                     },
                     "desktop_notifications": {
@@ -585,7 +583,6 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "Overlay SteamVR au poignet",
-                    "description": "* Runs automatically while VRChat is running.",
                     "grip": "Maintien : Grab pour les manettes Vive ou autres et boutons X/A pour les manettes Oculus.",
                     "menu": "Menu : Menu pour les manettes Vive, boutons B  pour les manettes d'Index et boutons Y/B pour les manettes Oculus.",
                     "steamvr_overlay": "Overlay SteamVR",
