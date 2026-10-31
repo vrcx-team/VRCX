@@ -1,0 +1,105 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing GitHub release tag to build and attach
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  verify_release:
+    name: Verify release exists
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check release tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: gh release view "$RELEASE_TAG" --json tagName --jq '.tagName'
+
+  builds:
+    name: Build Nexy release packages
+    needs: verify_release
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/github_actions.yml
+    with:
+      ref: ${{ github.event.release.tag_name || inputs.tag }}
+    secrets: inherit
+
+  attach:
+    name: Attach Nexy release packages
+    needs: builds
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+      # download-artifact extracts the ZIP-wrapped Actions artifact, leaving
+      # the original .exe ready to publish as a directly downloadable release asset.
+      - name: Extract Windows installer (.exe)
+        uses: actions/download-artifact@v8
+        with:
+          name: NexVR-Installer
+          path: release-assets
+
+      - name: Download Windows portable ZIP
+        uses: actions/download-artifact@v8
+        with:
+          name: Nexy-Zip
+          path: release-assets
+
+      - name: Download Linux AppImages
+        uses: actions/download-artifact@v8
+        with:
+          pattern: Electron-AppImage-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Download macOS DMGs
+        uses: actions/download-artifact@v8
+        with:
+          pattern: Electron-MacDmg-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Verify six release packages
+        shell: bash
+        run: |
+          shopt -s nullglob
+          expected=(
+            'Nexy_*_Setup_x64.exe'
+            'Nexy_*.zip'
+            'Nexy_*_x64.AppImage'
+            'Nexy_*_arm64.AppImage'
+            'Nexy_*_x64.dmg'
+            'Nexy_*_arm64.dmg'
+          )
+          for pattern in "${expected[@]}"; do
+            matches=(release-assets/$pattern)
+            if (( ${#matches[@]} != 1 )); then
+              echo "Expected one release asset matching $pattern; found ${#matches[@]}" >&2
+              exit 1
+            fi
+          done
+          assets=(release-assets/*)
+          if (( ${#assets[@]} != ${#expected[@]} )); then
+            echo "Expected six release assets; found ${#assets[@]}" >&2
+            exit 1
+          fi
+
+      - name: Upload unpacked packages to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: gh release upload "$RELEASE_TAG" release-assets/* --clobber
