@@ -59,7 +59,8 @@
 
     const { t } = useI18n();
 
-    const { freeStoreItemDialog } = storeToRefs(useNotificationStore());
+    const notificationStore = useNotificationStore();
+    const { freeStoreItemDialog } = storeToRefs(notificationStore);
     const notificationsSettingsStore = useNotificationsSettingsStore();
     const userStore = useUserStore();
 
@@ -81,6 +82,7 @@
     async function claimListings() {
         isClaiming.value = true;
         let claimed = 0;
+        const failedListingIds = [];
         for (const listing of freeStoreItemDialog.value.listings) {
             try {
                 await marketplaceRequest.purchaseListing({
@@ -91,8 +93,10 @@
                 claimed++;
             } catch (err) {
                 console.error('Error claiming free store item:', err);
+                failedListingIds.push(listing.id);
             }
         }
+        await notificationStore.addFailedFreeListingIds(failedListingIds);
         if (claimed > 0) {
             toast.success(t('dialog.free_store_item_dialog.claim_success', { count: claimed }));
         }
