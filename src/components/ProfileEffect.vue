@@ -1,5 +1,5 @@
 <template>
-    <template v-if="displayVRCProfileCosmetics">
+    <template v-if="typeof enabled !== 'undefined' ? enabled : displayVRCProfileCosmetics">
         <img
             v-if="mainUrl"
             v-show="isAnimated && !introActive"
@@ -31,7 +31,8 @@
     defineOptions({ inheritAttrs: false });
 
     const props = defineProps({
-        profileEffect: { type: String, default: '' }
+        profileEffect: { type: String, default: '' },
+        enabled: { type: Boolean, default: undefined }
     });
 
     const { cachedProfileEffects, currentUserClientConfig } = storeToRefs(useUserStore());

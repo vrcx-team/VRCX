@@ -55,7 +55,7 @@
                                                 <Slider
                                                     v-model="cardScaleValue"
                                                     class="friend-view__slider"
-                                                    :min="0.5"
+                                                    :min="0.6"
                                                     :max="1.0"
                                                     :step="0.01" />
                                             </div>
@@ -921,7 +921,7 @@
 
             const parsedScale = parseFloat(storedScale);
             if (!Number.isNaN(parsedScale) && parsedScale > 0) {
-                cardScaleBase.value = parsedScale;
+                cardScaleBase.value = Math.max(0.6, parsedScale);
             }
 
             const parsedSpacing = parseFloat(storedSpacing);
