@@ -736,6 +736,10 @@ export const useInstanceStore = defineStore('Instance', () => {
             }
             instance.$location = L;
             L.user = {};
+            const cachedOwnerId = cachedInstances.get(L.tag)?.ownerId;
+            if (!L.userId && cachedOwnerId && !cachedOwnerId.startsWith('grp_')) {
+                L.userId = cachedOwnerId;
+            }
             if (L.userId) {
                 ref = userStore.cachedUsers.get(L.userId);
                 if (typeof ref === 'undefined') {
