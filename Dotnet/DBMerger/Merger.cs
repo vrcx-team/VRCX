@@ -156,27 +156,47 @@ public partial class Merger(SQLiteConnection dbConn, string oldDBName, string ne
     private void MergeFavorites()
     {
         MergeTable(
-            table => table.StartsWith("favorite_"),
+            table => table == "favorite_print",
+            [1, 2],
+            (old, existing) =>
+            {
+                if (existing == null)
+                {
+                    logger.Trace("Inserting new print favorite");
+                    old[0] = null;
+                    return old;
+                }
+    
+                logger.Trace("Replacing print favorite");
+    
+                var oldDateTime = DateTime.Parse((string)old[2]);
+                var newDateTime = DateTime.Parse((string)existing[2]);
+                var updatedDateTime = oldDateTime < newDateTime ? oldDateTime : newDateTime;
+                existing[2] = updatedDateTime;
+    
+                return existing;
+            }
+        );
+    
+        MergeTable(
+            table => table.StartsWith("favorite_") && table != "favorite_print",
             [2, 3],
             (old, existing) =>
             {
                 if (existing == null)
                 {
                     logger.Trace("Inserting new favorite");
-                    // Let sqlite generate new pk
                     old[0] = null;
                     return old;
                 }
-
+    
                 logger.Trace("Replacing favorite");
-
-                // Favorites are the same, so just pick the older create
-                // time and add it
+    
                 var oldDateTime = DateTime.Parse((string)old[1]);
                 var newDateTime = DateTime.Parse((string)existing[1]);
                 var updatedDateTime = oldDateTime < newDateTime ? oldDateTime : newDateTime;
                 existing[1] = updatedDateTime;
-
+    
                 return existing;
             }
         );
