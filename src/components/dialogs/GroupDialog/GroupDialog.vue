@@ -1,7 +1,7 @@
 <template>
     <div class="flex-1 min-h-0 min-w-0 flex flex-row">
         <DialogHeader class="sr-only">
-            <DialogTitle>{{ groupDialog.ref?.name || t('dialog.group.info.header') }}</DialogTitle>
+            <DialogTitle>{{ groupDialog.ref?.name || groupDialog.id || t('dialog.group.info.header') }}</DialogTitle>
             <DialogDescription>
                 {{ groupDialog.ref?.description || groupDialog.ref?.name || t('dialog.group.info.header') }}
             </DialogDescription>
@@ -50,15 +50,15 @@
                                 @click="copyToClipboard(groupDialog.ref.name)">
                                 <span class="flex min-w-0 items-center gap-1">
                                     <span v-if="groupDialog.ref.ownerId === currentUser.id" class="shrink-0">👑</span>
-                                    <span class="truncate" :title="groupDialog.ref.name">{{
-                                        groupDialog.ref.name
+                                    <span class="truncate" :title="groupDialog.ref.name || groupDialog.id">{{
+                                        groupDialog.ref.name || groupDialog.id
                                     }}</span>
                                 </span>
                             </span>
                             <span
                                 class="x-grey font-mono text-xs truncate block min-w-0 cursor-pointer"
                                 @click="showUserDialog(groupDialog.ref.ownerId)"
-                                v-text="groupDialog.ownerDisplayName"></span>
+                                v-text="groupDialog.ownerDisplayName || groupDialog.ref.ownerId"></span>
                         </div>
                         <div class="ml-2 flex shrink-0 items-center justify-end gap-2">
                             <template v-if="groupDialog.inGroup && groupDialog.ref?.myMember">

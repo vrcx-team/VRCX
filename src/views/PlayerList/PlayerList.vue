@@ -39,14 +39,14 @@
                                     currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id
                                 "
                                 class="inline-block" />
-                            {{ currentInstanceWorld.ref.name }}
+                            {{ currentInstanceWorld.ref.name || currentInstanceWorld.ref.id }}
                         </span>
                     </div>
                     <div>
                         <span
                             class="cursor-pointer x-grey font-mono"
                             @click="showUserDialog(currentInstanceWorld.ref.authorId)"
-                            v-text="currentInstanceWorld.ref.authorName"></span>
+                            v-text="currentInstanceWorld.ref.authorName || currentInstanceWorld.ref.authorId"></span>
                     </div>
                     <div class="mt-1.5">
                         <Badge class="mr-1.5" v-if="currentInstanceWorld.ref.$isLabs" variant="outline">

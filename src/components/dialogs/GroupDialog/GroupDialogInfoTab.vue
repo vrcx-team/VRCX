@@ -40,7 +40,7 @@
                         <span
                             class="block truncate font-medium leading-[18px]"
                             :style="{ color: user.$userColour }"
-                            v-text="user.displayName" />
+                            v-text="user.displayName || user.id" />
                         <span v-if="user.location === 'traveling'" class="block truncate text-xs">
                             <Spinner class="inline-block mr-1" />
                             <Timer :epoch="user.$travelingToTime" />

@@ -1,7 +1,7 @@
 <template>
     <div class="flex-1 min-h-0 min-w-0 flex flex-row">
         <DialogHeader class="sr-only">
-            <DialogTitle>{{ avatarDialog.ref?.name || t('dialog.avatar.info.header') }}</DialogTitle>
+            <DialogTitle>{{ avatarDialog.ref?.name || avatarDialog.id || t('dialog.avatar.info.header') }}</DialogTitle>
             <DialogDescription>
                 {{ avatarDialog.ref?.description || avatarDialog.ref?.name || t('dialog.avatar.info.header') }}
             </DialogDescription>
@@ -26,8 +26,8 @@
                             <div class="col-start-1 row-start-1 overflow-hidden">
                                 <span
                                     class="flex flex-wrap font-bold cursor-pointer"
-                                    v-text="avatarDialog.ref.name"
-                                    :title="avatarDialog.ref.name"
+                                    v-text="avatarDialog.ref.name || avatarDialog.id"
+                                    :title="avatarDialog.ref.name || avatarDialog.id"
                                     @click="copyToClipboard(avatarDialog.ref.name)"></span>
                             </div>
                             <div class="col-start-1 row-start-2 flex flex-col gap-1">
@@ -35,7 +35,7 @@
                                     <span
                                         class="flex flex-wrap cursor-pointer x-grey font-mono text-xs max-w-30"
                                         @click="showUserDialog(avatarDialog.ref.authorId)"
-                                        v-text="avatarDialog.ref.authorName" />
+                                        v-text="avatarDialog.ref.authorName || avatarDialog.ref.authorId" />
                                 </div>
                             </div>
                             <div class="col-span-2 flex flex-wrap items-center">

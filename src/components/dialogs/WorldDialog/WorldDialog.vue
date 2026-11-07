@@ -1,7 +1,7 @@
 <template>
     <div class="flex-1 min-h-0 min-w-0 flex flex-row">
         <DialogHeader class="sr-only">
-            <DialogTitle>{{ worldDialog.ref?.name }}</DialogTitle>
+            <DialogTitle>{{ worldDialog.ref?.name || worldDialog.id }}</DialogTitle>
             <DialogDescription>
                 {{ worldDialog.ref?.description }}
             </DialogDescription>
@@ -31,14 +31,14 @@
                                     <span
                                         class="flex flex-wrap font-bold cursor-pointer"
                                         @click="copyWorldName"
-                                        :title="worldDialog.ref.name">
+                                        :title="worldDialog.ref.name || worldDialog.id">
                                         <Home
                                             v-if="
                                                 currentUser.$homeLocation &&
                                                 currentUser.$homeLocation.worldId === worldDialog.id
                                             "
                                             class="inline-block" />
-                                        {{ worldDialog.ref.name }}
+                                        {{ worldDialog.ref.name || worldDialog.id }}
                                     </span>
                                 </div>
                                 <div class="flex flex-col gap-1">
@@ -46,7 +46,7 @@
                                         <span
                                             class="flex flex-wrap cursor-pointer x-grey font-mono text-xs max-w-30"
                                             @click="showUserDialog(worldDialog.ref.authorId)"
-                                            v-text="worldDialog.ref.authorName" />
+                                            v-text="worldDialog.ref.authorName || worldDialog.ref.authorId" />
                                     </div>
                                 </div>
                             </div>

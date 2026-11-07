@@ -112,7 +112,7 @@ export const createColumns = ({
             cell: ({ row }) => {
                 const userRef = row.original?.ref;
                 const style = randomUserColours?.value ? { color: userRef?.$userColour } : null;
-                return <span style={style}>{userRef?.displayName ?? ''}</span>;
+                return <span style={style}>{userRef?.displayName || userRef?.id || ''}</span>;
             }
         },
         {

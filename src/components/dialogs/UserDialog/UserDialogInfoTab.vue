@@ -37,8 +37,8 @@
                             <span
                                 class="text-md text-foreground cursor-pointer block truncate"
                                 @click="showWorldDialog(userDialog.$location.tag)"
-                                :title="userDialog.instance?.ref?.world?.name"
-                                >{{ userDialog.instance?.ref?.world?.name }}</span
+                                :title="userDialog.instance?.ref?.world?.name || userDialog.$location.worldId"
+                                >{{ userDialog.instance?.ref?.world?.name || userDialog.$location.worldId }}</span
                             >
                             <div class="flex min-w-0 flex-wrap items-start gap-1.5">
                                 <LocationWorld
@@ -89,7 +89,9 @@
                                     <span
                                         class="block truncate font-medium leading-[18px]"
                                         :style="{ color: userDialog.$location.user.$userColour }"
-                                        v-text="userDialog.$location.user.displayName"></span>
+                                        v-text="
+                                            userDialog.$location.user.displayName || userDialog.$location.userId
+                                        "></span>
                                     <span class="block truncate text-xs">{{
                                         t('dialog.user.info.instance_creator')
                                     }}</span>
@@ -115,7 +117,7 @@
                                 <span
                                     class="block truncate font-medium leading-[18px]"
                                     :style="{ color: user.$userColour }"
-                                    v-text="user.displayName"></span>
+                                    v-text="user.displayName || user.id"></span>
                                 <span v-if="user.location === 'traveling'" class="block truncate text-xs">
                                     <Spinner class="inline-block mr-1" />
                                     <Timer :epoch="user.$travelingToTime" />

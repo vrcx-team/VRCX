@@ -97,8 +97,8 @@
                         </template>
                         <span
                             class="font-bold cursor-pointer flex flex-wrap"
-                            v-text="userDialog.ref.displayName"
-                            :title="userDialog.ref.displayName"
+                            v-text="userDialog.ref.displayName || userDialog.id"
+                            :title="userDialog.ref.displayName || userDialog.id"
                             @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
                         <TooltipWrapper
                             v-if="userDialog.publicProfileRef?.isEconomyCreator"
