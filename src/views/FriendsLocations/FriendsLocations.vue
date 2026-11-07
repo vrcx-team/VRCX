@@ -211,22 +211,16 @@
             : SEGMENTED_BASE_OPTIONS.filter((option) => option.value !== 'same-instance')
     );
 
-    const cardScaleBase = ref(1);
+    const cardScale = ref(1);
+    const cardScaleSlider = ref(1);
     const cardSpacingBase = ref(1);
-    const persistCardScale = debounce((value) => {
+    const applyCardScale = debounce((value) => {
+        cardScale.value = value;
         configRepository.setString('VRCX_FriendLocationCardScale', value.toString());
-    }, 200);
+    }, 500);
     const persistCardSpacing = debounce((value) => {
         configRepository.setString('VRCX_FriendLocationCardSpacing', value.toString());
-    }, 200);
-
-    const cardScale = computed({
-        get: () => cardScaleBase.value,
-        set: (value) => {
-            cardScaleBase.value = value;
-            persistCardScale(value);
-        }
-    });
+    }, 500);
 
     const cardSpacing = computed({
         get: () => cardSpacingBase.value,
@@ -236,14 +230,15 @@
         }
     });
 
-    const cardScalePercentLabel = computed(() => `${Math.round(cardScale.value * 100)}%`);
+    const cardScalePercentLabel = computed(() => `${Math.round(cardScaleSlider.value * 100)}%`);
     const cardSpacingPercentLabel = computed(() => `${Math.round(cardSpacing.value * 100)}%`);
     const cardScaleValue = computed({
-        get: () => [cardScale.value],
+        get: () => [cardScaleSlider.value],
         set: (value) => {
             const next = value?.[0];
             if (typeof next === 'number') {
-                cardScale.value = next;
+                cardScaleSlider.value = next;
+                applyCardScale(next);
             }
         }
     });
@@ -921,7 +916,8 @@
 
             const parsedScale = parseFloat(storedScale);
             if (!Number.isNaN(parsedScale) && parsedScale > 0) {
-                cardScaleBase.value = Math.max(0.6, parsedScale);
+                cardScale.value = Math.max(0.6, parsedScale);
+                cardScaleSlider.value = cardScale.value;
             }
 
             const parsedSpacing = parseFloat(storedSpacing);
