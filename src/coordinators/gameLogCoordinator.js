@@ -474,13 +474,36 @@ async function checkYoutubeBotError(videoError) {
     }
 }
 
+let gameLogQueue = Promise.resolve();
+
 /**
- * Parses raw game log JSON and delegates to addGameLogEntry.
+ * Runs game log work one task at a time, in call order.
+ *
+ * @param {() => Promise<void>} task
+ * @returns {Promise<void>}
+ */
+function enqueueGameLogTask(task) {
+    gameLogQueue = gameLogQueue.then(task).catch(console.error);
+    return gameLogQueue;
+}
+
+/**
+ * Queues raw game log JSON so entries are processed in order.
  * Called from C# / updateLoop.
  *
  * @param {string} json
+ * @returns {Promise<void>}
  */
-export async function addGameLogEvent(json) {
+export function addGameLogEvent(json) {
+    return enqueueGameLogTask(() => processGameLogEvent(json));
+}
+
+/**
+ * Parses raw game log JSON and delegates to addGameLogEntry.
+ *
+ * @param {string} json
+ */
+async function processGameLogEvent(json) {
     const locationStore = useLocationStore();
 
     const rawLogs = JSON.parse(json);
@@ -514,13 +537,15 @@ async function updateGameLog(dateTill) {
     await new Promise((resolve) => {
         workerTimers.setTimeout(resolve, 10000);
     });
-    let location = '';
-    for (const gameLog of await gameLogService.getAll()) {
-        if (gameLog.type === 'location') {
-            location = gameLog.location;
+    await enqueueGameLogTask(async () => {
+        let location = '';
+        for (const gameLog of await gameLogService.getAll()) {
+            if (gameLog.type === 'location') {
+                location = gameLog.location;
+            }
+            await addGameLogEntry(gameLog, location);
         }
-        await addGameLogEntry(gameLog, location);
-    }
+    });
 }
 
 /**
