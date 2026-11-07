@@ -297,7 +297,9 @@ export function useWorldDialogCommands(
             })
             .then(({ ok, value }) => {
                 if (!ok) return;
-                if (value && value !== world.ref.previewYoutubeId) {
+                value = value.trim();
+                const currentId = world.ref.previewYoutubeId || '';
+                if (value !== currentId) {
                     let processedValue = value;
                     if (value.length > 11) {
                         try {
@@ -315,7 +317,7 @@ export function useWorldDialogCommands(
                             return;
                         }
                     }
-                    if (processedValue !== world.ref.previewYoutubeId) {
+                    if (processedValue !== currentId) {
                         worldRequest
                             .saveWorld({
                                 id: world.id,
