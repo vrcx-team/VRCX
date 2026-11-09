@@ -662,6 +662,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
      */
     function applySessionsSearchFilter(segments) {
         const value = normalizeSessionsSearch(sessionsSearch.value);
+        if (!value) {
+            return segments;
+        }
 
         const filtered = [];
         for (const segment of segments) {
