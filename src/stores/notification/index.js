@@ -687,10 +687,29 @@ export const useNotificationStore = defineStore('Notification', () => {
         });
     }
 
+    let refreshNotificationsPromise = null;
+    let refreshNotificationsBlockedUntil = 0;
+
     /**
      * @returns {Promise<void>}
      */
-    async function refreshNotifications() {
+    function refreshNotifications() {
+        if (refreshNotificationsPromise) {
+            return refreshNotificationsPromise;
+        }
+        if (Date.now() < refreshNotificationsBlockedUntil) {
+            return Promise.resolve();
+        }
+        refreshNotificationsPromise = fetchAllNotifications().finally(() => {
+            refreshNotificationsPromise = null;
+        });
+        return refreshNotificationsPromise;
+    }
+
+    /**
+     * @returns {Promise<void>}
+     */
+    async function fetchAllNotifications() {
         isNotificationsLoading.value = true;
         let count;
         let params;
@@ -758,6 +777,9 @@ export const useNotificationStore = defineStore('Notification', () => {
             }
         } catch (err) {
             console.error(err);
+            if (err?.status === 429) {
+                refreshNotificationsBlockedUntil = Date.now() + 120000;
+            }
         } finally {
             isNotificationsLoading.value = false;
             notificationInitStatus.value = true;
