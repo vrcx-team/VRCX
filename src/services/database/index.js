@@ -19,12 +19,16 @@ import { printFavorites } from './printFavorites.js';
 
 import sqliteService from '../sqlite.js';
 
-const dbVars = {
+const dbVars = import.meta.hot?.data.dbVars ?? {
     userId: '',
     userPrefix: '',
     maxTableSize: 500,
     searchTableSize: 5000
 };
+
+if (import.meta.hot) {
+    import.meta.hot.data.dbVars = dbVars;
+}
 
 const database = {
     ...feed,
