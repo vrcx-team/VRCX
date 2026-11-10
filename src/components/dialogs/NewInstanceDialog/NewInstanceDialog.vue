@@ -150,7 +150,6 @@
                             <FieldLabel>{{ t('dialog.new_instance.display_name') }}</FieldLabel>
                             <FieldContent>
                                 <InputGroupField
-                                    :disabled="!isLocalUserVrcPlusSupporter"
                                     v-model="newInstanceDialog.displayName"
                                     size="sm"
                                     @click="$event.target.tagName === 'INPUT' && $event.target.select()"
@@ -641,7 +640,6 @@
 
     const {
         newInstanceDialog,
-        isLocalUserVrcPlusSupporter,
         buildInstance,
         buildLegacyInstance,
         updateNewInstanceDialog,

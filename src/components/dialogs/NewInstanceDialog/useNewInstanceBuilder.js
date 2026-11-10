@@ -16,7 +16,7 @@ import configRepository from '../../../services/config';
  */
 export function useNewInstanceBuilder(locationTagRef) {
     const { cachedGroups } = useGroupStore();
-    const { currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
+    const { currentUser } = storeToRefs(useUserStore());
     const { createNewInstance } = useInstanceStore();
 
     const newInstanceDialog = ref({
@@ -237,9 +237,6 @@ export function useNewInstanceBuilder(locationTagRef) {
         D.strict = false;
         D.shortName = '';
         D.secureOrShortName = '';
-        if (!isLocalUserVrcPlusSupporter.value) {
-            D.displayName = '';
-        }
         const args = await groupRequest.getGroupPermissions({
             userId: currentUser.value.id
         });
@@ -295,7 +292,6 @@ export function useNewInstanceBuilder(locationTagRef) {
 
     return {
         newInstanceDialog,
-        isLocalUserVrcPlusSupporter,
         buildInstance,
         buildLegacyInstance,
         updateNewInstanceDialog,

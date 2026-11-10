@@ -606,7 +606,7 @@
         instanceInfoState.isValidInstance = true;
         if (props.instance.ownerId === userStore.currentUser.id) {
             instanceInfoState.canCloseInstance = true;
-            instanceInfoState.canRenameInstance = userStore.isLocalUserVrcPlusSupporter;
+            instanceInfoState.canRenameInstance = true;
         } else if (props.instance.ownerId?.startsWith('grp_')) {
             const group = groupStore.cachedGroups.get(props.instance.ownerId);
             instanceInfoState.canCloseInstance = hasGroupPermission(group, 'group-instance-moderate');
