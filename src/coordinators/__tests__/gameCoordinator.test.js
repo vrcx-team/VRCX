@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
     userStore: {
@@ -135,7 +135,32 @@ vi.mock('worker-timers', () => ({
     setTimeout: vi.fn()
 }));
 
-import { runGameRunningChangedFlow } from '../gameCoordinator';
+import { getLastProfileArgument, runGameRunningChangedFlow } from '../gameCoordinator';
+
+describe('getLastProfileArgument', () => {
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    test('returns the --profile argument read from the log', async () => {
+        globalThis.AppApi = { GetVRChatProfileArgument: vi.fn().mockResolvedValue('--profile=2') };
+
+        expect(await getLastProfileArgument()).toBe('--profile=2');
+    });
+
+    test('returns an empty string when no profile was used', async () => {
+        globalThis.AppApi = { GetVRChatProfileArgument: vi.fn().mockResolvedValue('') };
+
+        expect(await getLastProfileArgument()).toBe('');
+    });
+
+    test('returns an empty string when reading it fails', async () => {
+        globalThis.AppApi = { GetVRChatProfileArgument: vi.fn().mockRejectedValue(new Error('bridge')) };
+        vi.spyOn(console, 'error').mockImplementation(() => { });
+
+        expect(await getLastProfileArgument()).toBe('');
+    });
+});
 
 describe('runGameRunningChangedFlow', () => {
     beforeEach(() => {

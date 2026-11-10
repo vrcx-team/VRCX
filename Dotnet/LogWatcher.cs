@@ -32,6 +32,7 @@ namespace VRCX
         private Thread? m_Thread;
         private DateTime tillDate;
         public bool VrcClosedGracefully;
+        public string VrcProfileArgument = string.Empty;
         private readonly ConcurrentQueue<string> m_LogQueue = new ConcurrentQueue<string>(); // for electron
         private static readonly Regex CleanId = new("[^a-zA-Z0-9_\\-~:()]", RegexOptions.Compiled);
         private static readonly Regex CleanLocation = new("[/]", RegexOptions.Compiled);
@@ -201,6 +202,9 @@ namespace VRCX
                     {
                         continue;
                     }
+
+                    if (ParseLaunchArgs(line, 34))
+                        continue;
 
                     if (DateTime.TryParseExact(
                             line.Substring(0, 19),
@@ -459,6 +463,27 @@ namespace VRCX
             }
 
             return false;
+        }
+
+        private bool ParseLaunchArgs(string line, int offset)
+        {
+            // 2026.11.08 21:58:05 Debug      -  Launching with args: 5
+            // 2026.11.08 21:58:05 Debug      -  Arg: --profile=1
+
+            if (string.Compare(line, offset, "Launching with args: ", 0, 21, StringComparison.Ordinal) == 0)
+            {
+                VrcProfileArgument = string.Empty;   // clear it: a new launch, previous profile is stale
+                return true;
+            }
+
+            if (string.Compare(line, offset, "Arg: ", 0, 5, StringComparison.Ordinal) != 0)
+                return false;
+
+            var arg = line.Substring(offset + 5).Trim();                  // text after "Arg: ", trimmed
+            if (Regex.IsMatch(arg, @"^--profile=\d+$"))                   // true only for --profile=<digits>
+                VrcProfileArgument = arg;
+
+            return true;
         }
 
         private bool ParseLogOnPlayerJoinedOrLeft(FileInfo fileInfo, LogContext logContext, string line, int offset)
@@ -1168,8 +1193,10 @@ namespace VRCX
         private bool ParseDesktopMode(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2023.04.22 16:54:18 Log        -  VR Disabled
+            // 2026.11.10 20:17:43 Error      -  Initializing XR Failed. Check Editor or Player log for details.
 
-            if (string.Compare(line, offset, "VR Disabled", 0, 11, StringComparison.Ordinal) != 0)
+            if (string.Compare(line, offset, "VR Disabled", 0, 11, StringComparison.Ordinal) != 0 &&
+                string.Compare(line, offset, "Initializing XR Failed.", 0, 23, StringComparison.Ordinal) != 0)
                 return false;
 
             AppendLog(new[]
