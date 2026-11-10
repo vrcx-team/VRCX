@@ -92,6 +92,10 @@ export function useSearchStoreShelves() {
                 .flatMap((args) => args.json ?? [])
                 .map((shelf) => ({
                     ...shelf,
+                    bannerImageId: shelf.shelfClientBannerImageId || shelf.shelfBackgroundImageId || '',
+                    logoImageId: shelf.shelfClientBannerImageId
+                        ? ''
+                        : shelf.shelfMobileLogoImageId || shelf.shelfMobileHeroBannerImageId || '',
                     listings: (shelf.listings ?? [])
                         .filter((listing) => listing.active)
                         .map((listing) => ({

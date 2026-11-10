@@ -327,13 +327,41 @@
                     </div>
                     <template v-else-if="filteredStoreShelves.length > 0">
                         <div v-for="shelf in filteredStoreShelves" :key="shelf.id" class="mb-6">
-                            <img
-                                v-if="shelf.shelfClientBannerImageId"
-                                :src="getFileImageUrl(shelf.shelfClientBannerImageId)"
-                                loading="lazy"
-                                class="mb-3 w-full rounded-lg object-cover" />
-                            <div v-if="shelf.shelfTitle" class="mb-2 font-medium" v-text="shelf.shelfTitle" />
+                            <div v-if="shelf.bannerImageId" class="relative mb-3 overflow-hidden rounded-lg">
+                                <img
+                                    :src="getFileImageUrl(shelf.bannerImageId)"
+                                    loading="lazy"
+                                    class="max-h-60 w-full object-cover" />
+                                <img
+                                    v-if="shelf.logoImageId"
+                                    :src="getFileImageUrl(shelf.logoImageId)"
+                                    loading="lazy"
+                                    class="absolute top-2 left-4 h-[calc(100%-4rem)] max-w-[50%] object-contain object-left drop-shadow-lg" />
+                                <div
+                                    v-if="shelf.shelfTitle"
+                                    class="absolute inset-x-0 bottom-0 flex items-center gap-3 bg-linear-to-t from-black/80 to-transparent p-4 pt-12 text-lg font-semibold text-white">
+                                    <img
+                                        v-if="shelf.shelfIconImageId"
+                                        :src="getFileImageUrl(shelf.shelfIconImageId)"
+                                        loading="lazy"
+                                        class="size-10 rounded object-contain drop-shadow" />
+                                    <span class="drop-shadow" v-text="shelf.shelfTitle" />
+                                </div>
+                            </div>
+                            <div v-else-if="shelf.shelfTitle" class="mb-2 flex items-center gap-2 font-medium">
+                                <img
+                                    v-if="shelf.shelfIconImageId"
+                                    :src="getFileImageUrl(shelf.shelfIconImageId)"
+                                    loading="lazy"
+                                    class="size-6 rounded object-contain" />
+                                <span v-text="shelf.shelfTitle" />
+                            </div>
+                            <div
+                                v-if="shelf.shelfDescription"
+                                class="mb-2 text-sm text-muted-foreground"
+                                v-text="shelf.shelfDescription" />
                             <ItemGroup
+                                v-if="shelf.listings.length > 0"
                                 class="grid gap-3"
                                 style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))">
                                 <Item
