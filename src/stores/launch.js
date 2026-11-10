@@ -126,7 +126,6 @@ export const useLaunchStore = defineStore('Launch', () => {
      * @param {string} [profileArgument] --profile argument to reuse, ignored if launch options already set one
      * @returns {Promise<void>}
      */
-
     async function launchGame(location, shortName, desktopMode, profileArgument = '') {
         const launchUrl = await getLaunchUrl(location, shortName);
         const args = [launchUrl];
