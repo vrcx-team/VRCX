@@ -26,20 +26,6 @@ function storeAvatarImage(args, cachedAvatarNames) {
 }
 
 /**
- * @param {string} avatar
- * @returns {string | null}
- */
-function parseAvatarUrl(avatar) {
-    const url = new URL(avatar);
-    const urlPath = url.pathname;
-    if (urlPath.substring(5, 13) === '/avatar/') {
-        const avatarId = urlPath.substring(13);
-        return avatarId;
-    }
-    return null;
-}
-
-/**
  * @param {object} unityPackages
  * @returns
  */
@@ -120,4 +106,4 @@ function compareUnityVersion(unitySortNumber, sdkUnityVersion) {
     return false;
 }
 
-export { storeAvatarImage, parseAvatarUrl, getPlatformInfo, compareUnityVersion };
+export { storeAvatarImage, getPlatformInfo, compareUnityVersion };

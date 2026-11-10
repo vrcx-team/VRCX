@@ -358,19 +358,6 @@ function userImageFull(user) {
 }
 
 /**
- * @param {string} user
- * @returns {any | string}
- */
-function parseUserUrl(user) {
-    const url = new URL(user);
-    const urlPath = url.pathname;
-    if (urlPath.substring(5, 11) === '/user/') {
-        const userId = urlPath.substring(11);
-        return userId;
-    }
-}
-
-/**
  * Find a user object from cachedUsers by displayName.
  *
  * @param {Map} cachedUsers
@@ -407,6 +394,5 @@ export {
     statusClass,
     userImage,
     userImageFull,
-    parseUserUrl,
     findUserByDisplayName
 };

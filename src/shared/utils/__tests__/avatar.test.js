@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 import { ref } from 'vue';
 
-import { getPlatformInfo, parseAvatarUrl, storeAvatarImage } from '../avatar';
+import { getPlatformInfo, storeAvatarImage } from '../avatar';
 
 vi.mock('../../../views/Feed/Feed.vue', () => ({
     default: { template: '<div />' }
@@ -55,23 +55,6 @@ describe('storeAvatarImage', () => {
         const cache = new Map();
         const result = storeAvatarImage(makeArgs('Avatar - ★ Fancy (Name) ★ - Image - v1', 'usr_789'), cache);
         expect(result.avatarName).toContain('Fancy');
-    });
-});
-
-describe('parseAvatarUrl', () => {
-    test('extracts avatar ID from valid avatar URL', () => {
-        const result = parseAvatarUrl('https://api.vrchat.cloud/file/avatar/avtr_12345-abcde');
-        expect(result).toBe('avtr_12345-abcde');
-    });
-
-    test('returns null for non-avatar URL', () => {
-        const result = parseAvatarUrl('https://api.vrchat.cloud/api/1/worlds/wrld_12345');
-        expect(result).toBeNull();
-    });
-
-    test('returns null for unrelated URL', () => {
-        const result = parseAvatarUrl('https://example.com/something');
-        expect(result).toBeNull();
     });
 });
 

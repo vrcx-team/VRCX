@@ -33,7 +33,6 @@ vi.mock('../../../stores', () => storeMocks);
 
 import {
     languageClass,
-    parseUserUrl,
     removeEmojis,
     statusClass,
     userImage,
@@ -116,20 +115,6 @@ describe('User Utils', () => {
         test('returns unknown flag for unmapped languages', () => {
             expect(languageClass('xyz')).toEqual({ unknown: true });
             expect(languageClass('')).toEqual({ unknown: true });
-        });
-    });
-
-    describe('parseUserUrl', () => {
-        test('extracts user ID from VRChat URL', () => {
-            expect(parseUserUrl('https://vrchat.com/home/user/usr_abc123-def456')).toBe('usr_abc123-def456');
-        });
-
-        test('returns undefined for non-user URLs', () => {
-            expect(parseUserUrl('https://vrchat.com/home/world/wrld_abc')).toBeUndefined();
-        });
-
-        test('throws for invalid URLs', () => {
-            expect(() => parseUserUrl('not-a-url')).toThrow();
         });
     });
 
