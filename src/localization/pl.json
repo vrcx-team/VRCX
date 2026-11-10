@@ -1260,7 +1260,7 @@
             "legacy": "Stare",
             "roles": "Role",
             "open_ingame": "Otwórz w grze",
-            "display_name": "Nazwa wyświetlana (VRC+)"
+            "display_name": "Nazwa wyświetlana"
         },
         "launch": {
             "header": "Uruchom",

@@ -2095,7 +2095,7 @@
             "legacy": "传统",
             "roles": "身份组",
             "open_ingame": "在 VRChat 中打开",
-            "display_name": "自定义房间名称 (需要 VRC+)",
+            "display_name": "自定义房间名称",
             "minimum_avatar_performance": "模型性能评级限制"
         },
         "launch": {

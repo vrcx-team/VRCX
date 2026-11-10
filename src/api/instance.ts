@@ -1,5 +1,12 @@
 import type { Instance, InstanceShortNameResponse, SentNotification } from 'vrchat';
-import type { InstanceCount, Json, VrcxUpdateInstanceRequest } from '../types/vrcx';
+import type {
+    InstanceCategory,
+    InstanceCount,
+    InstanceVibe,
+    Json,
+    VrcxCreateInstanceRequest,
+    VrcxUpdateInstanceRequest
+} from '../types/vrcx';
 import { toast } from 'vue-sonner';
 
 import { i18n } from '../plugins/i18n';
@@ -23,7 +30,9 @@ const instanceReq = {
         });
     },
 
-    createInstance(params: any): Promise<{ json: Json<Instance>; params: any }> {
+    createInstance(
+        params: VrcxCreateInstanceRequest
+    ): Promise<{ json: Json<Instance>; params: VrcxCreateInstanceRequest; ref: any }> {
         const instanceStore = useInstanceStore();
         return request('instances', {
             method: 'POST',
@@ -146,6 +155,26 @@ const instanceReq = {
             return {
                 json,
                 params
+            };
+        });
+    },
+
+    getInstanceCategories(): Promise<{ json: InstanceCategory[] }> {
+        return request('instanceCategories', {
+            method: 'GET'
+        }).then((json) => {
+            return {
+                json
+            };
+        });
+    },
+
+    getInstanceVibes(): Promise<{ json: InstanceVibe[] }> {
+        return request('instanceVibes', {
+            method: 'GET'
+        }).then((json) => {
+            return {
+                json
             };
         });
     }

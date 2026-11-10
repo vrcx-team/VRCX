@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia';
 
 import { buildLegacyInstanceTag, getLaunchURL, isRealInstance, parseLocation } from '../../../shared/utils';
 import { useGroupStore, useInstanceStore, useUserStore } from '../../../stores';
-import { groupRequest } from '../../../api';
+import { groupRequest, instanceRequest } from '../../../api';
 import { handleGroupPermissions } from '../../../coordinators/groupCoordinator';
 
 import configRepository from '../../../services/config';
@@ -46,8 +46,36 @@ export function useNewInstanceBuilder(locationTagRef) {
         selectedGroupRoles: [],
         roleIds: [],
         groupRef: {},
-        minimumAvatarPerformance: ''
+        minimumAvatarPerformance: '',
+        description: '',
+        languages: [],
+        categoryId: '',
+        vibeIds: []
     });
+
+    const instanceCategories = ref([]);
+    const instanceVibes = ref([]);
+
+    async function loadInstanceCategoriesAndVibes() {
+        if (instanceCategories.value.length === 0) {
+            try {
+                const args = await instanceRequest.getInstanceCategories();
+                instanceCategories.value = (args.json ?? [])
+                    .filter((category) => !category.deleted)
+                    .sort((a, b) => a.order - b.order);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        if (instanceVibes.value.length === 0) {
+            try {
+                const args = await instanceRequest.getInstanceVibes();
+                instanceVibes.value = (args.json ?? []).filter((vibe) => !vibe.deleted);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }
 
     // --- Config persistence ---
 
@@ -91,6 +119,22 @@ export function useNewInstanceBuilder(locationTagRef) {
         configRepository
             .getString('instanceDialogMinimumAvatarPerformance', '')
             .then((value) => (newInstanceDialog.value.minimumAvatarPerformance = value));
+
+        configRepository
+            .getString('instanceDialogDescription', '')
+            .then((value) => (newInstanceDialog.value.description = value));
+
+        configRepository
+            .getArray('instanceDialogLanguages', [])
+            .then((value) => (newInstanceDialog.value.languages = value ?? []));
+
+        configRepository
+            .getString('instanceDialogCategoryId', '')
+            .then((value) => (newInstanceDialog.value.categoryId = value));
+
+        configRepository
+            .getArray('instanceDialogVibeIds', [])
+            .then((value) => (newInstanceDialog.value.vibeIds = value ?? []));
     }
     function saveNewInstanceDialog() {
         const {
@@ -103,7 +147,11 @@ export function useNewInstanceBuilder(locationTagRef) {
             queueEnabled,
             ageGate,
             displayName,
-            minimumAvatarPerformance
+            minimumAvatarPerformance,
+            description,
+            languages,
+            categoryId,
+            vibeIds
         } = newInstanceDialog.value;
 
         configRepository.setString('instanceDialogAccessType', accessType);
@@ -116,6 +164,10 @@ export function useNewInstanceBuilder(locationTagRef) {
         configRepository.setBool('instanceDialogAgeGate', ageGate);
         configRepository.setString('instanceDialogDisplayName', displayName);
         configRepository.setString('instanceDialogMinimumAvatarPerformance', minimumAvatarPerformance);
+        configRepository.setString('instanceDialogDescription', description);
+        configRepository.setArray('instanceDialogLanguages', languages);
+        configRepository.setString('instanceDialogCategoryId', categoryId);
+        configRepository.setArray('instanceDialogVibeIds', vibeIds);
     }
 
     // --- Group role loading (shared between buildInstance & buildLegacyInstance) ---
@@ -237,6 +289,7 @@ export function useNewInstanceBuilder(locationTagRef) {
         D.strict = false;
         D.shortName = '';
         D.secureOrShortName = '';
+        loadInstanceCategoriesAndVibes();
         const args = await groupRequest.getGroupPermissions({
             userId: currentUser.value.id
         });
@@ -278,6 +331,27 @@ export function useNewInstanceBuilder(locationTagRef) {
         newInstanceDialog.value.roleIds = next;
         buildInstance();
     }
+    /**
+     * @param value
+     */
+    function handleLanguagesChange(value) {
+        newInstanceDialog.value.languages = Array.isArray(value) ? value.slice(0, 3) : [];
+        buildInstance();
+    }
+    /**
+     * @param value
+     */
+    function handleVibeIdsChange(value) {
+        newInstanceDialog.value.vibeIds = Array.isArray(value) ? value.slice(0, 3) : [];
+        buildInstance();
+    }
+    /**
+     * @param value
+     */
+    function handleCategoryIdChange(value) {
+        newInstanceDialog.value.categoryId = value === 'none' ? '' : String(value ?? '');
+        buildInstance();
+    }
 
     // --- Init ---
 
@@ -297,6 +371,11 @@ export function useNewInstanceBuilder(locationTagRef) {
         updateNewInstanceDialog,
         handleCreateNewInstance,
         newInstanceTabClick,
-        handleRoleIdsChange
+        handleRoleIdsChange,
+        handleLanguagesChange,
+        handleVibeIdsChange,
+        handleCategoryIdChange,
+        instanceCategories,
+        instanceVibes
     };
 }

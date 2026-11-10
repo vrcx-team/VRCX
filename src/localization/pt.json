@@ -1789,7 +1789,7 @@
             "legacy": "Legado",
             "roles": "Cargos",
             "open_ingame": "Abrir no jogo",
-            "display_name": "Nome de Exibição (VRC+)"
+            "display_name": "Nome de Exibição"
         },
         "launch": {
             "header": "Iniciar",

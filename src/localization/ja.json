@@ -1906,7 +1906,7 @@
             "legacy": "レガシー",
             "roles": "ロール",
             "open_ingame": "ゲーム内で開く",
-            "display_name": "インスタンス名 (VRC+)",
+            "display_name": "インスタンス名",
             "minimum_avatar_performance": "最低アバターパフォーマンスランク"
         },
         "launch": {

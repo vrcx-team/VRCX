@@ -2034,7 +2034,7 @@
             "legacy": "舊版",
             "roles": "身分",
             "open_ingame": "於遊戲中開啟",
-            "display_name": "顯示名稱（VRC+）"
+            "display_name": "顯示名稱"
         },
         "launch": {
             "header": "啟動",

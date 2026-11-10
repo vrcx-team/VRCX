@@ -2093,7 +2093,7 @@
             "legacy": "Hagyományos (Legacy)",
             "roles": "Szerepkörök",
             "open_ingame": "Megnyitás játékban",
-            "display_name": "Megjelenített név (VRC+)",
+            "display_name": "Megjelenített név",
             "minimum_avatar_performance": "Minimális avatar teljesítmény"
         },
         "launch": {

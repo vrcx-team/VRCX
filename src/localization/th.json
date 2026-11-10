@@ -1724,7 +1724,7 @@
             "content_third_person": "มุมมองบุคคลที่สาม",
             "content_prop_movement": "พร็อพที่แก้ไขการเคลื่อนไหวของผู้เล่น",
             "open_ingame": "เปิดในเกม",
-            "display_name": "ชื่อที่แสดง (VRC+)",
+            "display_name": "ชื่อที่แสดง",
             "minimum_avatar_performance": "ประสิทธิภาพอวาตาร์ขั้นต่ำ"
         },
         "launch": {

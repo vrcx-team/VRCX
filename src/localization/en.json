@@ -2201,8 +2201,13 @@
             "legacy": "Legacy",
             "roles": "Roles",
             "open_ingame": "Open in-game",
-            "display_name": "Display Name (VRC+)",
-            "minimum_avatar_performance": "Minimum Avatar Performance"
+            "display_name": "Display Name",
+            "minimum_avatar_performance": "Minimum Avatar Performance",
+            "description": "Description",
+            "category": "Category",
+            "vibes": "Vibes",
+            "languages": "Languages",
+            "none": "None"
         },
         "launch": {
             "header": "Launch",

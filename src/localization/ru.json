@@ -991,7 +991,7 @@
             "legacy": "Устаревший",
             "roles": "Роли",
             "open_ingame": "Открыть в игре",
-            "display_name": "Отображаемое имя (VRC+)"
+            "display_name": "Отображаемое имя"
         },
         "launch": {
             "header": "Запустить",

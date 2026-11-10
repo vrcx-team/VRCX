@@ -586,15 +586,31 @@ export const useInstanceStore = defineStore('Instance', () => {
             if (D.groupAccessType === 'members') {
                 params.roleIds = D.roleIds;
             }
-            if (D.minimumAvatarPerformance) {
-                params.minimumAvatarPerformance = D.minimumAvatarPerformance;
-            }
         }
-        if (D.ageGate && type === 'group' && hasGroupPermission(D.groupRef, 'group-instance-age-gated-create')) {
+        if (D.minimumAvatarPerformance) {
+            params.minimumAvatarPerformance = D.minimumAvatarPerformance;
+        }
+        const canAgeGate =
+            type === 'group'
+                ? hasGroupPermission(D.groupRef, 'group-instance-age-gated-create')
+                : userStore.currentUser.ageVerificationStatus === '18+';
+        if (D.ageGate && canAgeGate) {
             params.ageGate = true;
         }
         if (D.displayName) {
             params.displayName = D.displayName;
+        }
+        if (D.description) {
+            params.description = D.description;
+        }
+        if (D.languages?.length) {
+            params.languages = D.languages;
+        }
+        if (D.categoryId) {
+            params.categoryId = D.categoryId;
+        }
+        if (D.vibeIds?.length) {
+            params.vibeIds = D.vibeIds;
         }
         try {
             const args = await instanceRequest.createInstance(params);
