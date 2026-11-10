@@ -3,8 +3,9 @@ const toolCategories = [
     { key: 'shortcuts', labelKey: 'view.tools.shortcuts.header' },
     { key: 'group', labelKey: 'view.tools.group.header' },
     { key: 'system', labelKey: 'view.tools.system_tools.header' },
-    { key: 'user', labelKey: 'view.tools.export.header' },
-    { key: 'other', labelKey: 'view.tools.other.header' }
+    { key: 'marketplace', labelKey: 'view.tools.marketplace.header' },
+    { key: 'other', labelKey: 'view.tools.other.header' },
+    { key: 'user', labelKey: 'view.tools.export.header' }
 ];
 
 const toolDefinitions = [
@@ -226,6 +227,26 @@ const toolDefinitions = [
         action: { type: 'dialog', dialogKey: 'export-avatars-list' }
     },
     {
+        key: 'vrchat-store',
+        category: 'marketplace',
+        iconKey: 'store',
+        navIcon: 'ri-store-2-line',
+        titleKey: 'view.tools.marketplace.vrchat_store',
+        descriptionKey: 'view.tools.marketplace.vrchat_store_description',
+        navEligible: true,
+        action: { type: 'route', routeName: 'vrchat-store' }
+    },
+    {
+        key: 'purchase-history',
+        category: 'marketplace',
+        iconKey: 'shopping-bag',
+        navIcon: 'ri-shopping-bag-line',
+        titleKey: 'view.tools.other.purchase_history',
+        descriptionKey: 'view.tools.other.purchase_history_description',
+        navEligible: true,
+        action: { type: 'dialog', dialogKey: 'purchase-history' }
+    },
+    {
         key: 'edit-invite-message',
         category: 'other',
         iconKey: 'pencil',
@@ -244,16 +265,6 @@ const toolDefinitions = [
         descriptionKey: 'view.tools.other.moderation_reports_description',
         navEligible: true,
         action: { type: 'dialog', dialogKey: 'moderation-reports' }
-    },
-    {
-        key: 'purchase-history',
-        category: 'other',
-        iconKey: 'shopping-bag',
-        navIcon: 'ri-shopping-bag-line',
-        titleKey: 'view.tools.other.purchase_history',
-        descriptionKey: 'view.tools.other.purchase_history_description',
-        navEligible: true,
-        action: { type: 'dialog', dialogKey: 'purchase-history' }
     },
     {
         key: 'info-push',

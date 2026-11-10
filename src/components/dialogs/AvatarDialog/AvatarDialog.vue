@@ -601,8 +601,8 @@
                                         @click="purchaseListing(listing)">
                                         {{
                                             isListingOwned(listing)
-                                                ? t('view.search.store.owned')
-                                                : t('view.search.store.buy')
+                                                ? t('view.tools.marketplace.owned')
+                                                : t('view.tools.marketplace.buy')
                                         }}
                                     </Button>
                                 </div>

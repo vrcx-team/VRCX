@@ -54,8 +54,7 @@
             :side="side"
             :align="align"
             :side-offset="sideOffset"
-            :class="contentClass"
-            class="max-w-screen">
+            :class="['max-w-screen', contentClass]">
             <slot name="content">
                 <span v-if="content !== undefined" class="whitespace-pre-wrap">{{ content }}</span>
             </slot>

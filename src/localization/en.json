@@ -372,15 +372,6 @@
             "marketplace": {
                 "header": "Marketplace"
             },
-            "store": {
-                "header": "VRChat Store",
-                "refresh_tooltip": "Refresh store",
-                "free": "Free",
-                "vrc_plus_price": "{price} with VRC+",
-                "credits": "{credits}V",
-                "buy": "Buy",
-                "owned": "Owned"
-            },
             "group": {
                 "header": "Group"
             }
@@ -740,6 +731,19 @@
                 "launch_options_description": "Edit VRChat launch options",
                 "registry_backup": "VRChat Registry Backup",
                 "registry_backup_description": "Create or restore a VRChat registry backup"
+            },
+            "marketplace": {
+                "header": "Marketplace",
+                "vrchat_store": "VRChat Store",
+                "vrchat_store_description": "Browse and buy items from the VRChat store",
+                "search_placeholder": "Search store",
+                "refresh_tooltip": "Refresh store",
+                "free": "Free",
+                "vrc_plus_price": "{price} with VRC+",
+                "credits": "{credits}V",
+                "buy": "Buy",
+                "owned": "Owned",
+                "days_left": "{days}d left"
             },
             "other": {
                 "header": "Other",

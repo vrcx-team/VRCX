@@ -3,18 +3,17 @@ import { storeToRefs } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
-import { useModalStore, useSearchStore, useUserStore } from '../../../stores';
+import { useModalStore, useUserStore } from '../../../stores';
 import { commaNumber, replaceBioSymbols } from '../../../shared/utils';
 import { marketplaceRequest } from '../../../api';
 import { VRCHAT_STORE_IDS } from '../../../shared/constants';
 
 /**
- * VRChat store shelves composable for Search view.
- * Fetches the official store shelves, tracks owned listings and handles purchases.
+ * Fetches the official VRChat store shelves, tracks owned listings and handles purchases.
  */
-export function useSearchStoreShelves() {
+export function useStoreShelves() {
     const { t } = useI18n();
-    const { searchText } = storeToRefs(useSearchStore());
+    const searchText = ref('');
     const userStore = useUserStore();
     const { currentUserCredits, isLocalUserVrcPlusSupporter, ownedListingIds, ownedProductIds } =
         storeToRefs(userStore);
@@ -141,6 +140,7 @@ export function useSearchStoreShelves() {
     }
 
     return {
+        searchText,
         filteredStoreShelves,
         isStoreShelvesLoading,
         purchasingListingId,

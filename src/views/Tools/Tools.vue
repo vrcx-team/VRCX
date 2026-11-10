@@ -107,6 +107,7 @@
         shortcuts: false,
         system: false,
         user: false,
+        marketplace: false,
         other: false
     });
 
