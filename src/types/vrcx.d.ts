@@ -119,6 +119,12 @@ export interface VrcxWorld extends Json<World> {
     $isLabs: boolean;
 }
 
+export type WorldRatingValue = 'like' | 'dislike';
+
+export interface WorldRating {
+    value: WorldRatingValue | null;
+}
+
 export type VrcxNotification = Json<Notification> & {
     $isExpired: boolean;
 };

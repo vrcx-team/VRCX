@@ -83,6 +83,7 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
     D.isQuest = false;
     D.isIos = false;
     D.hasPersistData = false;
+    D.rating = null;
     D.listings = [];
     D.memo = '';
     const LL = parseLocation(locationStore.lastLocation.location);
@@ -159,6 +160,16 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
                         if (args.params.worldId === worldStore.worldDialog.id && worldStore.worldDialog.visible) {
                             worldStore.worldDialog.hasPersistData = args.json !== false;
                         }
+                    });
+                worldRequest
+                    .getWorldRating({ worldId: D.id })
+                    .then((args) => {
+                        if (args.params.worldId === D.id) {
+                            D.rating = args.json?.value ?? null;
+                        }
+                    })
+                    .catch((err) => {
+                        console.error('Failed to load world rating:', err);
                     });
             }
         });

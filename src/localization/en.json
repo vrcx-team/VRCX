@@ -1664,6 +1664,8 @@
             "actions": {
                 "delete_cache_tooltip": "Delete world from cache",
                 "favorites_tooltip": "Favorites",
+                "like": "Like",
+                "dislike": "Dislike",
                 "refresh": "Refresh",
                 "share": "Share",
                 "new_instance": "New Instance",

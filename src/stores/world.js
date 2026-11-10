@@ -31,6 +31,7 @@ export const useWorldStore = defineStore('World', () => {
         isQuest: false,
         isIos: false,
         hasPersistData: false,
+        rating: null,
         listings: []
     });
 

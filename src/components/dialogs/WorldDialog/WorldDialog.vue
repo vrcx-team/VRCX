@@ -215,9 +215,30 @@
                                         </template>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
+                                <div class="flex size-9 flex-col">
+                                    <TooltipWrapper side="top" :content="t('dialog.world.actions.like')">
+                                        <Button
+                                            class="h-1/2 w-full rounded-b-none rounded-t-lg border p-0 has-[>svg]:px-0"
+                                            :class="{ 'border-primary': worldDialog.rating === 'like' }"
+                                            :variant="worldDialog.rating === 'like' ? 'default' : 'outline'"
+                                            :ariaLabel="t('dialog.world.actions.like')"
+                                            @click="setWorldRating('like')"
+                                            ><ThumbsUp class="text-xs"
+                                        /></Button>
+                                    </TooltipWrapper>
+                                    <TooltipWrapper side="bottom" :content="t('dialog.world.actions.dislike')">
+                                        <Button
+                                            class="h-1/2 w-full rounded-t-none rounded-b-lg border border-t-0 p-0 has-[>svg]:px-0"
+                                            :class="{ 'border-primary': worldDialog.rating === 'dislike' }"
+                                            :variant="worldDialog.rating === 'dislike' ? 'default' : 'outline'"
+                                            :ariaLabel="t('dialog.world.actions.dislike')"
+                                            @click="setWorldRating('dislike')"
+                                            ><ThumbsDown class="text-xs"
+                                        /></Button>
+                                    </TooltipWrapper>
+                                </div>
                                 <TooltipWrapper
                                     v-if="worldDialog.inCache"
-                                    class="col-start-1 row-start-2"
                                     side="top"
                                     :content="t('dialog.world.actions.delete_cache_tooltip')">
                                     <Button
@@ -397,6 +418,8 @@
         Share2,
         Smartphone,
         Star,
+        ThumbsDown,
+        ThumbsUp,
         Trash2,
         Upload,
         Wand2
@@ -421,6 +444,7 @@
         useWorldStore
     } from '../../../stores';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
+    import { worldRequest } from '../../../api';
     import {
         DropdownMenu,
         DropdownMenuContent,
@@ -574,5 +598,18 @@
 
     function refreshWorldDialogTreeData() {
         treeData.value = formatJsonVars(worldDialog.value.ref);
+    }
+
+    function setWorldRating(rating) {
+        const D = worldDialog.value;
+        const req =
+            D.rating === rating
+                ? worldRequest.deleteWorldRating({ worldId: D.id })
+                : worldRequest.setWorldRating({ worldId: D.id, value: rating });
+        req.then((args) => {
+            if (args.params.worldId === D.id) {
+                D.rating = args.json?.value ?? null;
+            }
+        });
     }
 </script>
