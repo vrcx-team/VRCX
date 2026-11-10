@@ -2486,6 +2486,10 @@
         },
         "set_avatar_tags": {
             "header": "Set Avatar Tags",
+            "save_result": "Saved: {saved}. Unchanged: {unchanged}. Unavailable: {unavailable}. Remaining: {remaining}.",
+            "save_progress": "Saved: {saved}/{total}. Unchanged: {unchanged}. Unavailable: {unavailable}. Remaining: {remaining}.",
+            "refreshing": "Refreshing avatar tags before checking for changes...",
+            "save_error": "Avatar tag update stopped because a refresh or save failed.",
             "content_horror": "Horror",
             "content_gore": "Gore",
             "content_violence": "Violence",
