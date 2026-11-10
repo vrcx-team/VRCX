@@ -91,6 +91,8 @@ export interface VrcxGroup extends Json<Group> {
 }
 
 export interface VrcxInstance extends Json<Instance> {
+    creationLanguages?: string[];
+    languagesIso639?: string[];
     $fetchedAt: string;
     $disabledContentSettings: string[];
 }

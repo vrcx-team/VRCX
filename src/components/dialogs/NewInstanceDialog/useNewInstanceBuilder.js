@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia';
 
 import { buildLegacyInstanceTag, getLaunchURL, isRealInstance, parseLocation } from '../../../shared/utils';
 import { useGroupStore, useInstanceStore, useUserStore } from '../../../stores';
-import { groupRequest, instanceRequest } from '../../../api';
+import { groupRequest } from '../../../api';
 import { handleGroupPermissions } from '../../../coordinators/groupCoordinator';
 
 import configRepository from '../../../services/config';
@@ -17,7 +17,9 @@ import configRepository from '../../../services/config';
 export function useNewInstanceBuilder(locationTagRef) {
     const { cachedGroups } = useGroupStore();
     const { currentUser } = storeToRefs(useUserStore());
-    const { createNewInstance } = useInstanceStore();
+    const instanceStore = useInstanceStore();
+    const { createNewInstance, loadInstanceCategoriesAndVibes } = instanceStore;
+    const { instanceCategories, instanceVibes } = storeToRefs(instanceStore);
 
     const newInstanceDialog = ref({
         visible: false,
@@ -52,30 +54,6 @@ export function useNewInstanceBuilder(locationTagRef) {
         categoryId: '',
         vibeIds: []
     });
-
-    const instanceCategories = ref([]);
-    const instanceVibes = ref([]);
-
-    async function loadInstanceCategoriesAndVibes() {
-        if (instanceCategories.value.length === 0) {
-            try {
-                const args = await instanceRequest.getInstanceCategories();
-                instanceCategories.value = (args.json ?? [])
-                    .filter((category) => !category.deleted)
-                    .sort((a, b) => a.order - b.order);
-            } catch (err) {
-                console.error(err);
-            }
-        }
-        if (instanceVibes.value.length === 0) {
-            try {
-                const args = await instanceRequest.getInstanceVibes();
-                instanceVibes.value = (args.json ?? []).filter((vibe) => !vibe.deleted);
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    }
 
     // --- Config persistence ---
 

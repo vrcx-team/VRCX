@@ -79,6 +79,34 @@
                     <CalendarPlus class="h-4 w-4" />
                 </Button>
             </TooltipWrapper>
+            <TooltipWrapper
+                v-if="instanceInfoState.canRenameInstance"
+                side="top"
+                :content="t('dialog.user.info.rename_instance')">
+                <Button
+                    class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                    :style="buttonStyle"
+                    size="icon-sm"
+                    variant="outline"
+                    :ariaLabel="t('dialog.user.info.rename_instance')"
+                    @click="renameInstance(resolvedInstanceLocation)">
+                    <Pencil class="h-4 w-4" />
+                </Button>
+            </TooltipWrapper>
+            <TooltipWrapper
+                v-if="!instance?.closedAt && instanceInfoState.canCloseInstance"
+                side="top"
+                :content="t('dialog.user.info.close_instance')">
+                <Button
+                    class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-red-500"
+                    :style="buttonStyle"
+                    size="icon-sm"
+                    variant="outline"
+                    :ariaLabel="t('dialog.user.info.close_instance')"
+                    @click="closeInstance(resolvedInstanceLocation)">
+                    <PowerIcon class="h-4 w-4" />
+                </Button>
+            </TooltipWrapper>
             <TooltipWrapper v-if="showRefreshButton" side="top" :content="refreshTooltip">
                 <Button
                     class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
@@ -114,31 +142,60 @@
             <TooltipWrapper v-if="instanceInfoState.isValidInstance" side="top">
                 <template #content>
                     <div class="flex flex-col flex-wrap gap-x-6 gap-y-2">
-                        <div class="flex flex-col gap-1">
-                            <span>
+                        <div v-if="instanceDescription" class="flex flex-col gap-1">
+                            <span>{{ t('dialog.user.info.instance_description') }}</span>
+                            <span class="max-w-80 whitespace-pre-wrap break-words">{{ instanceDescription }}</span>
+                        </div>
+
+                        <div
+                            v-if="
+                                instance?.platforms?.standalonewindows ||
+                                instance?.platforms?.android ||
+                                instance?.platforms?.ios
+                            "
+                            class="flex flex-col gap-1">
+                            <span v-if="instance.platforms.standalonewindows">
                                 <span class="text-platform-pc border-platform-pc!">PC: </span>
-                                {{ instance?.platforms?.standalonewindows }}
+                                {{ instance.platforms.standalonewindows }}
                             </span>
-                            <span>
+                            <span v-if="instance.platforms.android">
                                 <span class="text-platform-quest border-platform-quest!">Android: </span>
-                                {{ instance?.platforms?.android }}
+                                {{ instance.platforms.android }}
                             </span>
-                            <span>
+                            <span v-if="instance.platforms.ios">
                                 <span class="text-platform-ios border-platform-quest!">iOS: </span>
-                                {{ instance?.platforms?.ios }}
+                                {{ instance.platforms.ios }}
                             </span>
                         </div>
+
+                        <span v-if="instance?.categoryId" class="flex items-center gap-1">
+                            {{ t('dialog.user.info.instance_category') }}
+                            <i
+                                v-if="instanceCategory?.icon"
+                                :class="['leading-none translate-y-px', instanceCategory.icon]" />
+                            {{ instanceCategory?.name ?? instance.categoryId }}
+                        </span>
+
+                        <span v-if="instance?.vibeIds?.length">
+                            {{ t('dialog.user.info.instance_vibes') }} {{ instanceVibeTitles }}
+                        </span>
 
                         <div v-if="instanceLanguages.length" class="flex flex-col gap-1">
                             <span>{{ t('dialog.user.info.instance_languages') }}</span>
                             <span v-for="lang in instanceLanguages" :key="lang.key" class="flex items-center gap-1.5">
                                 <span :class="['flags', 'inline-block', languageClass(lang.flagKey)]"></span>
                                 {{ lang.name }}
-                                <span class="text-muted-foreground">{{ lang.percent }}%</span>
+                                <span v-if="lang.percent !== null" class="text-muted-foreground">
+                                    {{ lang.percent }}%
+                                </span>
+                                <Star
+                                    v-if="lang.isCreationLanguage"
+                                    class="h-3 w-3 text-yellow-500"
+                                    :title="t('dialog.user.info.instance_creation_language')" />
                             </span>
                         </div>
 
-                        <span>
+                        <span v-if="instance?.gameServerVersion">
                             {{ t('dialog.user.info.instance_game_version') }} {{ instance?.gameServerVersion }}
                         </span>
 
@@ -150,29 +207,6 @@
                             {{ t('dialog.user.info.instance_disabled_content') }}
                             {{ instanceInfoState.disabledContentSettings }}
                         </span>
-
-                        <div class="flex gap-2">
-                            <Button
-                                v-if="!instance?.closedAt && instanceInfoState.canCloseInstance"
-                                class="w-12 h-6 text-xs hover:text-muted-foreground"
-                                size="icon-sm"
-                                variant="destructive"
-                                :title="t('dialog.user.info.close_instance')"
-                                :ariaLabel="t('dialog.user.info.close_instance')"
-                                @click="closeInstance(resolvedInstanceLocation)">
-                                <PowerIcon class="h-4 w-4" />
-                            </Button>
-                            <Button
-                                v-if="instanceInfoState.canRenameInstance"
-                                class="w-12 h-6 text-xs hover:text-muted-foreground"
-                                size="icon-sm"
-                                variant="secondary"
-                                :title="t('dialog.user.info.rename_instance')"
-                                :ariaLabel="t('dialog.user.info.rename_instance')"
-                                @click="renameInstance(resolvedInstanceLocation)">
-                                <Pencil class="h-4 w-4" />
-                            </Button>
-                        </div>
                     </div>
                 </template>
                 <div :class="cn('flex items-center gap-0.5', !instance?.hasCapacityForYou ? 'text-red-500' : null)">
@@ -322,6 +356,7 @@
         RefreshCw,
         UsersRound,
         SquareStack,
+        Star,
         IdCard,
         TrainFront,
         UserLock,
@@ -345,7 +380,14 @@
         useModalStore,
         useUserStore
     } from '../stores';
-    import { formatSeconds, hasGroupPermission, languageClass, parseLocation } from '../shared/utils';
+    import {
+        formatSeconds,
+        hasGroupPermission,
+        languageClass,
+        parseLocation,
+        replaceBioSymbols
+    } from '../shared/utils';
+    import { instanceCategoryIcons } from '../shared/constants';
     import { useInviteChecks } from '../composables/useInviteChecks';
     import { instanceRequest, miscRequest, queryRequest } from '../api';
     import InstanceAnnouncementDialog from './dialogs/InstanceAnnouncementDialog.vue';
@@ -366,7 +408,7 @@
     const launchStore = useLaunchStore();
     const inviteStore = useInviteStore();
 
-    const { instanceJoinHistory } = storeToRefs(instanceStore);
+    const { instanceJoinHistory, instanceCategories, instanceVibes } = storeToRefs(instanceStore);
     const { canOpenInstanceInGame } = storeToRefs(inviteStore);
     const { isOpeningInstance } = storeToRefs(launchStore);
     const { checkCanInviteSelf } = useInviteChecks();
@@ -503,26 +545,55 @@
     });
 
     const instanceLanguages = computed(() => {
-        const languages = props.instance?.languages;
-        if (!Array.isArray(languages)) return [];
+        const languages = Array.isArray(props.instance?.languages) ? props.instance.languages : [];
         const iso639 = props.instance?.languagesIso639 ?? [];
         const ratio = props.instance?.languageRatio ?? {};
+        const creationLanguages = new Set<string>(props.instance?.creationLanguages ?? []);
         const baseOf = (code) => code.split('-')[0];
         const uniqueBases = [...new Set(languages.map(baseOf))];
         const iso639ByBase = Object.fromEntries(uniqueBases.map((base, i) => [base, iso639[i]]));
-        return languages
-            .map((code) => {
-                const key = iso639ByBase[baseOf(code)] ?? code;
-                const region = code.split('-')[1];
-                const name = userStore.subsetOfLanguages?.[key] ?? code;
-                return {
-                    key: code,
-                    flagKey: key,
-                    name: region ? `${name} (${region.toUpperCase()})` : name,
-                    percent: Math.round((ratio[code] ?? 0) * 100)
-                };
-            })
-            .sort((a, b) => b.percent - a.percent);
+        const list = languages.map((code) => {
+            const key = iso639ByBase[baseOf(code)] ?? code;
+            const region = code.split('-')[1];
+            const name = userStore.subsetOfLanguages?.[key] ?? code;
+            return {
+                key: code,
+                flagKey: key,
+                name: region ? `${name} (${region.toUpperCase()})` : name,
+                percent: Math.round((ratio[code] ?? 0) * 100),
+                isCreationLanguage: creationLanguages.has(key) || creationLanguages.has(code)
+            };
+        });
+        const listedKeys = new Set(list.flatMap((lang) => [lang.key, lang.flagKey]));
+        for (const key of creationLanguages) {
+            if (listedKeys.has(key)) continue;
+            list.push({
+                key,
+                flagKey: key,
+                name: userStore.subsetOfLanguages?.[key] ?? key,
+                percent: null,
+                isCreationLanguage: true
+            });
+        }
+        return list.sort((a, b) => (b.percent ?? -1) - (a.percent ?? -1));
+    });
+
+    const instanceDescription = computed(() => {
+        const description = props.instance?.description?.trim();
+        const worldDescription = props.instance?.world?.description?.trim();
+        if (!description || worldDescription?.startsWith(description)) return '';
+        return description;
+    });
+
+    const instanceCategory = computed(() => {
+        const category = instanceCategories.value.find((category) => category.id === props.instance?.categoryId);
+        if (!category) return null;
+        return { name: category.name, icon: instanceCategoryIcons[category.iconUrl] };
+    });
+
+    const instanceVibeTitles = computed(() => {
+        const vibeById = new Map(instanceVibes.value.map((vibe) => [vibe.id, vibe.title]));
+        return (props.instance?.vibeIds ?? []).map((id) => vibeById.get(id) ?? id).join(', ');
     });
 
     const currentHypeTrain = computed(() => props.instance?.hypeTrain?.current ?? null);

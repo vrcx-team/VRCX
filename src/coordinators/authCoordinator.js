@@ -6,6 +6,7 @@ import { closeWebSocket, initWebsocket } from '../services/websocket';
 import { escapeTag } from '../shared/utils';
 import { queryClient } from '../queries';
 import { useAuthStore } from '../stores/auth';
+import { useInstanceStore } from '../stores/instance';
 import { useNotificationStore } from '../stores/notification';
 import { useUpdateLoopStore } from '../stores/updateLoop';
 import { useUserStore } from '../stores/user';
@@ -56,9 +57,11 @@ export async function runLogoutFlow() {
 export function runLoginSuccessFlow(json) {
     const updateLoopStore = useUpdateLoopStore();
     const authStore = useAuthStore();
+    const instanceStore = useInstanceStore();
 
     updateLoopStore.setNextCurrentUserRefresh(420); // 7mins
     applyCurrentUser(json);
     initWebsocket();
     void authStore.getPermissions();
+    void instanceStore.loadInstanceCategoriesAndVibes();
 }

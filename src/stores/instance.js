@@ -73,6 +73,30 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     const lastInstanceApplied = ref('');
 
+    const instanceCategories = ref([]);
+    const instanceVibes = ref([]);
+
+    async function loadInstanceCategoriesAndVibes() {
+        if (instanceCategories.value.length === 0) {
+            try {
+                const args = await instanceRequest.getInstanceCategories();
+                instanceCategories.value = (args.json ?? [])
+                    .filter((category) => !category.deleted)
+                    .sort((a, b) => a.order - b.order);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        if (instanceVibes.value.length === 0) {
+            try {
+                const args = await instanceRequest.getInstanceVibes();
+                instanceVibes.value = (args.json ?? []).filter((vibe) => !vibe.deleted);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }
+
     const currentInstanceWorld = ref({
         ref: {},
         instance: {},
@@ -477,9 +501,15 @@ export const useInstanceStore = defineStore('Instance', () => {
         if (ref?.world?.name) {
             ref.world.name = replaceBioSymbols(ref.world.name);
         }
+        if (ref?.world?.description) {
+            ref.world.description = replaceBioSymbols(ref.world.description);
+        }
         ref.$disabledContentSettings = computeDisabledContentSettings(json.contentSettings, instanceContentSettings);
         if (ref.displayName) {
             ref.displayName = replaceBioSymbols(ref.displayName);
+        }
+        if (ref.description) {
+            ref.description = replaceBioSymbols(ref.description);
         }
         if (userStore.userDialog.visible && userStore.userDialog.ref?.$location?.tag === ref.id) {
             userStore.applyUserDialogLocation();
@@ -1303,8 +1333,11 @@ export const useInstanceStore = defineStore('Instance', () => {
         previousInstancesListState,
         instanceJoinHistory,
         currentInstanceUsersData,
+        instanceCategories,
+        instanceVibes,
 
         applyInstance,
+        loadInstanceCategoriesAndVibes,
         updateCurrentInstanceWorld,
         createNewInstance,
         applyWorldDialogInstances,
