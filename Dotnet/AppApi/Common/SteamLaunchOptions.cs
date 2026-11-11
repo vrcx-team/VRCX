@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.Win32;
 using NLog;
 
 namespace VRCX
@@ -58,7 +59,7 @@ namespace VRCX
         }
 
         /// <summary>
-        /// Reads VRChat's launch options from the localconfig.vdf of the Steam user that last used Steam.
+        /// Reads VRChat's launch options from the signed-in Steam user's localconfig.vdf.
         /// </summary>
         private static string Read(string steamPath)
         {
@@ -69,11 +70,17 @@ namespace VRCX
             if (!Directory.Exists(userData))
                 return string.Empty;
 
-            var localConfig = Directory.GetDirectories(userData)
-                .Select(dir => new FileInfo(Path.Join(dir, "config", "localconfig.vdf")))
-                .Where(file => file.Exists)
-                .OrderByDescending(file => file.LastWriteTimeUtc)
-                .FirstOrDefault();
+            // the signed-in account's config; with no signed-in account (Steam not running),
+            // fall back to the config Steam wrote to last
+            var activeUser = GetActiveUser();
+            var activeConfig = new FileInfo(Path.Join(userData, activeUser.ToString(), "config", "localconfig.vdf"));
+            var localConfig = activeUser != 0 && activeConfig.Exists
+                ? activeConfig
+                : Directory.GetDirectories(userData)
+                    .Select(dir => new FileInfo(Path.Join(dir, "config", "localconfig.vdf")))
+                    .Where(file => file.Exists)
+                    .OrderByDescending(file => file.LastWriteTimeUtc)
+                    .FirstOrDefault();
             if (localConfig == null)
                 return string.Empty;
 
@@ -93,6 +100,26 @@ namespace VRCX
             }
 
             return string.Empty;
+        }
+
+        /// <summary>
+        /// Returns the account ID of the Steam user signed in right now (the userdata folder name), or 0 if none.
+        /// </summary>
+        private static uint GetActiveUser()
+        {
+            if (!OperatingSystem.IsWindows())
+                return 0;
+
+            try
+            {
+                using var key = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam\ActiveProcess");
+                return key?.GetValue("ActiveUser") is int activeUser ? unchecked((uint)activeUser) : 0;
+            }
+            catch (Exception e)
+            {
+                logger.Warn(e, "Failed to read the active Steam user");
+                return 0;
+            }
         }
 
         /// <summary>
