@@ -149,9 +149,9 @@ namespace VRCX
             return LogWatcher.Instance.VrcClosedGracefully;
         }
 
-        public string GetVRChatProfileArgument()
+        public string GetVRChatLaunchArguments()
         {
-            return LogWatcher.Instance.VrcProfileArgument;
+            return LogWatcher.Instance.VrcLaunchArguments;
         }
 
         public Dictionary<string, int> GetColourBulk(List<object> userIds)

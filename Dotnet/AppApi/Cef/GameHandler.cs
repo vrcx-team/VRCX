@@ -69,13 +69,14 @@ namespace VRCX
                 if (match.Success)
                 {
                     var path = match.Groups[1].Value;
-                    // var _arguments = Uri.EscapeDataString(arguments);
+                    // Steam appends VRChat's launch options itself, so don't pass them twice
+                    var steamArguments = SteamLaunchOptions.RemoveFrom(path, arguments);
                     Process.Start(new ProcessStartInfo
                     {
                         WorkingDirectory = path,
                         FileName = $"{path}\\steam.exe",
                         UseShellExecute = false,
-                        Arguments = $"-applaunch 438100 {arguments}"
+                        Arguments = $"-applaunch 438100 {steamArguments}"
                     })?.Dispose();
                     return true;
                 }

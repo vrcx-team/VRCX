@@ -135,30 +135,32 @@ vi.mock('worker-timers', () => ({
     setTimeout: vi.fn()
 }));
 
-import { getLastProfileArgument, runGameRunningChangedFlow } from '../gameCoordinator';
+import { getLastLaunchArguments, runGameRunningChangedFlow } from '../gameCoordinator';
 
-describe('getLastProfileArgument', () => {
+describe('getLastLaunchArguments', () => {
     afterEach(() => {
         vi.restoreAllMocks();
     });
 
-    test('returns the --profile argument read from the log', async () => {
-        globalThis.AppApi = { GetVRChatProfileArgument: vi.fn().mockResolvedValue('--profile=2') };
+    test('returns the launch arguments read from the log', async () => {
+        globalThis.AppApi = {
+            GetVRChatLaunchArguments: vi.fn().mockResolvedValue('--profile=2 --no-vr --enable-debug-gui')
+        };
 
-        expect(await getLastProfileArgument()).toBe('--profile=2');
+        expect(await getLastLaunchArguments()).toBe('--profile=2 --no-vr --enable-debug-gui');
     });
 
-    test('returns an empty string when no profile was used', async () => {
-        globalThis.AppApi = { GetVRChatProfileArgument: vi.fn().mockResolvedValue('') };
+    test('returns an empty string when the launch had no arguments', async () => {
+        globalThis.AppApi = { GetVRChatLaunchArguments: vi.fn().mockResolvedValue('') };
 
-        expect(await getLastProfileArgument()).toBe('');
+        expect(await getLastLaunchArguments()).toBe('');
     });
 
-    test('returns an empty string when reading it fails', async () => {
-        globalThis.AppApi = { GetVRChatProfileArgument: vi.fn().mockRejectedValue(new Error('bridge')) };
+    test('returns an empty string when reading them fails', async () => {
+        globalThis.AppApi = { GetVRChatLaunchArguments: vi.fn().mockRejectedValue(new Error('bridge')) };
         vi.spyOn(console, 'error').mockImplementation(() => { });
 
-        expect(await getLastProfileArgument()).toBe('');
+        expect(await getLastLaunchArguments()).toBe('');
     });
 });
 

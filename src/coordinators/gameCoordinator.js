@@ -216,19 +216,20 @@ async function runRestartCrashedGameFlow(location) {
     if (persistedEntry) {
         gameLogStore.addGameLog(persistedEntry);
     }
-    launchStore.launchGame(location, '', gameStore.isGameNoVR, await getLastProfileArgument());
+    launchStore.launchGame(location, '', gameStore.isGameNoVR, await getLastLaunchArguments());
 }
 
 /**
- * Reads the --profile argument of the crashed VRChat launch from its log, so the relaunch uses the same profile.
+ * Reads the arguments of the crashed VRChat launch from its log, so the relaunch uses the same ones.
+ * The executable path, launch URL and startup timestamp are already left out.
  *
- * @returns {Promise<string>} The --profile argument, or an empty string.
+ * @returns {Promise<string>} The launch arguments, or an empty string.
  */
-export async function getLastProfileArgument() {
+export async function getLastLaunchArguments() {
     try {
-        return (await AppApi.GetVRChatProfileArgument()) || '';
+        return (await AppApi.GetVRChatLaunchArguments()) || '';
     } catch (e) {
-        console.error('Failed to read VRChat profile argument', e);
+        console.error('Failed to read VRChat launch arguments', e);
         return '';
     }
 }

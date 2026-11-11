@@ -32,7 +32,9 @@ namespace VRCX
         private Thread? m_Thread;
         private DateTime tillDate;
         public bool VrcClosedGracefully;
-        public string VrcProfileArgument = string.Empty;
+        public string VrcLaunchArguments = string.Empty;
+        private readonly List<string> m_LaunchArgs = new List<string>();
+        private int m_LaunchArgIndex;
         private readonly ConcurrentQueue<string> m_LogQueue = new ConcurrentQueue<string>(); // for electron
         private static readonly Regex CleanId = new("[^a-zA-Z0-9_\\-~:()]", RegexOptions.Compiled);
         private static readonly Regex CleanLocation = new("[/]", RegexOptions.Compiled);
@@ -470,18 +472,34 @@ namespace VRCX
             // 2026.11.08 21:58:05 Debug      -  Launching with args: 5
             // 2026.11.08 21:58:05 Debug      -  Arg: --profile=1
 
+            // 2026.11.08 21:58:05 Debug      -  Arg: C:\...\VRChat.exe
+            // 2026.11.08 21:58:05 Debug      -  Arg: vrchat://launch?ref=vrcx.app&id=...
+
             if (string.Compare(line, offset, "Launching with args: ", 0, 21, StringComparison.Ordinal) == 0)
             {
-                VrcProfileArgument = string.Empty;   // clear it: a new launch, previous profile is stale
+                // a new launch: the previous launch's arguments are stale
+                m_LaunchArgs.Clear();
+                m_LaunchArgIndex = 0;
+                VrcLaunchArguments = string.Empty;
                 return true;
             }
 
             if (string.Compare(line, offset, "Arg: ", 0, 5, StringComparison.Ordinal) != 0)
                 return false;
 
-            var arg = line.Substring(offset + 5).Trim();                  // text after "Arg: ", trimmed
-            if (Regex.IsMatch(arg, @"^--profile=\d+$"))                   // true only for --profile=<digits>
-                VrcProfileArgument = arg;
+            var arg = line.Substring(offset + 5).Trim();
+            var index = m_LaunchArgIndex++;
+
+            // skip the executable path, the launch URL and the per-launch startup timestamp:
+            // the relaunch supplies its own
+            if (index == 0 ||
+                arg.Length == 0 ||
+                arg.StartsWith("vrchat://", StringComparison.OrdinalIgnoreCase) ||
+                arg.StartsWith("--startup-begin-ts=", StringComparison.Ordinal))
+                return true;
+
+            m_LaunchArgs.Add(arg.Contains(' ') ? $"\"{arg}\"" : arg);
+            VrcLaunchArguments = string.Join(" ", m_LaunchArgs);
 
             return true;
         }

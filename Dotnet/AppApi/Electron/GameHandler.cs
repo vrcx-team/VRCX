@@ -66,12 +66,14 @@ namespace VRCX
 
         public override bool StartGame(string arguments)
         {
+            // Steam appends VRChat's launch options itself, so don't pass them twice
+            var steamArguments = SteamLaunchOptions.RemoveFrom(_steamPath, arguments);
             try
             {
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = "steam",
-                    Arguments = $"-applaunch 438100 {arguments}",
+                    Arguments = $"-applaunch 438100 {steamArguments}",
                     UseShellExecute = false,
                 })?.Dispose();
                 return true; // Steam accepted launch command (no exception thrown)
@@ -100,7 +102,7 @@ namespace VRCX
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = steamExecutable,
-                    Arguments = $"-applaunch 438100 {arguments}",
+                    Arguments = $"-applaunch 438100 {steamArguments}",
                     UseShellExecute = false,
                 })?.Dispose();
 

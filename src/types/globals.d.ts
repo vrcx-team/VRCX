@@ -188,7 +188,7 @@ declare global {
         CurrentLanguage(): Promise<string>;
         GetVersion(): Promise<string>;
         VrcClosedGracefully(): Promise<boolean>;
-        GetVRChatProfileArgument(): Promise<string>;
+        GetVRChatLaunchArguments(): Promise<string>;
         GetColourBulk(userIds: string[]): Promise<Record<string, number>>;
         SetAppLauncherSettings(enabled: boolean, killOnExit: boolean, runProcessOnce: boolean): Promise<void>;
         GetFileBase64(path: string): Promise<string | null>;
