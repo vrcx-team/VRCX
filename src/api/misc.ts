@@ -196,6 +196,13 @@ const miscReq = {
             };
             return args;
         });
+    },
+
+    getWorldCategories(): Promise<{ json: Json<InfoPush[]>; params }> {
+        return miscReq.getInfoPush({
+            require: 'world-category',
+            include: []
+        });
     }
 };
 

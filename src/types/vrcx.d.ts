@@ -1,9 +1,10 @@
 import type {
-    CreateInstanceRequest,
     CurrentUser,
     Favorite,
     Group,
     Instance,
+    InstanceCategory,
+    InstanceVibe,
     Notification,
     UpdateInstanceRequest,
     User,
@@ -91,8 +92,6 @@ export interface VrcxGroup extends Json<Group> {
 }
 
 export interface VrcxInstance extends Json<Instance> {
-    creationLanguages?: string[];
-    languagesIso639?: string[];
     $fetchedAt: string;
     $disabledContentSettings: string[];
 }
@@ -103,23 +102,9 @@ export interface InstanceCount {
     instances: number;
 }
 
-export interface InstanceCategory {
-    deleted: boolean;
-    iconUrl: string;
-    id: string;
-    name: string;
-    order: number;
-}
-
-export interface InstanceVibe {
-    deleted: boolean;
-    id: string;
-    title: string;
-}
-
-export interface VrcxCreateInstanceRequest extends Json<CreateInstanceRequest> {
-    languages?: string[];
-    minimumAvatarPerformance?: string;
+export interface InstanceOptions {
+    categories: Json<InstanceCategory>[];
+    vibes: Json<InstanceVibe>[];
 }
 
 export interface VrcxUpdateInstanceRequest {
@@ -128,32 +113,8 @@ export interface VrcxUpdateInstanceRequest {
     displayName?: string | null;
 }
 
-export interface MarketplaceAvatarSearchParams {
-    n: number;
-    offset: number;
-    search: string;
-    releaseStatus: string;
-    order: string;
-    marketplace: string;
-    metadata: boolean;
-    minPrice?: number;
-    maxPrice?: number;
-    performanceAtLeast?: string;
-    platform?: string;
-    minUnityVersion?: string;
-    maxUnityVersion?: string;
-    minAssetVersion?: number;
-    maxAssetVersion?: number;
-}
-
 export interface VrcxWorld extends Json<World> {
     $isLabs: boolean;
-}
-
-export type WorldRatingValue = 'like' | 'dislike';
-
-export interface WorldRating {
-    value: WorldRatingValue | null;
 }
 
 export type VrcxNotification = Json<Notification> & {

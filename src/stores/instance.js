@@ -77,23 +77,17 @@ export const useInstanceStore = defineStore('Instance', () => {
     const instanceVibes = ref([]);
 
     async function loadInstanceCategoriesAndVibes() {
-        if (instanceCategories.value.length === 0) {
-            try {
-                const args = await instanceRequest.getInstanceCategories();
-                instanceCategories.value = (args.json ?? [])
-                    .filter((category) => !category.deleted)
-                    .sort((a, b) => a.order - b.order);
-            } catch (err) {
-                console.error(err);
-            }
+        if (instanceCategories.value.length > 0 && instanceVibes.value.length > 0) {
+            return;
         }
-        if (instanceVibes.value.length === 0) {
-            try {
-                const args = await instanceRequest.getInstanceVibes();
-                instanceVibes.value = (args.json ?? []).filter((vibe) => !vibe.deleted);
-            } catch (err) {
-                console.error(err);
-            }
+        try {
+            const args = await instanceRequest.getInstanceOptions();
+            instanceCategories.value = (args.json?.categories ?? [])
+                .filter((category) => !category.deleted)
+                .sort((a, b) => a.order - b.order);
+            instanceVibes.value = (args.json?.vibes ?? []).filter((vibe) => !vibe.deleted);
+        } catch (err) {
+            console.error(err);
         }
     }
 
@@ -574,6 +568,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             };
         }
 
+        /** @type {import('vrchat').InstanceType} */
         let type = 'public';
         let canRequestInvite = false;
         switch (D.accessType) {
@@ -594,6 +589,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 type = 'group';
                 break;
         }
+        /** @type {import('vrchat').CreateInstanceRequestRegion} */
         let region = 'us';
         if (D.region === 'US East') {
             region = 'use';
@@ -602,6 +598,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         } else if (D.region === 'Japan') {
             region = 'jp';
         }
+        /** @type {import('../types/vrcx').Json<import('vrchat').CreateInstanceRequest>} */
         const params = {
             type,
             canRequestInvite,

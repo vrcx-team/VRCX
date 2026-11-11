@@ -1,5 +1,5 @@
 import type {
-    Avatar,
+    AvatarList,
     Balance,
     GetProductPurchaseHistory,
     GetProductPurchases,
@@ -7,22 +7,15 @@ import type {
     ProductListing,
     ProductPurchase,
     ProductPurchaseHistory,
+    SearchAvatars,
     StoreShelf
 } from 'vrchat';
-import type { Json, MarketplaceAvatarSearchParams } from '../types/vrcx';
+import type { Json } from '../types/vrcx';
 import { request } from '../services/request';
 import { useUserStore } from '../stores';
 
-type MarketplaceAvatarSearchResponse = {
-    hasNext: boolean;
-    totalCount: number;
-    results: Json<Avatar>[];
-};
-
 const marketplaceReq = {
-    searchAvatars(
-        params: MarketplaceAvatarSearchParams
-    ): Promise<{ json: MarketplaceAvatarSearchResponse; params: MarketplaceAvatarSearchParams }> {
+    searchAvatars(params: SearchAvatars['query']): Promise<{ json: Json<AvatarList>; params: SearchAvatars['query'] }> {
         const query = Object.fromEntries(Object.entries(params).filter(([, value]) => value !== undefined));
         return request('avatars', {
             method: 'GET',

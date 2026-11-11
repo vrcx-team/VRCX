@@ -100,7 +100,7 @@
         "vee-validate": "^4.15.1",
         "vite": "^8.1.5",
         "vitest": "^5.0.5",
-        "vrchat": "^2.26.0",
+        "vrchat": "^2.26.1-nightly.15",
         "vue": "^3.5.44",
         "vue-advanced-cropper": "^2.8.9",
         "vue-i18n": "^11.4.8",

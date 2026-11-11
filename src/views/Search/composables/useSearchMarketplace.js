@@ -5,6 +5,7 @@ import { useSearchStore } from '../../../stores';
 import { replaceBioSymbols } from '../../../shared/utils';
 import { marketplaceRequest } from '../../../api';
 
+/** @returns {import('vrchat').SearchAvatars['query']} */
 function createDefaultSearchMarketplaceParams() {
     return {
         n: 50,

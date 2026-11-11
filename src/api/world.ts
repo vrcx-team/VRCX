@@ -1,5 +1,13 @@
-import type { File, LimitedWorld, SearchWorlds, UpdateWorldRequest, World } from 'vrchat';
-import type { Json, WorldRating, WorldRatingValue } from '../types/vrcx';
+import type {
+    File,
+    LimitedWorld,
+    SearchWorlds,
+    UpdateWorldRequest,
+    World,
+    WorldRating,
+    WorldRatingValue
+} from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
 import { request } from '../services/request';
 import { applyWorld } from '../coordinators/worldCoordinator';

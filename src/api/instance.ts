@@ -1,12 +1,12 @@
-import type { Instance, InstanceShortNameResponse, SentNotification } from 'vrchat';
 import type {
+    CreateInstanceRequest,
+    Instance,
     InstanceCategory,
-    InstanceCount,
+    InstanceShortNameResponse,
     InstanceVibe,
-    Json,
-    VrcxCreateInstanceRequest,
-    VrcxUpdateInstanceRequest
-} from '../types/vrcx';
+    SentNotification
+} from 'vrchat';
+import type { InstanceCount, InstanceOptions, Json, VrcxUpdateInstanceRequest } from '../types/vrcx';
 import { toast } from 'vue-sonner';
 
 import { i18n } from '../plugins/i18n';
@@ -31,8 +31,8 @@ const instanceReq = {
     },
 
     createInstance(
-        params: VrcxCreateInstanceRequest
-    ): Promise<{ json: Json<Instance>; params: VrcxCreateInstanceRequest; ref: any }> {
+        params: Json<CreateInstanceRequest>
+    ): Promise<{ json: Json<Instance>; params: Json<CreateInstanceRequest>; ref: any }> {
         const instanceStore = useInstanceStore();
         return request('instances', {
             method: 'POST',
@@ -159,7 +159,7 @@ const instanceReq = {
         });
     },
 
-    getInstanceCategories(): Promise<{ json: InstanceCategory[] }> {
+    getInstanceCategories(): Promise<{ json: Json<InstanceCategory>[] }> {
         return request('instanceCategories', {
             method: 'GET'
         }).then((json) => {
@@ -169,8 +169,18 @@ const instanceReq = {
         });
     },
 
-    getInstanceVibes(): Promise<{ json: InstanceVibe[] }> {
+    getInstanceVibes(): Promise<{ json: Json<InstanceVibe>[] }> {
         return request('instanceVibes', {
+            method: 'GET'
+        }).then((json) => {
+            return {
+                json
+            };
+        });
+    },
+
+    getInstanceOptions(): Promise<{ json: InstanceOptions }> {
+        return request('instanceOptions', {
             method: 'GET'
         }).then((json) => {
             return {

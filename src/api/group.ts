@@ -29,7 +29,7 @@ import type {
     GetUserGroupInstancesForGroupResponse,
     GetUserGroupInstancesResponse,
     Group,
-    GroupAuditLogEntryType,
+    GroupAuditLogType,
     GroupGallery,
     GroupGalleryImage,
     GroupMember,
@@ -41,7 +41,7 @@ import type {
     LimitedGroup,
     LimitedUserGroups,
     PaginatedCalendarEventList,
-    PaginatedGroupAuditLogEntryList,
+    PaginatedGroupAuditLogList,
     RepresentedGroup,
     SearchGroupMembers,
     SearchGroupMembersResponse,
@@ -602,7 +602,7 @@ const groupReq = {
             return args;
         });
     },
-    getGroupAuditLogTypes(params: { groupId: string }): Promise<{ json: Json<GroupAuditLogEntryType[]>; params }> {
+    getGroupAuditLogTypes(params: { groupId: string }): Promise<{ json: Json<GroupAuditLogType[]>; params }> {
         return request(`groups/${params.groupId}/auditLogTypes`, {
             method: 'GET'
         }).then((json) => {
@@ -614,7 +614,7 @@ const groupReq = {
         });
     },
     getGroupLogs(params: { groupId: string; n: number; offset: number; eventTypes?: string[] }): Promise<{
-        json: Json<PaginatedGroupAuditLogEntryList>;
+        json: Json<PaginatedGroupAuditLogList>;
         params: { groupId: string; n: number; offset: number; eventTypes?: string[] };
     }> {
         return request(`groups/${params.groupId}/auditLogs`, {
