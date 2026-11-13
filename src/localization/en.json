@@ -1105,7 +1105,9 @@
                         "header": "Desktop Notifications",
                         "when_to_display": "Show Desktop Notifications",
                         "when_to_display_vr": "Show VR Notifications",
-                        "desktop_notification_while_afk": "Show Notifications While AFK"
+                        "desktop_notification_while_afk": "Show Notifications While AFK",
+                        "queue_ready_alarm": "Queue Ready Alarm",
+                        "queue_ready_alarm_description": "Play a chime and flash the taskbar (Windows) when a queued instance is ready, even while Busy"
                     },
                     "text_to_speech": {
                         "header": "Text-To-Speech",
