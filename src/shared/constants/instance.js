@@ -11,4 +11,11 @@ const instanceCategoryIcons = {
     'vrchat://category_other': 'ri-apps-2-line'
 };
 
-export { instanceContentSettings, instanceCategoryIcons };
+const regionLocaleKeyMap = {
+    us: 'dialog.new_instance.region_usw',
+    use: 'dialog.new_instance.region_use',
+    eu: 'dialog.new_instance.region_eu',
+    jp: 'dialog.new_instance.region_jp'
+};
+
+export { instanceContentSettings, instanceCategoryIcons, regionLocaleKeyMap };

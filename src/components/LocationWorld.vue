@@ -7,7 +7,7 @@
             )
         ">
         <InstanceCategory :location="locationobject.tag" />
-        <span v-if="region" :class="cn('flags inline-block shrink-0', region)"></span>
+        <span v-if="region" :class="cn('flags inline-block shrink-0', region)" :title="regionTitle"></span>
         <span
             @click="showLaunchDialog"
             class="min-w-0 flex-1 cursor-pointer truncate text-muted-foreground"
@@ -37,14 +37,14 @@
 
 <script setup>
     import { AlertTriangle, Lock, Unlock } from 'lucide-vue-next';
-    import { ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { useInstanceStore, useLaunchStore } from '../stores';
     import { showGroupDialog } from '../coordinators/groupCoordinator';
     import { formatDateFilter, getGroupName, parseLocation } from '../shared/utils';
-    import { accessTypeLocaleKeyMap } from '../shared/constants';
+    import { accessTypeLocaleKeyMap, regionLocaleKeyMap } from '../shared/constants';
     import { cn } from '@/lib/utils';
 
     import InstanceCategory from './InstanceCategory.vue';
@@ -70,6 +70,7 @@
     const instanceName = ref('');
     const accessTypeName = ref('');
     const region = ref('us');
+    const regionTitle = computed(() => (regionLocaleKeyMap[region.value] ? t(regionLocaleKeyMap[region.value]) : ''));
     const shortName = ref('');
     const isUnlocked = ref(false);
     const strict = ref(false);
