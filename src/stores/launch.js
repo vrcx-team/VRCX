@@ -123,17 +123,19 @@ export const useLaunchStore = defineStore('Launch', () => {
      * @param {string} location
      * @param {string} shortName
      * @param {boolean} desktopMode
+     * @param {string} [previousArguments] arguments of a previous launch to reuse in place of the configured launch options
      * @returns {Promise<void>}
      */
-    async function launchGame(location, shortName, desktopMode) {
+    async function launchGame(location, shortName, desktopMode, previousArguments = '') {
         const launchUrl = await getLaunchUrl(location, shortName);
         const args = [launchUrl];
-        const launchArguments = await configRepository.getString('launchArguments');
+        const launchArguments =
+            previousArguments || (await configRepository.getString('launchArguments'));
         const vrcLaunchPathOverride = await configRepository.getString('vrcLaunchPathOverride');
         if (launchArguments) {
             args.push(launchArguments);
         }
-        if (desktopMode) {
+        if (desktopMode && !/(^|\s)--no-vr(\s|$)/.test(launchArguments || '')) {
             args.push('--no-vr');
         }
         try {

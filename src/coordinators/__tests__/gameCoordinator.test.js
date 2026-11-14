@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
     userStore: {
@@ -135,7 +135,34 @@ vi.mock('worker-timers', () => ({
     setTimeout: vi.fn()
 }));
 
-import { runGameRunningChangedFlow } from '../gameCoordinator';
+import { getLastLaunchArguments, runGameRunningChangedFlow } from '../gameCoordinator';
+
+describe('getLastLaunchArguments', () => {
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    test('returns the launch arguments read from the log', async () => {
+        globalThis.AppApi = {
+            GetVRChatLaunchArguments: vi.fn().mockResolvedValue('--profile=2 --no-vr --enable-debug-gui')
+        };
+
+        expect(await getLastLaunchArguments()).toBe('--profile=2 --no-vr --enable-debug-gui');
+    });
+
+    test('returns an empty string when the launch had no arguments', async () => {
+        globalThis.AppApi = { GetVRChatLaunchArguments: vi.fn().mockResolvedValue('') };
+
+        expect(await getLastLaunchArguments()).toBe('');
+    });
+
+    test('returns an empty string when reading them fails', async () => {
+        globalThis.AppApi = { GetVRChatLaunchArguments: vi.fn().mockRejectedValue(new Error('bridge')) };
+        vi.spyOn(console, 'error').mockImplementation(() => { });
+
+        expect(await getLastLaunchArguments()).toBe('');
+    });
+});
 
 describe('runGameRunningChangedFlow', () => {
     beforeEach(() => {
