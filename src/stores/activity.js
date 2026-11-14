@@ -314,7 +314,7 @@ export const useActivityStore = defineStore('Activity', () => {
             rangeDays,
             dayLabels,
             forceRefresh,
-            normalizeConfig: pickActivityNormalizeConfig(isSelf, rangeDays)
+            normalizeConfig: pickActivityNormalizeConfig(rangeDays)
         });
         return {
             hasAnyData: response.sessions.length > 0,
@@ -662,96 +662,58 @@ async function expandRange(snapshot, rangeDays) {
     deferWrite(() => database.upsertActivitySyncStateV2(snapshot.sync));
 }
 
-function pickActivityNormalizeConfig(isSelf, rangeDays) {
-    const role = isSelf ? 'self' : 'friend';
-    return (
-        {
-            self: {
-                7: {
-                    floorPercentile: 10,
-                    capPercentile: 80,
-                    rankWeight: 0.15,
-                    targetCoverage: 0.12,
-                    targetVolume: 40
-                },
-                30: {
-                    floorPercentile: 15,
-                    capPercentile: 85,
-                    rankWeight: 0.2,
-                    targetCoverage: 0.25,
-                    targetVolume: 60
-                },
-                90: {
-                    floorPercentile: 15,
-                    capPercentile: 85,
-                    rankWeight: 0.2,
-                    targetCoverage: 0.3,
-                    targetVolume: 50
-                }
-            },
-            friend: {
-                7: {
-                    floorPercentile: 10,
-                    capPercentile: 80,
-                    rankWeight: 0.15,
-                    targetCoverage: 0.12,
-                    targetVolume: 40
-                },
-                30: {
-                    floorPercentile: 15,
-                    capPercentile: 85,
-                    rankWeight: 0.2,
-                    targetCoverage: 0.25,
-                    targetVolume: 60
-                },
-                90: {
-                    floorPercentile: 15,
-                    capPercentile: 85,
-                    rankWeight: 0.2,
-                    targetCoverage: 0.3,
-                    targetVolume: 50
-                }
-            }
-        }[role][rangeDays] || {
-            floorPercentile: 15,
-            capPercentile: 85,
-            rankWeight: 0.2,
-            targetCoverage: 0.25,
-            targetVolume: 60
-        }
-    );
+const ACTIVITY_NORMALIZE_CONFIGS = {
+    7: {
+        floorPercentile: 10,
+        capPercentile: 80,
+        rankWeight: 0.15,
+        targetCoverage: 0.12,
+        targetVolume: 40
+    },
+    30: {
+        floorPercentile: 15,
+        capPercentile: 85,
+        rankWeight: 0.2,
+        targetCoverage: 0.25,
+        targetVolume: 60
+    },
+    90: {
+        floorPercentile: 15,
+        capPercentile: 85,
+        rankWeight: 0.2,
+        targetCoverage: 0.3,
+        targetVolume: 50
+    }
+};
+
+const OVERLAP_NORMALIZE_CONFIGS = {
+    7: {
+        floorPercentile: 10,
+        capPercentile: 80,
+        rankWeight: 0.15,
+        targetCoverage: 0.08,
+        targetVolume: 15
+    },
+    30: {
+        floorPercentile: 15,
+        capPercentile: 85,
+        rankWeight: 0.2,
+        targetCoverage: 0.15,
+        targetVolume: 25
+    },
+    90: {
+        floorPercentile: 15,
+        capPercentile: 85,
+        rankWeight: 0.2,
+        targetCoverage: 0.18,
+        targetVolume: 20
+    }
+};
+
+function pickActivityNormalizeConfig(rangeDays) {
+    return ACTIVITY_NORMALIZE_CONFIGS[rangeDays] || ACTIVITY_NORMALIZE_CONFIGS[30];
 }
 
 function pickOverlapNormalizeConfig(rangeDays) {
-    return (
-        {
-            7: {
-                floorPercentile: 10,
-                capPercentile: 80,
-                rankWeight: 0.15,
-                targetCoverage: 0.08,
-                targetVolume: 15
-            },
-            30: {
-                floorPercentile: 15,
-                capPercentile: 85,
-                rankWeight: 0.2,
-                targetCoverage: 0.15,
-                targetVolume: 25
-            },
-            90: {
-                floorPercentile: 15,
-                capPercentile: 85,
-                rankWeight: 0.2,
-                targetCoverage: 0.18,
-                targetVolume: 20
-            }
-        }[rangeDays] || {
-            floorPercentile: 15,
-            capPercentile: 85,
-            rankWeight: 0.2,
-            targetCoverage: 0.15,
-            targetVolume: 25
-        }
-    );
+    return OVERLAP_NORMALIZE_CONFIGS[rangeDays] || OVERLAP_NORMALIZE_CONFIGS[30];
 }
