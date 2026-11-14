@@ -33,6 +33,11 @@ managedHostPath = managedHostPath.indexOf('app.asar.unpacked') < 0 ?
         return true;
     }
 
+    if (fileContent.includes("managedHostPath.indexOf('app.asar.unpacked')")) {
+        console.log(`Already patched: ${filePath}`);
+        return true;
+    }
+
     console.log(`No changes needed for: ${filePath}`);
     return false;
 }
@@ -45,28 +50,29 @@ managedHostPath = managedHostPath.indexOf('app.asar.unpacked') < 0 ?
  * @returns {void}
  */
 function patchNodeApiDotNet(arch, platform) {
-    let platformName = '';
-    switch (platform) {
-        case 'win32':
-            platformName = 'win';
-            break;
-        case 'darwin':
-            platformName = 'mac';
-            break;
-        case 'linux':
-            platformName = 'linux';
-            break;
-    }
-    if (arch === 'arm64') {
-        platformName += '-arm64';
+    const platformName = { win32: 'win', darwin: 'mac', linux: 'linux' }[platform];
+    if (!platformName) {
+        throw new Error(`Unsupported platform: ${platform}`);
     }
 
+    const appName = `${platformName}-${arch}`;
+    const resourcePath =
+        platform === 'darwin'
+            ? path.join('build', appName, 'VRCX.app', 'Contents', 'Resources')
+            : path.join('build', `${appName}-unpacked`, 'resources');
     const postBuildPath = path.join(
         __dirname,
-        `./../build/${platformName}-unpacked/resources/app.asar.unpacked/node_modules/node-api-dotnet/init.js`
+        '..',
+        resourcePath,
+        'app.asar.unpacked',
+        'node_modules',
+        'node-api-dotnet',
+        'init.js'
     );
     console.log('Patching post-build init.js...');
-    patchFile(postBuildPath);
+    if (!patchFile(postBuildPath)) {
+        throw new Error(`Unable to patch packaged node-api-dotnet at ${postBuildPath}`);
+    }
 }
 
 const { arch, platform } = getArchAndPlatform();
