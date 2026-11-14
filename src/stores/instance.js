@@ -648,6 +648,24 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
     }
 
+    const DIALOG_INSTANCE_STALE_MS = 60_000;
+
+    async function refreshStaleDialogInstance(tag, cachedRef) {
+        if (!isRealInstance(tag)) {
+            return;
+        }
+        const fetchedAt = Date.parse(cachedRef?.$fetchedAt) || 0;
+        if (Date.now() - fetchedAt < DIALOG_INSTANCE_STALE_MS) {
+            return;
+        }
+        const L = parseLocation(tag);
+        try {
+            await instanceRequest.getInstance({ worldId: L.worldId, instanceId: L.instanceId });
+        } catch {
+            // ignored
+        }
+    }
+
     function applyWorldDialogInstances() {
         debounce(applyWorldDialogInstancesDebounced, 100)();
     }
@@ -811,12 +829,12 @@ export const useInstanceStore = defineStore('Instance', () => {
             }
             rooms.push(instance);
         }
-        // get instance from cache
         for (const room of rooms) {
             ref = cachedInstances.get(room.tag);
             if (typeof ref !== 'undefined') {
                 Object.assign(room.ref, ref);
             }
+            refreshStaleDialogInstance(room.tag, ref);
         }
         rooms.sort(function (a, b) {
             // sort selected and current instance to top
@@ -981,17 +999,12 @@ export const useInstanceStore = defineStore('Instance', () => {
             }
             rooms.push(instance);
         }
-        // get instance
         for (const room of rooms) {
             ref = cachedInstances.get(room.tag);
             if (typeof ref !== 'undefined') {
                 Object.assign(room.ref, ref);
-            } else if (isRealInstance(room.tag)) {
-                instanceRequest.getInstance({
-                    worldId: room.$location.worldId,
-                    instanceId: room.$location.instanceId
-                });
             }
+            refreshStaleDialogInstance(room.tag, ref);
         }
         rooms.sort(function (a, b) {
             // sort current instance to top
