@@ -215,28 +215,6 @@
                                         </template>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
-                                <div class="flex size-9 flex-col">
-                                    <TooltipWrapper side="top" :content="t('dialog.world.actions.like')">
-                                        <Button
-                                            class="h-1/2 w-full rounded-b-none rounded-t-lg border p-0 has-[>svg]:px-0"
-                                            :class="{ 'border-primary': worldDialog.rating === 'like' }"
-                                            :variant="worldDialog.rating === 'like' ? 'default' : 'outline'"
-                                            :ariaLabel="t('dialog.world.actions.like')"
-                                            @click="setWorldRating('like')"
-                                            ><ThumbsUp class="text-xs"
-                                        /></Button>
-                                    </TooltipWrapper>
-                                    <TooltipWrapper side="bottom" :content="t('dialog.world.actions.dislike')">
-                                        <Button
-                                            class="h-1/2 w-full rounded-t-none rounded-b-lg border border-t-0 p-0 has-[>svg]:px-0"
-                                            :class="{ 'border-primary': worldDialog.rating === 'dislike' }"
-                                            :variant="worldDialog.rating === 'dislike' ? 'default' : 'outline'"
-                                            :ariaLabel="t('dialog.world.actions.dislike')"
-                                            @click="setWorldRating('dislike')"
-                                            ><ThumbsDown class="text-xs"
-                                        /></Button>
-                                    </TooltipWrapper>
-                                </div>
                                 <TooltipWrapper
                                     v-if="worldDialog.inCache"
                                     side="top"
@@ -353,6 +331,28 @@
                 :unmount-on-hide="false"
                 fill
                 @update:modelValue="worldDialogTabClick">
+                <template #header-end>
+                    <TooltipWrapper side="top" :content="t('dialog.world.actions.like')">
+                        <Button
+                            class="size-7 rounded-full text-muted-foreground hover:text-foreground"
+                            size="icon-sm"
+                            variant="ghost"
+                            :ariaLabel="t('dialog.world.actions.like')"
+                            @click="setWorldRating('like')">
+                            <ThumbsUp :class="{ 'fill-current text-primary': worldDialog.rating === 'like' }" />
+                        </Button>
+                    </TooltipWrapper>
+                    <TooltipWrapper side="top" :content="t('dialog.world.actions.dislike')">
+                        <Button
+                            class="size-7 rounded-full text-muted-foreground hover:text-foreground"
+                            size="icon-sm"
+                            variant="ghost"
+                            :ariaLabel="t('dialog.world.actions.dislike')"
+                            @click="setWorldRating('dislike')">
+                            <ThumbsDown :class="{ 'fill-current text-primary': worldDialog.rating === 'dislike' }" />
+                        </Button>
+                    </TooltipWrapper>
+                </template>
                 <template #Instances>
                     <WorldDialogInstancesTab />
                 </template>

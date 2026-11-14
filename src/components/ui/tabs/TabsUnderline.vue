@@ -38,6 +38,7 @@
     const header = ref(null);
     const viewport = ref(null);
     const content = ref(null);
+    const headerEnd = ref(null);
     const hasOverflow = ref(false);
     const canScrollLeft = ref(false);
     const canScrollRight = ref(false);
@@ -98,9 +99,10 @@
                   (variant.value === 'pill' ? 0.25 : 0.5)
                 : 0;
         // Compare against the whole header, not the space left by the arrows.
+        const availableWidth = header.value.clientWidth - (headerEnd.value?.offsetWidth ?? 0);
         hasOverflow.value =
             header.value.clientWidth > 0 &&
-            content.value.scrollWidth + removedPadding > header.value.clientWidth + scrollTolerance;
+            content.value.scrollWidth + removedPadding > availableWidth + scrollTolerance;
         const { scrollLeft, scrollWidth, clientWidth } = viewport.value;
         canScrollLeft.value = scrollLeft > scrollTolerance;
         canScrollRight.value = scrollWidth - clientWidth - scrollLeft > scrollTolerance;
@@ -261,6 +263,9 @@
                 @click="scrollTabs(1)">
                 <ChevronRight aria-hidden="true" />
             </Button>
+            <div v-if="$slots['header-end']" ref="headerEnd" class="flex shrink-0 items-center gap-1 px-2">
+                <slot name="header-end" />
+            </div>
         </div>
 
         <TabsContent
