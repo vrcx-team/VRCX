@@ -187,7 +187,8 @@
             if (instanceId === currentInstanceId()) {
                 parse();
             }
-        }
+        },
+        { deep: true }
     );
 
     function currentInstanceId() {

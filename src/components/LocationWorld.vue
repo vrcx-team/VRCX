@@ -6,6 +6,7 @@
                 props.class
             )
         ">
+        <slot name="prefix" />
         <span v-if="region" :class="cn('flags inline-block shrink-0', region)"></span>
         <span
             @click="showLaunchDialog"
@@ -72,6 +73,7 @@
     const strict = ref(false);
     const groupName = ref('');
     const closedAt = ref('');
+    let groupNameId = '';
 
     function parse() {
         const locObj = props.locationobject;
@@ -105,15 +107,21 @@
         }
 
         if (props.grouphint) {
+            groupNameId = '';
             groupName.value = props.grouphint;
         } else if (locObj.groupId) {
+            if (groupNameId === locObj.groupId) {
+                return;
+            }
+            groupNameId = locObj.groupId;
             groupName.value = locObj.groupId;
             getGroupName(locObj.groupId).then((name) => {
-                if (name && props.locationobject.tag === locObj.tag) {
+                if (name && groupNameId === locObj.groupId) {
                     groupName.value = name;
                 }
             });
         } else {
+            groupNameId = '';
             groupName.value = '';
         }
     }
@@ -142,7 +150,7 @@
                 parse();
             }
         },
-        { immediate: true }
+        { immediate: true, deep: true }
     );
 
     function showLaunchDialog() {

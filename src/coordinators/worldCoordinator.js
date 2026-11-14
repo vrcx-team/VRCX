@@ -7,7 +7,6 @@ import {
     evictMapCache,
     getAvailablePlatforms,
     getBundleDateSize,
-    isRealInstance,
     parseLocation,
     sanitizeEntityJson
 } from '../shared/utils';
@@ -127,18 +126,6 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
             if (D.id === args.ref.id) {
                 D.ref = args.ref;
                 uiStore.setDialogCrumbLabel('world', D.id, D.ref?.name || D.id);
-                if (args.ref.slimInstances) {
-                    for (const instance of args.ref.slimInstances) {
-                        const { instanceId } = instance;
-                        const tag = `${D.id}:${instanceId}`;
-                        if (isRealInstance(tag)) {
-                            instanceRequest.getInstance({
-                                worldId: D.id,
-                                instanceId
-                            });
-                        }
-                    }
-                }
                 D.visible = true;
                 D.loading = false;
                 D.isFavorite = favoriteStore.getCachedFavoritesByObjectId(D.id);
@@ -208,14 +195,6 @@ export function applyWorld(json) {
         worldDialog.avatarScalingDisabled = ref.tags?.includes('feature_avatar_scaling_disabled');
         worldDialog.focusViewDisabled = ref.tags?.includes('feature_focus_view_disabled');
         instanceStore.applyWorldDialogInstances();
-        for (const room of worldDialog.rooms) {
-            if (isRealInstance(room.tag)) {
-                instanceRequest.getInstance({
-                    worldId: worldDialog.id,
-                    instanceId: room.id
-                });
-            }
-        }
         if (Object.keys(worldDialog.fileAnalysis).length === 0) {
             getBundleDateSize(ref);
         }

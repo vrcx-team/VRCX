@@ -8,7 +8,7 @@ import {
     hasGroupPermission,
     sanitizeEntityJson
 } from '../shared/utils';
-import { groupRequest, instanceRequest, queryRequest } from '../api';
+import { groupRequest, queryRequest } from '../api';
 import { database } from '../services/database';
 import { FILTER_EVERYONE } from '../shared/constants/';
 import { patchGroupFromEvent } from '../queries';
@@ -619,11 +619,6 @@ export function getGroupDialogGroup(groupId, existingRef) {
                                 .then((args1) => {
                                     json.world = args1.ref;
                                 });
-                            // get queue size etc
-                            instanceRequest.getInstance({
-                                worldId: json.worldId,
-                                instanceId: json.instanceId
-                            });
                         }
                     });
                 getGroupDialogCalendar(groupId);

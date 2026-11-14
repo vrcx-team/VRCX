@@ -139,7 +139,7 @@
                     props.class
                 )
             ">
-            <TooltipWrapper v-if="instanceInfoState.isValidInstance" side="top">
+            <TooltipWrapper v-if="instanceInfoState.isValidInstance" side="top" :disabled="!hasInstanceDetails">
                 <template #content>
                     <div class="flex flex-col flex-wrap gap-x-6 gap-y-2">
                         <div v-if="instanceDescription" class="flex flex-col gap-1">
@@ -209,7 +209,7 @@
                         </span>
                     </div>
                 </template>
-                <div :class="cn('flex items-center gap-0.5', !instance?.hasCapacityForYou ? 'text-red-500' : null)">
+                <div :class="cn('flex items-center gap-0.5', instance?.hasCapacityForYou === false ? 'text-red-500' : null)">
                     <UsersRound class="h-4 w-4" />
                     <span v-if="resolvedInstanceLocation === locationStore.lastLocation.location">
                         {{ locationStore.lastLocation.playerList.size }}/{{ instance?.capacity }}
@@ -362,7 +362,7 @@
         UserLock,
         UserPlus2
     } from 'lucide-vue-next';
-    import { computed, reactive, ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { useIntervalFn } from '@vueuse/core';
     import { Button } from '@/components/ui/button';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -519,8 +519,8 @@
     const hasInstanceMetadata = computed(() => {
         return !!(
             props.instance?.queueSize ||
-            instanceInfoState.isAgeGated ||
-            instanceInfoState.isRoleRestricted ||
+            instanceInfoState.value.isAgeGated ||
+            instanceInfoState.value.isRoleRestricted ||
             props.instance?.calendarEntryId ||
             props.instance?.hypeTrain?.current ||
             (props.instance.minimumAvatarPerformance && props.instance.minimumAvatarPerformance !== 'None')
@@ -533,15 +533,40 @@
         return `/images/performance_ranks/${rank}.png`;
     });
 
-    const instanceInfoState = reactive({
-        isValidInstance: false,
-        canCloseInstance: false,
-        canRenameInstance: false,
-        canSendAnnouncement: false,
-        canLinkCalendarEvent: false,
-        isAgeGated: false,
-        isRoleRestricted: false,
-        disabledContentSettings: ''
+    const instanceInfoState = computed(() => {
+        const state = {
+            isValidInstance: false,
+            canCloseInstance: false,
+            canRenameInstance: false,
+            canSendAnnouncement: false,
+            canLinkCalendarEvent: false,
+            isAgeGated: false,
+            isRoleRestricted: false,
+            disabledContentSettings: ''
+        };
+        const instance = props.instance;
+        const location = resolvedInstanceLocation.value;
+        if (!location || !instance || Object.keys(instance).length === 0) return state;
+
+        state.isValidInstance = true;
+        if (instance.ownerId === userStore.currentUser.id) {
+            state.canCloseInstance = true;
+            state.canRenameInstance = true;
+        } else if (instance.ownerId?.startsWith('grp_')) {
+            const group = groupStore.cachedGroups.get(instance.ownerId);
+            state.canCloseInstance = hasGroupPermission(group, 'group-instance-moderate');
+            state.canRenameInstance = hasGroupPermission(group, 'group-instance-manage');
+            state.canSendAnnouncement =
+                hasGroupPermission(group, 'group-instance-announcement-create') &&
+                location === locationStore.lastLocation.location;
+            state.canLinkCalendarEvent =
+                hasGroupPermission(group, 'group-instance-manage') &&
+                hasGroupPermission(group, 'group-instance-calendar-link');
+        }
+        state.isAgeGated = instance.ageGate === true || location.includes('~ageGate');
+        state.isRoleRestricted = instance.roleRestricted === true;
+        state.disabledContentSettings = instance.$disabledContentSettings?.join(', ') ?? '';
+        return state;
     });
 
     const instanceLanguages = computed(() => {
@@ -583,6 +608,22 @@
         const worldDescription = props.instance?.world?.description?.trim();
         if (!description || worldDescription?.startsWith(description)) return '';
         return description;
+    });
+
+    const hasInstanceDetails = computed(() => {
+        const instance = props.instance;
+        return Boolean(
+            instanceDescription.value ||
+            instance?.platforms?.standalonewindows ||
+            instance?.platforms?.android ||
+            instance?.platforms?.ios ||
+            instance?.categoryId ||
+            instance?.vibeIds?.length ||
+            instanceLanguages.value.length ||
+            instance?.gameServerVersion ||
+            instance?.queueEnabled ||
+            instanceInfoState.value.disabledContentSettings
+        );
     });
 
     const instanceCategory = computed(() => {
@@ -658,43 +699,6 @@
 
     const parseLastJoin = () => {
         lastJoin.value = instanceJoinHistory.value.get(resolvedLastJoinLocation.value);
-    };
-
-    const parseInstanceInfo = () => {
-        Object.assign(instanceInfoState, {
-            isValidInstance: false,
-            canCloseInstance: false,
-            canRenameInstance: false,
-            canSendAnnouncement: false,
-            canLinkCalendarEvent: false,
-            isAgeGated: false,
-            isRoleRestricted: false,
-            disabledContentSettings: ''
-        });
-
-        if (!resolvedInstanceLocation.value || !props.instance || Object.keys(props.instance).length === 0) return;
-
-        instanceInfoState.isValidInstance = true;
-        if (props.instance.ownerId === userStore.currentUser.id) {
-            instanceInfoState.canCloseInstance = true;
-            instanceInfoState.canRenameInstance = true;
-        } else if (props.instance.ownerId?.startsWith('grp_')) {
-            const group = groupStore.cachedGroups.get(props.instance.ownerId);
-            instanceInfoState.canCloseInstance = hasGroupPermission(group, 'group-instance-moderate');
-            instanceInfoState.canRenameInstance = hasGroupPermission(group, 'group-instance-manage');
-            instanceInfoState.canSendAnnouncement =
-                hasGroupPermission(group, 'group-instance-announcement-create') &&
-                resolvedInstanceLocation.value === locationStore.lastLocation.location;
-            instanceInfoState.canLinkCalendarEvent =
-                hasGroupPermission(group, 'group-instance-manage') &&
-                hasGroupPermission(group, 'group-instance-calendar-link');
-        }
-        instanceInfoState.isAgeGated = props.instance.ageGate === true;
-        if (resolvedInstanceLocation.value?.includes('~ageGate')) instanceInfoState.isAgeGated = true;
-        instanceInfoState.isRoleRestricted = props.instance.roleRestricted === true;
-        if (props.instance.$disabledContentSettings?.length) {
-            instanceInfoState.disabledContentSettings = props.instance.$disabledContentSettings.join(', ');
-        }
     };
 
     const refreshInstance = (location) => {
@@ -783,7 +787,4 @@
 
     watch(() => resolvedLastJoinLocation.value, parseLastJoin, { immediate: true });
     watch(() => props.currentlocation, parseLastJoin);
-    watch([resolvedInstanceLocation, () => props.instance, () => props.friendcount], parseInstanceInfo, {
-        immediate: true
-    });
 </script>

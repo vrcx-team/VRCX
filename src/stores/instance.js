@@ -1,4 +1,4 @@
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, triggerRef, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -483,14 +483,19 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
         ref.$location = parseLocation(ref.location);
         if (ref.world?.id) {
-            queryRequest
-                .fetch('world.location', {
-                    worldId: ref.world.id
-                })
-                .then((args) => {
-                    ref.world = args.ref;
-                    return args;
-                });
+            const cachedWorld = worldStore.cachedWorlds.get(ref.world.id);
+            if (cachedWorld) {
+                ref.world = cachedWorld;
+            } else {
+                queryRequest
+                    .fetch('world.location', {
+                        worldId: ref.world.id
+                    })
+                    .then((args) => {
+                        ref.world = args.ref;
+                        return args;
+                    });
+            }
         }
         if (ref?.world?.name) {
             ref.world.name = replaceBioSymbols(ref.world.name);
@@ -520,6 +525,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             }
         }
         lastInstanceApplied.value = ref.id;
+        triggerRef(lastInstanceApplied);
         return ref;
     }
 
@@ -649,20 +655,24 @@ export const useInstanceStore = defineStore('Instance', () => {
     }
 
     const DIALOG_INSTANCE_STALE_MS = 60_000;
+    const inflightDialogInstances = new Set();
 
     async function refreshStaleDialogInstance(tag, cachedRef) {
-        if (!isRealInstance(tag)) {
+        if (!isRealInstance(tag) || inflightDialogInstances.has(tag)) {
             return;
         }
         const fetchedAt = Date.parse(cachedRef?.$fetchedAt) || 0;
         if (Date.now() - fetchedAt < DIALOG_INSTANCE_STALE_MS) {
             return;
         }
+        inflightDialogInstances.add(tag);
         const L = parseLocation(tag);
         try {
             await instanceRequest.getInstance({ worldId: L.worldId, instanceId: L.instanceId });
         } catch {
             // ignored
+        } finally {
+            inflightDialogInstances.delete(tag);
         }
     }
 
