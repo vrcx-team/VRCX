@@ -16,6 +16,7 @@
                         </TooltipWrapper>
                     </template>
                     <template v-else>
+                        <InstanceCategory :location="currentInstanceId()" />
                         <div v-if="region" :class="cn('flags shrink-0', region)"></div>
                         <TooltipWrapper
                             :content="tooltipContent"
@@ -95,6 +96,7 @@
     import { showWorldDialog } from '../coordinators/worldCoordinator';
     import { runNewInstanceSelfInviteFlow } from '../coordinators/inviteCoordinator';
     import { Spinner } from './ui/spinner';
+    import InstanceCategory from './InstanceCategory.vue';
     import WorldActionMenuItems from './WorldActionMenuItems.vue';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
     import { cn } from '@/lib/utils';

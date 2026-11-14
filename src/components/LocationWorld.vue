@@ -6,7 +6,7 @@
                 props.class
             )
         ">
-        <slot name="prefix" />
+        <InstanceCategory :location="locationobject.tag" />
         <span v-if="region" :class="cn('flags inline-block shrink-0', region)"></span>
         <span
             @click="showLaunchDialog"
@@ -46,6 +46,8 @@
     import { formatDateFilter, getGroupName, parseLocation } from '../shared/utils';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
     import { cn } from '@/lib/utils';
+
+    import InstanceCategory from './InstanceCategory.vue';
 
     const { t } = useI18n();
     const { cachedInstances } = useInstanceStore();
