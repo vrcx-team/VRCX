@@ -32,6 +32,7 @@ import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
 import { useLocationStore } from './location';
 import { useNotificationStore } from './notification';
+import { useNotificationsSettingsStore } from './settings/notifications';
 import { usePhotonStore } from './photon';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
@@ -41,6 +42,26 @@ import { watchState } from '../services/watchState';
 
 import configRepository from '../services/config';
 
+/** Plays a short two-tone chime when a queued instance is ready. */
+function playQueueReadyChime() {
+    const ctx = new AudioContext();
+    const gain = ctx.createGain();
+    gain.connect(ctx.destination);
+    [880, 1320].forEach((frequency, i) => {
+        const start = ctx.currentTime + i * 0.15;
+        const osc = ctx.createOscillator();
+        osc.frequency.value = frequency;
+        osc.connect(gain);
+        gain.gain.setValueAtTime(0.3, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.15);
+        osc.start(start);
+        osc.stop(start + 0.15);
+        if (i === 1) {
+            osc.onended = () => ctx.close();
+        }
+    });
+}
+
 export const useInstanceStore = defineStore('Instance', () => {
     const locationStore = useLocationStore();
     const worldStore = useWorldStore();
@@ -48,6 +69,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const groupStore = useGroupStore();
     const notificationStore = useNotificationStore();
+    const notificationsSettingsStore = useNotificationsSettingsStore();
     const uiStore = useUiStore();
     const userStore = useUserStore();
     const sharedFeedStore = useSharedFeedStore();
@@ -1132,6 +1154,10 @@ export const useInstanceStore = defineStore('Instance', () => {
         notificationStore.queueNotificationNoty(noty);
         sharedFeedStore.addEntry(noty);
         notificationStore.notificationTable.data.push(noty);
+        if (notificationsSettingsStore.queueReadyAlarm) {
+            playQueueReadyChime();
+            AppApi.FlashWindow();
+        }
     }
 
     /**
