@@ -168,18 +168,6 @@
                             </span>
                         </div>
 
-                        <span v-if="instance?.categoryId" class="flex items-center gap-1">
-                            {{ t('dialog.user.info.instance_category') }}
-                            <i
-                                v-if="instanceCategory?.icon"
-                                :class="['leading-none translate-y-px', instanceCategory.icon]" />
-                            {{ instanceCategory?.name ?? instance.categoryId }}
-                        </span>
-
-                        <span v-if="instance?.vibeIds?.length">
-                            {{ t('dialog.user.info.instance_vibes') }} {{ instanceVibeTitles }}
-                        </span>
-
                         <div v-if="instanceLanguages.length" class="flex flex-col gap-1">
                             <span>{{ t('dialog.user.info.instance_languages') }}</span>
                             <span v-for="lang in instanceLanguages" :key="lang.key" class="flex items-center gap-1.5">
@@ -387,7 +375,6 @@
         parseLocation,
         replaceBioSymbols
     } from '../shared/utils';
-    import { instanceCategoryIcons } from '../shared/constants';
     import { useInviteChecks } from '../composables/useInviteChecks';
     import { instanceRequest, miscRequest, queryRequest } from '../api';
     import InstanceAnnouncementDialog from './dialogs/InstanceAnnouncementDialog.vue';
@@ -408,7 +395,7 @@
     const launchStore = useLaunchStore();
     const inviteStore = useInviteStore();
 
-    const { instanceJoinHistory, instanceCategories, instanceVibes } = storeToRefs(instanceStore);
+    const { instanceJoinHistory } = storeToRefs(instanceStore);
     const { canOpenInstanceInGame } = storeToRefs(inviteStore);
     const { isOpeningInstance } = storeToRefs(launchStore);
     const { checkCanInviteSelf } = useInviteChecks();
@@ -617,24 +604,11 @@
             instance?.platforms?.standalonewindows ||
             instance?.platforms?.android ||
             instance?.platforms?.ios ||
-            instance?.categoryId ||
-            instance?.vibeIds?.length ||
             instanceLanguages.value.length ||
             instance?.gameServerVersion ||
             instance?.queueEnabled ||
             instanceInfoState.value.disabledContentSettings
         );
-    });
-
-    const instanceCategory = computed(() => {
-        const category = instanceCategories.value.find((category) => category.id === props.instance?.categoryId);
-        if (!category) return null;
-        return { name: category.name, icon: instanceCategoryIcons[category.iconUrl] };
-    });
-
-    const instanceVibeTitles = computed(() => {
-        const vibeById = new Map(instanceVibes.value.map((vibe) => [vibe.id, vibe.title]));
-        return (props.instance?.vibeIds ?? []).map((id) => vibeById.get(id) ?? id).join(', ');
     });
 
     const currentHypeTrain = computed(() => props.instance?.hypeTrain?.current ?? null);
