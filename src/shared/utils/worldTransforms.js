@@ -5,26 +5,21 @@
  * @returns {import('@/types/vrcx').VrcxWorld}
  */
 export function createDefaultWorldRef(json) {
-    return /** @type {import('@/types/vrcx').VrcxWorld} */ ({
+    return {
         id: '',
         name: '',
         description: '',
         defaultContentSettings: {},
         disabledPropAbilities: [],
+        supportedPlatforms: [],
         authorId: '',
         authorName: '',
         capacity: 0,
         recommendedCapacity: 0,
         tags: [],
-        releaseStatus: '',
+        releaseStatus: 'private',
         imageUrl: '',
         thumbnailImageUrl: '',
-        assetUrl: '',
-        assetUrlObject: {},
-        pluginUrl: '',
-        pluginUrlObject: {},
-        unityPackageUrl: '',
-        unityPackageUrlObject: {},
         unityPackages: [],
         version: 0,
         favorites: 0,
@@ -52,5 +47,5 @@ export function createDefaultWorldRef(json) {
         $isLabs: false,
         //
         ...json
-    });
+    };
 }

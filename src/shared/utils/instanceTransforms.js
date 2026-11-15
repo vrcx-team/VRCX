@@ -1,3 +1,5 @@
+import { createDefaultWorldRef } from './worldTransforms';
+
 /**
  * Compute which content settings are disabled for an instance.
  *
@@ -26,13 +28,14 @@ export function computeDisabledContentSettings(contentSettings, settingsList) {
  * @returns {import('@/types/vrcx').VrcxInstance}
  */
 export function createDefaultInstanceRef(json) {
-    return /** @type {import('@/types/vrcx').VrcxInstance} */ ({
+    return {
         id: '',
         location: '',
         instanceId: '',
         name: '',
         worldId: '',
-        type: '',
+        type: 'public',
+        accessType: '',
         ownerId: '',
         tags: [],
         active: false,
@@ -44,18 +47,18 @@ export function createDefaultInstanceRef(json) {
         userCount: 0,
         queueEnabled: false, // only present with group instance type
         queueSize: 0, // only present when queuing is enabled
-        platforms: {},
+        platforms: { android: 0, standalonewindows: 0 },
         gameServerVersion: 0,
         hardClose: null, // boolean or null
         closedAt: null, // string or null
         secureName: '',
         shortName: '',
-        world: {},
+        world: createDefaultWorldRef({}),
         users: [], // only present when you're the owner
         clientNumber: '',
         contentSettings: {},
-        photonRegion: '',
-        region: '',
+        photonRegion: 'unknown',
+        region: 'unknown',
         canRequestInvite: false,
         permanent: false,
         private: '', // part of instance tag
@@ -83,10 +86,9 @@ export function createDefaultInstanceRef(json) {
         disabledPropAbilities: [],
         minimumAvatarPerformance: null,
         userIcons: [],
-        hypeTrain: null,
         // VRCX
         $fetchedAt: '',
         $disabledContentSettings: [],
         ...json
-    });
+    };
 }

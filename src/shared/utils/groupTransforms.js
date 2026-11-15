@@ -5,7 +5,7 @@
  * @returns {import('@/types/vrcx').VrcxGroup}
  */
 export function createDefaultGroupRef(json) {
-    return /** @type {import('@/types/vrcx').VrcxGroup} */ ({
+    return {
         id: '',
         name: '',
         shortCode: '',
@@ -18,15 +18,15 @@ export function createDefaultGroupRef(json) {
         iconId: '',
         iconUrl: '',
         isVerified: false,
-        joinState: '',
+        joinState: 'closed',
         languages: [],
         links: [],
         memberCount: 0,
         memberCountSyncedAt: '',
-        membershipStatus: '',
+        membershipStatus: 'inactive',
         onlineMemberCount: 0,
         ownerId: '',
-        privacy: '',
+        privacy: 'default',
         rules: null,
         tags: [],
         ageVerificationBetaCode: '',
@@ -51,14 +51,11 @@ export function createDefaultGroupRef(json) {
             isSubscribedToEventAnnouncements: false,
             joinedAt: '',
             managerNotes: '',
-            membershipStatus: '',
+            membershipStatus: 'inactive',
             permissions: [],
             roleIds: [],
             userId: '',
-            visibility: '',
-            _created_at: '',
-            _id: '',
-            _updated_at: ''
+            visibility: ''
         },
         updatedAt: '',
         // includeRoles: true
@@ -72,5 +69,5 @@ export function createDefaultGroupRef(json) {
         // VRCX
         $languages: [],
         ...json
-    });
+    };
 }

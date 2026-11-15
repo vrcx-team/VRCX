@@ -176,26 +176,19 @@ export function diffObjectProps(ref, json, arraysMatchFn) {
  * @returns {import('@/types/vrcx').VrcxUser} Default user object with json spread on top
  */
 export function createDefaultUserRef(json) {
-    return /** @type {import('@/types/vrcx').VrcxUser} */ ({
+    return {
         acceptedPrivacyVersion: 0,
         acceptedTOSVersion: 0,
         accountDeletionDate: null,
         accountDeletionLog: null,
-        ageVerificationStatus: '',
+        ageVerificationStatus: 'hidden',
         ageVerified: false,
         allowAvatarCopying: false,
         appleDetails: {},
-        badges: [],
         bannerColor: '',
-        bannerType: '',
         bannerUrl: '',
-        bio: '',
-        bioLinks: [],
-        currentAvatarImageUrl: '',
-        currentAvatarTags: [],
-        currentAvatarThumbnailImageUrl: '',
         date_joined: '',
-        developerType: '',
+        developerType: 'none',
         discordId: '',
         displayName: '',
         friendKey: '',
@@ -215,20 +208,15 @@ export function createDefaultUserRef(json) {
         platform: '',
         note: null,
         profileEffect: '',
-        profilePicOverride: '',
-        profilePicOverrideThumbnail: '',
         pronouns: '',
         state: '',
-        status: '',
+        status: 'offline',
         statusDescription: '',
         tags: [],
         travelingToInstance: '',
         travelingToLocation: '',
         travelingToWorld: '',
-        userIcon: '',
         worldId: '',
-        // only in bulk request
-        fallbackAvatar: '',
         // VRCX
         $location: {},
         $location_at: Date.now(),
@@ -257,8 +245,13 @@ export function createDefaultUserRef(json) {
         $customTagColour: '',
         $friendNumber: 0,
         $platform: '',
-        $moderations: {},
+        $moderations: {
+            isBlocked: false,
+            isMuted: false,
+            isAvatarInteractionDisabled: false,
+            isChatBoxMuted: false
+        },
         //
         ...json
-    });
+    };
 }

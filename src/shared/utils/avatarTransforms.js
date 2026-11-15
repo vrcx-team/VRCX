@@ -5,7 +5,7 @@
  * @returns {import('@/types/vrcx').Json<import('vrchat').Avatar>}
  */
 export function createDefaultAvatarRef(json) {
-    return /** @type {import('@/types/vrcx').Json<import('vrchat').Avatar>} */ ({
+    return {
         acknowledgements: '',
         activeAssetReviewId: '',
         assetUrl: '',
@@ -27,9 +27,9 @@ export function createDefaultAvatarRef(json) {
         performance: {},
         productId: null,
         publishedListings: [],
-        releaseStatus: '',
+        releaseStatus: 'private',
         searchable: false,
-        styles: [],
+        styles: {},
         tags: [],
         thumbnailImageUrl: '',
         unityPackageUrl: '',
@@ -38,5 +38,5 @@ export function createDefaultAvatarRef(json) {
         updated_at: '',
         version: 0,
         ...json
-    });
+    };
 }

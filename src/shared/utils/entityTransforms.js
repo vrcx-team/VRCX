@@ -23,17 +23,17 @@ export function sanitizeEntityJson(json, fields) {
  * @returns {import('@/types/vrcx').Json<import('vrchat').FavoriteGroup>}
  */
 export function createDefaultFavoriteGroupRef(json) {
-    return /** @type {import('@/types/vrcx').Json<import('vrchat').FavoriteGroup>} */ ({
+    return {
         id: '',
         ownerId: '',
         ownerDisplayName: '',
         name: '',
         displayName: '',
-        type: '',
-        visibility: '',
+        type: 'friend',
+        visibility: 'private',
         tags: [],
         ...json
-    });
+    };
 }
 
 /**
@@ -44,16 +44,17 @@ export function createDefaultFavoriteGroupRef(json) {
  * @returns {import('@/types/vrcx').VrcxFavorite}
  */
 export function createDefaultFavoriteCachedRef(json) {
-    const ref = /** @type {import('@/types/vrcx').VrcxFavorite} */ ({
+    /** @type {import('@/types/vrcx').VrcxFavorite} */
+    const ref = {
         id: '',
-        type: '',
+        type: 'friend',
         favoriteId: '',
         tags: [],
         // VRCX
         $groupKey: '',
         //
         ...json
-    });
+    };
     ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
     return ref;
 }

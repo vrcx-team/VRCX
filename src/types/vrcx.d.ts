@@ -29,7 +29,8 @@ export interface moderations {
     isChatBoxMuted: boolean;
 }
 
-export interface VrcxUser extends Json<User> {
+export interface VrcxUser extends Omit<Json<User>, 'state'> {
+    state: User['state'] | '';
     $location: {};
     $location_at: number;
     $online_for: number;
@@ -55,7 +56,7 @@ export interface VrcxUser extends Json<User> {
     $customTag: string;
     $customTagColour: string;
     $friendNumber: number;
-    $lastFetch: number;
+    $lastFetch?: number;
     $moderations: moderations;
     $memo: string;
     $platform: string;
