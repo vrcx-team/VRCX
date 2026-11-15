@@ -23,7 +23,7 @@ import {
     User
 } from 'lucide-vue-next';
 import { formatDateFilter, getAvailablePlatforms, getPlatformInfo, timeToText } from '../../shared/utils';
-import { i18n } from '../../plugins';
+import { i18n } from '../../plugins/i18n';
 
 const { t } = i18n.global;
 

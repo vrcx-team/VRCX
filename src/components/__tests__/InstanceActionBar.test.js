@@ -122,7 +122,16 @@ vi.mock('lucide-vue-next', () => ({
     Mail: { template: '<i data-testid="icon-mail" />' },
     MapPin: { template: '<i data-testid="icon-map" />' },
     RefreshCw: { template: '<i data-testid="icon-refresh" />' },
-    UsersRound: { template: '<i data-testid="icon-users" />' }
+    UsersRound: { template: '<i data-testid="icon-users" />' },
+    Megaphone: { template: '<i />' },
+    Pencil: { template: '<i />' },
+    PowerIcon: { template: '<i />' },
+    SquareStack: { template: '<i />' },
+    Star: { template: '<i />' },
+    IdCard: { template: '<i />' },
+    TrainFront: { template: '<i />' },
+    UserLock: { template: '<i />' },
+    UserPlus2: { template: '<i />' }
 }));
 
 import InstanceActionBar from '../InstanceActionBar.vue';
@@ -203,6 +212,7 @@ describe('InstanceActionBar.vue', () => {
     });
 
     it('renders launch and invite buttons when invite-self is allowed', () => {
+        mocks.currentUser.id = 'usr_other';
         const wrapper = mountBar({
             showRefresh: false,
             showHistory: false,
@@ -270,6 +280,7 @@ describe('InstanceActionBar.vue', () => {
     it('refresh/history callbacks run when buttons clicked', async () => {
         const onRefresh = vi.fn();
         const onHistory = vi.fn();
+        mocks.currentUser.id = 'usr_other';
         const wrapper = mountBar({
             onRefresh,
             onHistory,
@@ -289,6 +300,7 @@ describe('InstanceActionBar.vue', () => {
 
     it('hides launch and invite buttons when invite-self is not allowed', () => {
         mocks.checkCanInviteSelf.mockReturnValue(false);
+        mocks.currentUser.id = 'usr_other';
         const wrapper = mountBar({
             showRefresh: false,
             showHistory: false,

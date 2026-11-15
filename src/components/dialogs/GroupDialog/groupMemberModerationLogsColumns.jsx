@@ -1,5 +1,5 @@
 import Location from '@/components/Location.vue';
-import { i18n } from '@/plugins';
+import { i18n } from '@/plugins/i18n';
 import { formatDateFilter } from '@/shared/utils';
 import { ArrowUpDown } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';

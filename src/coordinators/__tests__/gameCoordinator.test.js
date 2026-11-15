@@ -25,7 +25,8 @@ const mocks = vi.hoisted(() => ({
         setNextDiscordUpdate: vi.fn()
     },
     gameLogStore: {
-        clearNowPlaying: vi.fn()
+        clearNowPlaying: vi.fn(),
+        resetNowPlayingProducers: vi.fn()
     },
     vrStore: {
         updateVRLastLocation: vi.fn(),

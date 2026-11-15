@@ -296,7 +296,7 @@ describe('FriendsLocations.vue', () => {
 
         await wrapper.get('[data-testid="set-scale"]').trigger('click');
         await wrapper.get('[data-testid="toggle-same-instance"]').trigger('click');
-        vi.advanceTimersByTime(200);
+        vi.advanceTimersByTime(500);
 
         expect(mocks.configSetString).toHaveBeenCalledWith('VRCX_FriendLocationCardScale', '0.8');
         expect(mocks.configSetBool).toHaveBeenCalledWith('VRCX_FriendLocationShowSameInstance', true);

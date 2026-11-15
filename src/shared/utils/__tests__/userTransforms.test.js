@@ -7,16 +7,14 @@ import {
 } from '../userTransforms';
 
 describe('sanitizeUserJson', () => {
-    it('applies replaceBioSymbols to statusDescription, bio, note', () => {
+    it('applies replaceBioSymbols to statusDescription and note', () => {
         const json = {
             statusDescription: 'hello？ world',
-            bio: 'test＃ bio',
             note: 'test＠ note'
         };
         sanitizeUserJson(json, '');
         // replaceBioSymbols replaces Unicode look-alikes with ASCII
         expect(json.statusDescription).toContain('?');
-        expect(json.bio).toContain('#');
         expect(json.note).toContain('@');
     });
 
@@ -207,6 +205,6 @@ describe('createDefaultUserRef', () => {
         });
         expect(ref.id).toBe('usr_123');
         expect(ref.displayName).toBe('Test');
-        expect(ref.bio).toBe('');
+        expect(ref.state).toBe('');
     });
 });

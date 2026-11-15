@@ -16,9 +16,7 @@ const mocks = vi.hoisted(() => ({
     }
 }));
 
-Object.assign(globalThis, {
-    navigator: { clipboard: { writeText: (...a) => mocks.writeText(...a) } }
-});
+vi.stubGlobal('navigator', { clipboard: { writeText: (...a) => mocks.writeText(...a) } });
 
 vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
 vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));

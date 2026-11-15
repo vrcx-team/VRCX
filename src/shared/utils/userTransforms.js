@@ -2,7 +2,7 @@ import { removeEmojis, replaceBioSymbols } from './base/string';
 
 /**
  * Sanitize user JSON fields before applying to cache.
- * Applies replaceBioSymbols to statusDescription, bio, note;
+ * Applies replaceBioSymbols to statusDescription, note;
  * removeEmojis to statusDescription;
  * strips robot avatar URL.
  *

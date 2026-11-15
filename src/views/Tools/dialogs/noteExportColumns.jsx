@@ -2,7 +2,7 @@ import { Trash2 } from 'lucide-vue-next';
 
 import { Button } from '@/components/ui/button';
 import { InputGroupTextareaField } from '@/components/ui/input-group';
-import { i18n } from '@/plugins';
+import { i18n } from '@/plugins/i18n';
 
 const { t } = i18n.global;
 

@@ -2,7 +2,7 @@
     <div class="flex h-full flex-col overflow-hidden">
         <div ref="scrollViewportRef" class="flex-1 overflow-y-auto">
             <div v-if="allRows.length" class="relative w-full px-1.5 py-2" :style="virtualContainerStyle">
-                <template v-for="item in virtualItems" :key="item.virtualItem.key">
+                <template v-for="item in virtualItems" :key="String(item.virtualItem.key)">
                     <div
                         class="absolute left-0 top-0 w-full px-0.5 box-border"
                         :data-index="item.virtualItem.index"

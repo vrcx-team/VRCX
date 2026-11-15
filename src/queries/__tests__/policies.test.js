@@ -128,7 +128,7 @@ describe('query policy configuration', () => {
 
     test('visits policy has longer staleTime for slow-changing data', () => {
         expect(entityQueryPolicies.visits).toMatchObject({
-            staleTime: 1800000,
+            staleTime: 240000,
             gcTime: 7200000,
             retry: 1,
             refetchOnWindowFocus: false

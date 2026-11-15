@@ -13,7 +13,7 @@ import { ArrowUpDown, Copy, ExternalLink, FileText, Trash2, X } from 'lucide-vue
 import { storeToRefs } from 'pinia';
 
 import { copyToClipboard, formatDateFilter, openExternalLink } from '../../shared/utils';
-import { i18n } from '../../plugins';
+import { i18n } from '../../plugins/i18n';
 import { useInstanceStore, useUiStore } from '../../stores';
 import { lookupUser } from '../../coordinators/userCoordinator';
 import { showWorldDialog } from '../../coordinators/worldCoordinator';

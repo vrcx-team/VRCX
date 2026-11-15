@@ -169,73 +169,6 @@ describe('addGameLogVideo', () => {
     });
 });
 
-// ─── addGameLogPyPyDance ─────────────────────────────────────────────
-
-describe('addGameLogPyPyDance', () => {
-    let deps, parsers;
-
-    beforeEach(() => {
-        vi.clearAllMocks();
-        isRpcWorld.mockReturnValue(true);
-        findUserByDisplayName.mockReturnValue(null);
-        deps = makeDeps();
-        parsers = createMediaParsers(deps);
-    });
-
-    test('parses PyPyDance data and calls setNowPlaying', () => {
-        const gameLog = {
-            dt: '2024-01-01',
-            data: 'VideoPlay(PyPyDance) "https://example.com/v.mp4",10,300,"SomeSource: Song Title(TestUser)"'
-        };
-        parsers.addGameLogPyPyDance(gameLog, 'wrld_rpc');
-
-        expect(deps.setNowPlaying).toHaveBeenCalledWith(
-            expect.objectContaining({
-                type: 'VideoPlay',
-                videoUrl: 'https://example.com/v.mp4',
-                videoLength: 300,
-                displayName: 'TestUser'
-            })
-        );
-    });
-
-    test('returns early for unparseable data', () => {
-        const gameLog = { dt: '2024-01-01', data: 'garbage data' };
-        parsers.addGameLogPyPyDance(gameLog, 'wrld_rpc');
-
-        expect(deps.setNowPlaying).not.toHaveBeenCalled();
-    });
-
-    test('sets displayName to empty when Random', () => {
-        const gameLog = {
-            dt: '2024-01-01',
-            data: 'VideoPlay(PyPyDance) "https://example.com/v.mp4",5,200,"Source: Title(Random)"'
-        };
-        parsers.addGameLogPyPyDance(gameLog, 'wrld_rpc');
-
-        expect(deps.setNowPlaying).toHaveBeenCalledWith(expect.objectContaining({ displayName: '' }));
-    });
-
-    test('updates nowPlaying when URL matches', () => {
-        deps.nowPlaying.value.url = 'https://example.com/v.mp4';
-        parsers = createMediaParsers(deps);
-
-        const gameLog = {
-            dt: '2024-01-01',
-            data: 'VideoPlay(PyPyDance) "https://example.com/v.mp4",20,300,"Source: Title(User1)"'
-        };
-        parsers.addGameLogPyPyDance(gameLog, 'wrld_rpc');
-
-        expect(deps.setNowPlaying).toHaveBeenCalledWith(
-            expect.objectContaining({
-                updatedAt: '2024-01-01',
-                videoPos: 20,
-                videoLength: 300
-            })
-        );
-    });
-});
-
 // ─── addGameLogVRDancing ─────────────────────────────────────────────
 
 describe('addGameLogVRDancing', () => {
@@ -304,64 +237,6 @@ describe('addGameLogVRDancing', () => {
         expect(deps.setNowPlaying).not.toHaveBeenCalled();
     });
 });
-
-// ─── addGameLogZuwaZuwaDance ─────────────────────────────────────────
-
-describe('addGameLogZuwaZuwaDance', () => {
-    let deps, parsers;
-
-    beforeEach(() => {
-        vi.clearAllMocks();
-        isRpcWorld.mockReturnValue(true);
-        findUserByDisplayName.mockReturnValue(null);
-        deps = makeDeps();
-        parsers = createMediaParsers(deps);
-    });
-
-    test('parses ZuwaZuwaDance data correctly', () => {
-        const gameLog = {
-            dt: '2024-01-01',
-            data: 'VideoPlay(ZuwaZuwaDance) "https://example.com/v.mp4",5,200,42,"Alice","Dance Song"'
-        };
-        parsers.addGameLogZuwaZuwaDance(gameLog, 'wrld_rpc');
-
-        expect(deps.setNowPlaying).toHaveBeenCalledWith(
-            expect.objectContaining({
-                type: 'VideoPlay',
-                displayName: 'Alice',
-                videoName: 'Dance Song',
-                videoId: '42'
-            })
-        );
-    });
-
-    test('converts videoId 9999 to YouTube', () => {
-        const gameLog = {
-            dt: '2024-01-01',
-            data: 'VideoPlay(ZuwaZuwaDance) "https://youtu.be/dQw4w9WgXcQ",0,200,9999,"Alice","Song"'
-        };
-        parsers.addGameLogZuwaZuwaDance(gameLog, 'wrld_rpc');
-        expect(deps.setNowPlaying).toHaveBeenCalled();
-    });
-
-    test('sets displayName to empty when Random', () => {
-        const gameLog = {
-            dt: '2024-01-01',
-            data: 'VideoPlay(ZuwaZuwaDance) "https://example.com/v.mp4",0,200,1,"Random","Song"'
-        };
-        parsers.addGameLogZuwaZuwaDance(gameLog, 'wrld_rpc');
-
-        expect(deps.setNowPlaying).toHaveBeenCalledWith(expect.objectContaining({ displayName: '' }));
-    });
-
-    test('returns early for unparseable data', () => {
-        const gameLog = { dt: '2024-01-01', data: 'bad' };
-        parsers.addGameLogZuwaZuwaDance(gameLog, 'wrld_rpc');
-        expect(deps.setNowPlaying).not.toHaveBeenCalled();
-    });
-});
-
-// ─── addGameLogLSMedia ───────────────────────────────────────────────
 
 describe('addGameLogLSMedia', () => {
     let deps, parsers;

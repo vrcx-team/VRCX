@@ -1,5 +1,5 @@
 import CountdownTimer from '@/components/CountdownTimer.vue';
-import { i18n } from '@/plugins';
+import { i18n } from '@/plugins/i18n';
 
 const { t } = i18n.global;
 

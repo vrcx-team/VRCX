@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar'
 import { Button } from '../../components/ui/button';
 import { Checkbox } from '../../components/ui/checkbox';
 import { TooltipWrapper } from '../../components/ui/tooltip';
-import { i18n } from '../../plugins';
+import { i18n } from '../../plugins/i18n';
 import {
     formatDateFilter,
     getFaviconUrl,

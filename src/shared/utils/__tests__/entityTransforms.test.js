@@ -25,8 +25,8 @@ describe('createDefaultFavoriteGroupRef', () => {
         expect(ref.id).toBe('');
         expect(ref.name).toBe('');
         expect(ref.displayName).toBe('');
-        expect(ref.type).toBe('');
-        expect(ref.visibility).toBe('');
+        expect(ref.type).toBe('friend');
+        expect(ref.visibility).toBe('private');
         expect(ref.tags).toEqual([]);
     });
 
@@ -48,10 +48,10 @@ describe('createDefaultFavoriteCachedRef', () => {
     it('creates object with defaults and computes $groupKey', () => {
         const ref = createDefaultFavoriteCachedRef({});
         expect(ref.id).toBe('');
-        expect(ref.type).toBe('');
+        expect(ref.type).toBe('friend');
         expect(ref.favoriteId).toBe('');
         expect(ref.tags).toEqual([]);
-        expect(ref.$groupKey).toBe(':undefined');
+        expect(ref.$groupKey).toBe('friend:undefined');
     });
 
     it('computes $groupKey from type and first tag', () => {

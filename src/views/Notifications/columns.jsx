@@ -8,7 +8,7 @@ import { storeToRefs } from 'pinia';
 
 import { formatDateFilter } from '../../shared/utils';
 import { checkCanInvite } from '../../shared/utils/invite';
-import { i18n } from '../../plugins';
+import { i18n } from '../../plugins/i18n';
 import {
     useGameStore,
     useInstanceStore,

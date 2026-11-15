@@ -48,7 +48,8 @@ vi.mock('../../shared/constants', () => ({
         friends: 'dialog.world.instance.friends',
         groupPublic: 'dialog.world.instance.group_public',
         group: 'dialog.world.instance.group'
-    }
+    },
+    regionLocaleKeyMap: {}
 }));
 
 vi.mock('../../shared/utils', () => ({

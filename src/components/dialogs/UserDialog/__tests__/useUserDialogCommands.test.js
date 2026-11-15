@@ -47,7 +47,7 @@ vi.mock('../../../../composables/useRecentActions', () => ({
 }));
 
 // Import mocks after vi.mock
-const { favoriteRequest, friendRequest, playerModerationRequest, miscRequest } = await import('../../../../api');
+const { favoriteRequest, friendRequest, playerModerationRequest } = await import('../../../../api');
 const { database } = await import('../../../../services/database');
 
 function createMockUserDialog() {
@@ -95,6 +95,7 @@ function createMockDeps(overrides = {}) {
         showAvatarAuthorDialog: vi.fn(),
         showModerateGroupDialog: vi.fn(),
         showSendBoopDialog: vi.fn(),
+        showModerationReportDialog: vi.fn(),
         showGalleryPage: vi.fn(),
         getFriendRequest: vi.fn(() => ''),
         handleFriendDelete: vi.fn(),
@@ -293,16 +294,13 @@ describe('useUserDialogCommands', () => {
             });
         });
 
-        it('Report Hacking: should confirm then report', async () => {
+        it('Report User: should open moderation report dialog', () => {
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
-            userDialogCommand('Report Hacking');
-            await vi.waitFor(() => {
-                expect(miscRequest.reportUser).toHaveBeenCalledWith({
-                    userId: 'usr_test123',
-                    contentType: 'user',
-                    reason: 'behavior-hacking',
-                    type: 'report'
-                });
+            userDialogCommand('Report User');
+            expect(deps.showModerationReportDialog).toHaveBeenCalledWith({
+                type: 'user',
+                contentId: 'usr_test123',
+                contentName: 'TestUser'
             });
         });
 

@@ -86,6 +86,7 @@ describe('createDefaultNotificationRef', () => {
             id: '',
             senderUserId: '',
             senderUsername: '',
+            receiverUserId: '',
             type: '',
             message: '',
             details: {},

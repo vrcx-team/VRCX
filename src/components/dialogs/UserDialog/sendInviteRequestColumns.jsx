@@ -1,6 +1,6 @@
 import CountdownTimer from '@/components/CountdownTimer.vue';
 import { Button } from '@/components/ui/button';
-import { i18n } from '@/plugins';
+import { i18n } from '@/plugins/i18n';
 import { SquarePen } from 'lucide-vue-next';
 
 const { t } = i18n.global;
