@@ -17,13 +17,18 @@
                     v-if="!hideNicknames && friend.$nickName"
                     class="block truncate font-medium leading-[18px]"
                     :style="{ color: friend.ref.$userColour }">
-                    {{ friend.ref.displayName }} ({{ friend.$nickName }})
+                    <Clock v-if="hasRecentInviteAction" class="mr-1 inline size-3.5 text-muted-foreground" />{{
+                        friend.ref.displayName
+                    }}
+                    ({{ friend.$nickName }})
                 </span>
                 <span
                     v-else
                     class="block truncate font-medium leading-[18px]"
                     :style="{ color: friend.ref.$userColour }"
-                    >{{ friend.ref.displayName }}{{ isGroupByInstance && isFavorite ? ' ⭐' : '' }}</span
+                    ><Clock v-if="hasRecentInviteAction" class="mr-1 inline size-3.5 text-muted-foreground" />{{
+                        friend.ref.displayName
+                    }}{{ isGroupByInstance && isFavorite ? ' ⭐' : '' }}</span
                 >
 
                 <span v-if="isFriendActiveOrOffline" class="block truncate text-xs">{{
@@ -69,7 +74,7 @@
 
 <script setup>
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-    import { Trash2, User } from 'lucide-vue-next';
+    import { Clock, Trash2, User } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Spinner } from '@/components/ui/spinner';
     import { computed } from 'vue';
@@ -82,6 +87,7 @@
 
     import { useAppearanceSettingsStore, useFriendStore } from '../../../stores';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
+    import { isActionRecent } from '../../../composables/useRecentActions';
 
     import '@/styles/status-icon.css';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
@@ -101,6 +107,15 @@
 
     const isFriendTraveling = computed(() => props.friend.ref?.location === 'traveling');
     const isFriendActiveOrOffline = computed(() => props.friend.state === 'active' || props.friend.state === 'offline');
+    const hasRecentInviteAction = computed(
+        () =>
+            isActionRecent(props.friend.id, 'Invite') ||
+            isActionRecent(props.friend.id, 'Invite Photo') ||
+            isActionRecent(props.friend.id, 'Invite Message') ||
+            isActionRecent(props.friend.id, 'Request Invite') ||
+            isActionRecent(props.friend.id, 'Request Invite Photo') ||
+            isActionRecent(props.friend.id, 'Request Invite Message')
+    );
 
     const friendStatusClass = computed(() => {
         return userStatusClass(props.friend.ref, props.friend.pendingOffline);
