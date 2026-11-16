@@ -142,7 +142,7 @@ describe('getLastLaunchArguments', () => {
         vi.restoreAllMocks();
     });
 
-    test('returns the launch arguments read from the log', async () => {
+    test('returns the launch arguments of the VRChat process', async () => {
         globalThis.AppApi = {
             GetVRChatLaunchArguments: vi.fn().mockResolvedValue('--profile=2 --no-vr --enable-debug-gui')
         };

@@ -80,6 +80,84 @@ namespace VRCX
             return exited;
         }
 
+        [DllImport("ntdll.dll")]
+        private static extern int NtQueryInformationProcess(IntPtr processHandle, int processInformationClass, IntPtr processInformation, int processInformationLength, out int returnLength);
+
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern IntPtr CommandLineToArgvW(string lpCmdLine, out int pNumArgs);
+
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr LocalFree(IntPtr hMem);
+
+        private const int ProcessCommandLineInformation = 60;
+
+        /// <summary>
+        /// Reads the arguments a running process was started with, straight from Windows.
+        /// Uses NtQueryInformationProcess(ProcessCommandLineInformation), which only needs PROCESS_QUERY_LIMITED_INFORMATION,
+        /// so it works on anti-cheat protected processes where WMI (Win32_Process.CommandLine) returns nothing.
+        /// </summary>
+        /// <param name="processId">The process to read.</param>
+        /// <returns>The arguments including the executable as the first item, or null if they could not be read.</returns>
+        internal static string[] GetProcessArguments(int processId)
+        {
+            var hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, processId);
+            if (hProcess == IntPtr.Zero)
+                return null;
+
+            var buffer = IntPtr.Zero;
+            try
+            {
+                // first call reports the size needed
+                NtQueryInformationProcess(hProcess, ProcessCommandLineInformation, IntPtr.Zero, 0, out var length);
+                if (length <= 0)
+                    return null;
+
+                buffer = Marshal.AllocHGlobal(length);
+                if (NtQueryInformationProcess(hProcess, ProcessCommandLineInformation, buffer, length, out _) != 0)
+                    return null;
+
+                // UNICODE_STRING: ushort Length (bytes), ushort MaximumLength, PWSTR Buffer
+                var chars = (ushort)Marshal.ReadInt16(buffer) / 2;
+                var text = Marshal.ReadIntPtr(buffer, IntPtr.Size);
+                if (chars == 0 || text == IntPtr.Zero)
+                    return null;
+
+                return SplitCommandLine(Marshal.PtrToStringUni(text, chars));
+            }
+            finally
+            {
+                if (buffer != IntPtr.Zero)
+                    Marshal.FreeHGlobal(buffer);
+                CloseHandle(hProcess);
+            }
+        }
+
+        /// <summary>
+        /// Splits a command line into arguments with CommandLineToArgvW, the same rules Windows programs use.
+        /// </summary>
+        private static string[] SplitCommandLine(string commandLine)
+        {
+            if (string.IsNullOrWhiteSpace(commandLine))
+                return null;
+
+            var argv = CommandLineToArgvW(commandLine, out var count);
+            if (argv == IntPtr.Zero)
+                return null;
+
+            try
+            {
+                var arguments = new string[count];
+                for (var i = 0; i < count; i++)
+                    arguments[i] = Marshal.PtrToStringUni(Marshal.ReadIntPtr(argv, i * IntPtr.Size));
+
+                return arguments;
+            }
+            finally
+            {
+                LocalFree(argv);
+            }
+        }
+
         internal static string GetCpuName()
         {
             return Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0\")?.GetValue("ProcessorNameString").ToString() ?? null;

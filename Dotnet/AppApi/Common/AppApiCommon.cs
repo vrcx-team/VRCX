@@ -151,7 +151,7 @@ namespace VRCX
 
         public string GetVRChatLaunchArguments()
         {
-            return LogWatcher.Instance.VrcLaunchArguments;
+            return VrcLaunchArguments.Value;
         }
 
         public Dictionary<string, int> GetColourBulk(List<object> userIds)

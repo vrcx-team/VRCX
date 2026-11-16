@@ -220,7 +220,7 @@ async function runRestartCrashedGameFlow(location) {
 }
 
 /**
- * Reads the arguments of the crashed VRChat launch from its log, so the relaunch uses the same ones.
+ * Gets the arguments the crashed VRChat process was started with, so the relaunch uses the same ones.
  * The executable path, launch URL and startup timestamp are already left out.
  *
  * @returns {Promise<string>} The launch arguments, or an empty string.

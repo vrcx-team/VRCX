@@ -16,6 +16,15 @@ namespace VRCX
             if (!monitoredProcess.HasName("VRChat") && !monitoredProcess.HasName("vrserver"))
                 return;
 
+            // remember what this VRChat was started with, for a crash relaunch
+            if (monitoredProcess.HasName("VRChat"))
+            {
+                if (monitoredProcess.IsRunning && monitoredProcess.Process != null)
+                    VrcLaunchArguments.Capture(monitoredProcess.Process.Id);
+                else
+                    VrcLaunchArguments.MarkExited();
+            }
+
             CheckGameRunning();
         }
 
