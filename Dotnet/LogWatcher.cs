@@ -1168,8 +1168,10 @@ namespace VRCX
         private bool ParseDesktopMode(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2023.04.22 16:54:18 Log        -  VR Disabled
+            // 2026.11.10 20:17:43 Error      -  Initializing XR Failed. Check Editor or Player log for details.
 
-            if (string.Compare(line, offset, "VR Disabled", 0, 11, StringComparison.Ordinal) != 0)
+            if (string.Compare(line, offset, "VR Disabled", 0, 11, StringComparison.Ordinal) != 0 &&
+                string.Compare(line, offset, "Initializing XR Failed.", 0, 23, StringComparison.Ordinal) != 0)
                 return false;
 
             AppendLog(new[]
