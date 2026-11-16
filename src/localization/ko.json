@@ -106,7 +106,6 @@
             "avatars": {
                 "search": "검색",
                 "vrchat_favorites": "VRChat 즐겨찾기",
-                "local_favorites": "Local Favorites (Requires VRC+)",
                 "new_group": "새 그룹",
                 "check_invalid": "이 그룹의 유효하지 않은 모델 확인",
                 "check_description": "이 그룹에서 유효하지 않은 모델을 감지하고 삭제",
@@ -509,7 +508,6 @@
                 "edit_language": "언어 설정",
                 "edit_bio": "자기소개 설정",
                 "edit_pronouns": "Pronouns",
-                "report_hacking": "불법 프로그램 신고",
                 "unfriend": "친구 끊기",
                 "logout": "로그아웃"
             },

@@ -107,7 +107,6 @@
             "avatars": {
                 "search": "Vyhledávání",
                 "vrchat_favorites": "VRChat Oblíbené",
-                "local_favorites": "Lokální Oblíbené (Potřeba VRC+)",
                 "new_group": "Nová skupina",
                 "cancel_refresh": "Zrušit obnovení"
             },
@@ -552,7 +551,6 @@
                 "edit_language": "Language",
                 "edit_bio": "Bio",
                 "edit_pronouns": "Pronouns",
-                "report_hacking": "Report For Hacking",
                 "unfriend": "Unfriend",
                 "logout": "Logout"
             },

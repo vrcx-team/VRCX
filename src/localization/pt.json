@@ -333,7 +333,6 @@
             "avatars": {
                 "search": "Pesquisar",
                 "vrchat_favorites": "Favoritos do VRChat",
-                "local_favorites": "Favoritos Locais (Requer VRC+)",
                 "new_group": "Novo Grupo",
                 "cancel_refresh": "Cancelar Atualização",
                 "check_invalid": "Verificar avatares excluídos/privados",
@@ -1296,7 +1295,6 @@
                 "edit_language": "Idioma",
                 "edit_bio": "Bio",
                 "edit_pronouns": "Pronomes",
-                "report_hacking": "Denunciar por Hacking",
                 "unfriend": "Desfazer Amizade",
                 "unfriend_success_msg": "Amizade desfeita",
                 "logout": "Sair",
@@ -1990,8 +1988,7 @@
             "drone_skin": "Skin de Drone",
             "emoji": "Emoji",
             "redeem": "Resgatar",
-            "create_animated_emoji": "Gerador de Emoji Animado",
-            "crop_image": "Confirmar Envio"
+            "create_animated_emoji": "Gerador de Emoji Animado"
         },
         "image_crop": {
             "rotate_left": "Girar para a Esquerda",

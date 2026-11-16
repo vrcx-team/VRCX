@@ -131,7 +131,6 @@
             "avatars": {
                 "search": "Поиск",
                 "vrchat_favorites": "Избранное VRChat",
-                "local_favorites": "Локальное избранное (требуется VRC+)",
                 "new_group": "Новая группа",
                 "cancel_refresh": "Отмена обновления"
             },
@@ -579,7 +578,6 @@
                 "edit_language": "Язык",
                 "edit_bio": "Био",
                 "edit_pronouns": "Местоимение",
-                "report_hacking": "Сообщить о взломе",
                 "unfriend": "Удалить из друзей",
                 "logout": "Выйти"
             },

@@ -370,7 +370,6 @@
             "avatars": {
                 "search": "検索",
                 "vrchat_favorites": "VRChat のお気に入り",
-                "local_favorites": "ローカルのお気に入り (VRC+が必要)",
                 "new_group": "グループ作成",
                 "cancel_refresh": "キャッシュ削除",
                 "check_invalid": "このグループの無効なアバターをチェック",
@@ -1363,7 +1362,6 @@
                 "edit_language": "言語を変更",
                 "edit_bio": "自己紹介を変更",
                 "edit_pronouns": "代名詞",
-                "report_hacking": "ハッキングを通報",
                 "unfriend": "フレンドを解除",
                 "unfriend_success_msg": "フレンドを解除しました。",
                 "logout": "ログアウト",
@@ -2109,8 +2107,7 @@
             "drone_skin": "ドローンスキン",
             "emoji": "絵文字",
             "redeem": "引き換え",
-            "create_animated_emoji": "アニメーション絵文字を作成",
-            "crop_image": "トリミングしてアップロード"
+            "create_animated_emoji": "アニメーション絵文字を作成"
         },
         "image_crop": {
             "rotate_left": "左に回転",
