@@ -18,6 +18,7 @@ vi.mock('../../../stores', () => ({
         setSessionsViewMode: (...a) => mocks.setSessionsViewMode(...a),
         gameLogTable: mocks.table,
         gameLogTableData: ref([]),
+        visibleGameLogTableData: ref([]),
         sessionsViewMode: mocks.sessionsViewMode
     }),
     useAppearanceSettingsStore: () => ({
@@ -66,6 +67,9 @@ vi.mock('lucide-vue-next', () => ({
     Table2: { template: '<i />' }
 }));
 vi.mock('../components/GameLogSessions.vue', () => ({
+    default: { template: '<div />' }
+}));
+vi.mock('../components/ResourceLoadFilter.vue', () => ({
     default: { template: '<div />' }
 }));
 vi.mock('../../../services/database', () => ({
