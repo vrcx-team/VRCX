@@ -93,6 +93,36 @@ function changeLogRemoveLinks(text) {
     return text.replace(/([^!])\[[^\]]+\]\([^)]+\)/g, '$1');
 }
 
+const bioSymbols = {
+    '@': '＠',
+    '#': '＃',
+    $: '＄',
+    '%': '％',
+    '&': '＆',
+    '=': '＝',
+    '+': '＋',
+    '/': '⁄',
+    '\\': '＼',
+    ';': ';',
+    ':': '˸',
+    ',': '‚',
+    '?': '？',
+    '!': 'ǃ',
+    '"': '＂',
+    '<': '≺',
+    '>': '≻',
+    '.': '․',
+    '^': '＾',
+    '{': '｛',
+    '}': '｝',
+    '[': '［',
+    ']': '］',
+    '(': '（',
+    ')': '）',
+    '|': '｜',
+    '*': '∗'
+};
+
 /**
  * @param {string} text
  * @returns {string}
@@ -101,41 +131,11 @@ function replaceBioSymbols(text) {
     if (typeof text !== 'string') {
         return '';
     }
-    const symbolList = {
-        '@': '＠',
-        '#': '＃',
-        $: '＄',
-        '%': '％',
-        '&': '＆',
-        '=': '＝',
-        '+': '＋',
-        '/': '⁄',
-        '\\': '＼',
-        ';': ';',
-        ':': '˸',
-        ',': '‚',
-        '?': '？',
-        '!': 'ǃ',
-        '"': '＂',
-        '<': '≺',
-        '>': '≻',
-        '.': '․',
-        '^': '＾',
-        '{': '｛',
-        '}': '｝',
-        '[': '［',
-        ']': '］',
-        '(': '（',
-        ')': '）',
-        '|': '｜',
-        '*': '∗'
-    };
     let newText = text;
-    for (const key in symbolList) {
-        const regex = new RegExp(symbolList[key], 'g');
-        newText = newText.replace(regex, key);
+    for (const [symbol, lookalike] of Object.entries(bioSymbols)) {
+        newText = newText.replaceAll(lookalike, symbol);
     }
-    return newText.replace(/ {1,}/g, ' ').trimRight();
+    return newText.replace(/ +/g, ' ').trimEnd();
 }
 
 /**
