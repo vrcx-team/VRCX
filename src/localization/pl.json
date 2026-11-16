@@ -162,7 +162,6 @@
             "avatars": {
                 "search": "Szukaj",
                 "vrchat_favorites": "Ulubione VRChat",
-                "local_favorites": "Lokalne ulubione (wymaga VRC+)",
                 "new_group": "Nowa grupa",
                 "cancel_refresh": "Anuluj odświeżanie",
                 "check_invalid": "Sprawdź usunięte/prywatne awatary",
@@ -834,7 +833,6 @@
                 "edit_language": "Język",
                 "edit_bio": "Bio",
                 "edit_pronouns": "Zaimki",
-                "report_hacking": "Zgłoś za hakowanie",
                 "unfriend": "Usuń ze znajomych",
                 "logout": "Wyloguj się"
             },

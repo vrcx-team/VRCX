@@ -106,7 +106,6 @@
             "avatars": {
                 "search": "Tìm kiếm",
                 "vrchat_favorites": "Yêu thích lưu trên VRChat",
-                "local_favorites": "Local Favorites (Requires VRC+)",
                 "new_group": "Nhóm mới"
             },
             "export": "Xuất dữ liệu",
@@ -498,7 +497,6 @@
                 "edit_language": "Ngôn ngữ",
                 "edit_bio": "Bio",
                 "edit_pronouns": "Pronouns",
-                "report_hacking": "Báo cáo Hack",
                 "unfriend": "Bỏ bạn",
                 "logout": "Đang xuất"
             },

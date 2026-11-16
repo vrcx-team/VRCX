@@ -374,7 +374,6 @@
             "avatars": {
                 "search": "搜尋",
                 "vrchat_favorites": "VRChat 收藏",
-                "local_favorites": "本地收藏列表 (需要 VRC+)",
                 "new_group": "新群組",
                 "cancel_refresh": "取消刷新",
                 "check_invalid": "檢查已刪除／私人角色",
@@ -1368,7 +1367,6 @@
                 "edit_language": "語言",
                 "edit_bio": "自我介紹",
                 "edit_pronouns": "代稱",
-                "report_hacking": "檢舉駭客行為",
                 "unfriend": "解除好友",
                 "unfriend_success_msg": "已解除好友",
                 "logout": "登出",
@@ -2236,8 +2234,7 @@
             "drone_skin": "無人機外觀",
             "emoji": "表情符號",
             "redeem": "兌換",
-            "create_animated_emoji": "動畫表情生成器",
-            "crop_image": "確認上傳"
+            "create_animated_emoji": "動畫表情生成器"
         },
         "image_crop": {
             "rotate_left": "向左旋轉",

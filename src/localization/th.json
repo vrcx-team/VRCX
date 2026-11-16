@@ -205,7 +205,6 @@
             "avatars": {
                 "search": "ค้นหา",
                 "vrchat_favorites": "รายการโปรด VRC+",
-                "local_favorites": "รายการโปรดในเครื่อง (ต้องใช้ VRC+)",
                 "new_group": "กลุ่มใหม่",
                 "cancel_refresh": "ยกเลิกการรีเฟรช",
                 "check_invalid": "ตรวจสอบอวาตาร์ที่ถูกลบ/ส่วนตัว",
@@ -1203,7 +1202,6 @@
                 "edit_language": "ภาษา",
                 "edit_bio": "ข้อมูลประวัติ",
                 "edit_pronouns": "สรรพนาม",
-                "report_hacking": "รายงานการแฮก",
                 "unfriend": "ลบเพื่อน",
                 "logout": "ออกจากระบบ",
                 "favorites_tooltip": "รายการโปรด",
@@ -1920,8 +1918,7 @@
             "drone_skin": "สกินโดรน",
             "emoji": "อิโมจิ",
             "redeem": "แลกรับ",
-            "create_animated_emoji": "เครื่องสร้างอิโมจิภาพเคลื่อนไหว",
-            "crop_image": "ยืนยันการอัปโหลด"
+            "create_animated_emoji": "เครื่องสร้างอิโมจิภาพเคลื่อนไหว"
         },
         "gallery_select": {
             "header": "เลือกรูปภาพ",

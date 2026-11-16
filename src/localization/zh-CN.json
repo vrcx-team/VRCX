@@ -83,6 +83,7 @@
         "help_support": "帮助 & 支持",
         "expand_menu": "展开菜单",
         "collapse_menu": "折叠菜单",
+        "expand_sidebar": "展开侧边栏",
         "toggle_theme": "切换日/夜间模式"
     },
     "nav_menu": {
@@ -244,6 +245,12 @@
             "login": "登录",
             "register": "注册",
             "forgotPassword": "忘记密码？",
+            "reset_password": {
+                "title": "重置密码",
+                "description": "输入绑定到你的 VRChat 账户的邮箱地址，向你的邮箱发送一封密码恢复邮件。",
+                "email": "邮箱",
+                "send": "发送"
+            },
             "updater": "检查更新",
             "proxy_settings": "代理设置",
             "settings": "设置",
@@ -259,6 +266,12 @@
             "language_detect": {
                 "title": "界面语言",
                 "description": "你的系统语言似乎是 {language}。是否切换到该语言？"
+            },
+            "qr": {
+                "button": "使用二维码登录",
+                "hint": "使用已登录 VRChat 的设备扫码，然后批准登录。",
+                "cancel": "取消",
+                "failed": "二维码登录失败"
             }
         },
         "feed": {
@@ -356,6 +369,9 @@
                 "sort_update": "按更新时间排序",
                 "sort_created": "按建立时间排序"
             },
+            "marketplace": {
+                "header": "市场"
+            },
             "group": {
                 "header": "群组"
             }
@@ -374,7 +390,6 @@
             "avatars": {
                 "search": "搜索",
                 "vrchat_favorites": "在线收藏夹",
-                "local_favorites": "本地收藏夹（需要 VRC+）",
                 "new_group": "创建新的收藏夹",
                 "cancel_refresh": "清除缓存",
                 "check_invalid": "检测这个分组的失效模型",
@@ -496,7 +511,8 @@
                     "report": {
                         "closed": "举报完成"
                     },
-                    "contentrestriction": "内容限制"
+                    "contentrestriction": "内容限制",
+                    "sanction": "管理处罚"
                 },
                 "instance": {
                     "closed": "房间关闭",
@@ -666,7 +682,11 @@
             "group": {
                 "header": "群组",
                 "calendar": "活动日历",
-                "calendar_description": "查看活动日历"
+                "calendar_description": "查看活动日历",
+                "blocked_groups": "屏蔽群组",
+                "blocked_groups_description": "查看与取消屏蔽你已屏蔽的群组",
+                "group_invites": "群组邀请",
+                "group_invites_description": "接受、拒绝或频闭待定的群组邀请"
             },
             "user": {
                 "discord_names_description": "查找好友的 Discord 名称（如果他们有写上去的话）",
@@ -712,10 +732,29 @@
                 "registry_backup": "VRChat 设置数据备份工具",
                 "registry_backup_description": "创建或恢复 VRChat 的设置备份"
             },
+            "marketplace": {
+                "header": "市场",
+                "vrchat_store": "VRChat 商店",
+                "vrchat_store_description": "在 VRChat 商店浏览和购买物品",
+                "search_placeholder": "搜索商店",
+                "refresh_tooltip": "刷新商店",
+                "free": "免费",
+                "vrc_plus_price": "{price}（VRC+优惠价）",
+                "credits": "{credits}V",
+                "buy": "购买",
+                "owned": "已拥有",
+                "days_left": "还剩 {days} 天"
+            },
             "other": {
                 "header": "其它",
                 "edit_invite_message": "编辑邀请消息",
-                "edit_invite_message_description": "编辑邀请或申请加入时使用的消息"
+                "edit_invite_message_description": "编辑邀请或申请加入时使用的消息",
+                "moderation_reports": "我的举报",
+                "moderation_reports_description": "查看和删除你提交的举报",
+                "purchase_history": "购买历史",
+                "purchase_history_description": "查看你从 VRChat 商店和市场购买的物品",
+                "info_push": "信息推送",
+                "info_push_description": "浏览 VRChat 信息推送公告和内容"
             }
         },
         "profile": {
@@ -726,7 +765,8 @@
             "game_info": {
                 "header": "游戏信息",
                 "online_users": "总在线玩家",
-                "user_online": "现有 {count} 位玩家在线",
+                "user_online": "现有 {count} 位玩家在线。",
+                "instances_active": "现有 {count} 个活跃房间。",
                 "refresh": "点击以刷新"
             },
             "config_json": "API 端点返回的配置信息",
@@ -867,7 +907,9 @@
                     "auto_change_status_groups": "仅统计来自以下分组的好友",
                     "auto_change_status_groups_placeholder": "选择分组",
                     "auto_accept_invite_groups": "指定分组",
-                    "auto_accept_invite_groups_placeholder": "选择分组"
+                    "auto_accept_invite_groups_placeholder": "选择分组",
+                    "auto_accept_invite_statuses": "仅在我的特定状态下接受",
+                    "auto_accept_invite_statuses_placeholder": "所有状态"
                 },
                 "legal_notice": {
                     "header": "法律声明",
@@ -923,6 +965,8 @@
                     "show_status_bar": "显示底部状态栏",
                     "age_gated_instances": "显示具有年龄限制的房间",
                     "age_gated_instances_description": "显示具有年龄限制的房间。禁用时，这些房间将在列表中被隐藏，以跳转方式打开则显示为受限。",
+                    "closed_instances": "显示已关闭房间",
+                    "closed_instances_description": "显示以关闭的房间。禁用后，已关闭房间将从世界的房间列表中隐藏。",
                     "nicknames": "显示本地好友备注",
                     "nicknames_description": "在用户名后显示你的本地备注名。",
                     "sort_favorite_by": "收藏夹排序规则",
@@ -1023,9 +1067,17 @@
             "notifications": {
                 "notifications": {
                     "header": "通知",
+                    "busy_warning": "当你的状态设置为“请勿打扰”时，通知将被禁用。",
                     "notification_filter": "通知筛选器",
                     "test_notification": "发送测试通知",
                     "test_message": "这是一个测试通知。",
+                    "inventory_notifications": {
+                        "header": "库存与商店",
+                        "inventory_bundle_notifications": "未使用的捆绑包",
+                        "inventory_bundle_notifications_description": "当库存中有未使用的捆绑包时进行通知。",
+                        "free_store_item_notifications": "免费商店物品",
+                        "free_store_item_notifications_description": "当商店中有新的免费物品时进行通知。"
+                    },
                     "steamvr_notifications": {
                         "header": "SteamVR 通知",
                         "steamvr_overlay": "SteamVR 叠加界面",
@@ -1100,11 +1152,15 @@
                     "instance_type_player_count": "显示房间类型和人数",
                     "join_button": "在面板上显示加入按钮（仅限公开房间）",
                     "show_details_in_private": "在私人房间时显示房间信息",
+                    "show_details_in_private_tooltip": "显示仅限邀请、邀请+和仅限群组成员，或在使用“忙碌”状态时的世界和房间详细信息",
                     "show_images": "显示世界缩略图",
+                    "show_media_images": "显示媒体图像",
+                    "show_media_images_tooltip": "当世界中的媒体播放器提供缩略图时，使用当前播放视频的缩略图",
                     "show_current_platform": "显示当前所在的平台",
                     "world_integration": "打开与特定世界的集成",
                     "world_integration_tooltip": "为 Popcorn Palace、PyPyDance、VRDancing 和 LS Media 显示“正在观看/正在收听”的状态",
-                    "display_world_name_as_discord_status": "在 Discord 状态中显示世界名称"
+                    "display_world_name_as_discord_status": "在 Discord 状态中显示世界名称",
+                    "display_world_name_as_discord_status_tooltip": "在你的 Discord 状态中显示世界名称而不是“VRChat”，例如“正在玩 中文吧 Chinese Bar”"
                 },
                 "rpc": {
                     "vr": "VR 模式",
@@ -1325,7 +1381,8 @@
         "alertdialog": {
             "ok": "确定",
             "cancel": "取消",
-            "confirm": "确认"
+            "confirm": "确认",
+            "dont_show_again": "不再提示"
         },
         "prompt": {
             "input_invalid": "输入无效"
@@ -1346,7 +1403,9 @@
                 "vrchat_team": "VRChat 团队成员",
                 "age_verified": "已完成年龄验证",
                 "trust_level": "信誉等级",
+                "account_standing": "账号状态",
                 "mutual_friends": "共同好友",
+                "mutual_groups": "共同群组",
                 "open_in_discord": "在 Discord 中打开",
                 "discord": "Discord"
             },
@@ -1388,7 +1447,7 @@
                 "edit_language": "语言",
                 "edit_bio": "个人简介",
                 "edit_pronouns": "人称代词",
-                "report_hacking": "举报这个玩家的开挂/盗模行为",
+                "report_user": "举报用户",
                 "unfriend": "删除好友",
                 "unfriend_success_msg": "已成功删除好友",
                 "logout": "退出登录",
@@ -1404,6 +1463,16 @@
                 "self_invite_tooltip": "邀请自己",
                 "open_in_vrchat_tooltip": "在 VRChat 中打开",
                 "refresh_instance_info": "刷新房间信息",
+                "instance_languages": "语言：",
+                "instance_creation_language": "由房间建立者设置",
+                "instance_description": "描述：",
+                "instance_category": "分类：",
+                "instance_vibes": "氛围：",
+                "instance_hype_train": "Hype Train 进行中",
+                "instance_hype_train_gifts": "礼物：",
+                "instance_hype_train_contributors": "贡献者：",
+                "instance_hype_train_started": "开始时间：",
+                "instance_hype_train_time_remaining": "剩余时间：",
                 "instance_queue": "在排队等待的玩家：",
                 "instance_users": "房间玩家：",
                 "instance_friends_tooltip": "房间内的好友",
@@ -1447,15 +1516,19 @@
                 "instance_age_restricted": "年龄限制",
                 "instance_age_restricted_tooltip": "位于年龄限制房间",
                 "close_instance": "关闭该房间",
+                "rename_instance": "重命名该房间",
                 "instance_age_gated": "房间具有年龄限制",
                 "instance_role_restricted": "房间具有身份组限制",
+                "instance_calendar_event": "日历事件",
                 "open_previous_instance": "打开之前加入的房间的列表",
                 "show_mutual_friends": "是否允许查看共同好友",
                 "show_discord_connections": "是否允许查看绑定的 Discord 账号信息",
+                "reduced_profile_animations": "减少个人主页动画",
                 "instance_minimum_avatar_performance": "模型性能评级限制",
                 "current_instance": "当前房间",
                 "economy_creator": "商业创作者",
-                "instance_announcement_tooltip": "发送房间公告"
+                "instance_announcement_tooltip": "发送房间公告",
+                "instance_calendar_link_tooltip": "分配群组事件"
             },
             "groups": {
                 "header": "群组",
@@ -1510,6 +1583,7 @@
                 "all": "所有",
                 "public": "公开",
                 "private": "私人",
+                "purchased": "已购买",
                 "group_by": "分组方式："
             },
             "json": {
@@ -1598,6 +1672,8 @@
             "actions": {
                 "delete_cache_tooltip": "从缓存中删除此世界",
                 "favorites_tooltip": "添加到收藏夹",
+                "like": "点赞",
+                "dislike": "点踩",
                 "refresh": "刷新",
                 "share": "分享",
                 "new_instance": "创建新房间",
@@ -1657,6 +1733,9 @@
                 "visit_count": "游玩次数",
                 "time_spent": "总停留时长",
                 "description": "描述"
+            },
+            "store": {
+                "header": "商店"
             },
             "json": {
                 "header": "原始 JSON 信息"
@@ -1721,6 +1800,7 @@
                 "id_tooltip": "复制到剪贴板",
                 "copy_id": "复制 ID",
                 "copy_url": "复制链接",
+                "copy_name": "复制名称",
                 "created_at": "创建时间",
                 "last_updated": "最后更新时间",
                 "version": "版本",
@@ -1734,7 +1814,12 @@
                 "memo": "备注",
                 "memo_placeholder": "点此添加备注",
                 "listings": "列表",
-                "gallery": "模型相册"
+                "purchase_confirm": "Purchase {name} for {price} VRC Credits? VRC Credits are purchased with real money and this purchase cannot be reversed.",
+                "purchase_success": "Purchase successful",
+                "gallery": "模型相册",
+                "gallery_move_left": "向左移动",
+                "gallery_move_right": "向右移动",
+                "gallery_delete": "删除照片"
             },
             "json": {
                 "header": "原始 JSON 信息"
@@ -1774,7 +1859,8 @@
             "description": "描述",
             "starts_at": "开始时间",
             "ends_at": "结束时间",
-            "invalid_date_range": "活动结束时间必须位于开始时间之后",
+            "invalid_date_range": "活动结束时间必须位于开始时间之后。",
+            "start_in_past": "活动必须在未来开始。",
             "access_type": "可见性",
             "access_group": "仅限群组",
             "access_public": "公开",
@@ -1897,6 +1983,8 @@
                 "create_post": "创建群组帖子",
                 "create_event": "创建群组活动",
                 "moderation_tools": "成员管理",
+                "manage_roles": "管理身份组",
+                "view_roles": "查看身份组",
                 "transfer": "转让群组",
                 "delete": "删除群组",
                 "leave": "离开群组",
@@ -1985,7 +2073,29 @@
                 "confirm_description": "确定要发送将 {groupName} 的所有权移交至 {displayName} 的请求吗？"
             },
             "gallery": {
-                "header": "相册"
+                "header": "相册",
+                "create_tooltip": "创建相册",
+                "delete_tooltip": "删除相册",
+                "edit_tooltip": "编辑相册",
+                "add_image_tooltip": "添加照片",
+                "delete_image_tooltip": "删除照片",
+                "name": "名称",
+                "description": "描述",
+                "members_only": "仅限群组成员",
+                "visibility_public": "对所有人可见",
+                "visibility_members": "对群组成员可见",
+                "visibility_roles": "对特定身份组可见",
+                "save": "保存",
+                "create": "创建",
+                "saved": "相册已更新",
+                "created": "相册已创建",
+                "deleted": "相册已删除",
+                "image_added": "照片已添加",
+                "image_pending_approval": "照片已提交并等待审核",
+                "image_deleted": "照片已删除"
+            },
+            "store": {
+                "header": "商店"
             },
             "json": {
                 "header": "原始 JSON 信息"
@@ -2096,7 +2206,12 @@
             "roles": "身份组",
             "open_ingame": "在 VRChat 中打开",
             "display_name": "自定义房间名称",
-            "minimum_avatar_performance": "模型性能评级限制"
+            "minimum_avatar_performance": "模型性能评级限制",
+            "description": "描述",
+            "category": "分类",
+            "vibes": "氛围",
+            "languages": "语言",
+            "none": "无"
         },
         "launch": {
             "header": "启动",
@@ -2255,7 +2370,8 @@
             "json": "JSON格式"
         },
         "export_own_avatars": {
-            "header": "导出自己创建的模型的 ID"
+            "header": "导出自己创建的模型的 ID",
+            "public_only": "仅限公开模型"
         },
         "discord_names": {
             "header": "Discord 名称",
@@ -2305,8 +2421,7 @@
             "drone_skin": "无人机皮肤",
             "emoji": "Emoji（表情）",
             "redeem": "兑换码兑换",
-            "create_animated_emoji": "动画表情生成器",
-            "crop_image": "确认上传"
+            "create_animated_emoji": "动画表情生成器"
         },
         "image_crop": {
             "rotate_left": "向左旋转",
@@ -2317,7 +2432,8 @@
             "zoom_out": "缩小",
             "mode_fit": "切换到适应模式",
             "mode_free": "切换到自由模式",
-            "reset": "重置"
+            "reset": "重置",
+            "auto_resize": "自动调整图像"
         },
         "gallery_select": {
             "header": "选择图片",
@@ -2544,6 +2660,43 @@
             "import_bans_start": "导入并封禁",
             "import_bans_clear_errors": "清除错误信息"
         },
+        "group_roles": {
+            "header": "管理群组身份组",
+            "view_header": "群组身份组",
+            "new_role": "新身份组",
+            "no_roles": "未找到身份组",
+            "no_role_selected": "选择要编辑的身份组，或创建新身份组",
+            "name": "名称",
+            "description": "描述",
+            "self_assignable": "可自行分配",
+            "self_assignable_description": "成员可以将此身份组分配给自己",
+            "added_on_join": "加入时添加",
+            "added_on_join_description": "自动授予新成员",
+            "requires_two_factor": "需要双因素身份验证（2FA）",
+            "requires_two_factor_description": "成员需要启用双因素身份验证才能使用此身份组",
+            "requires_purchase": "需要购买",
+            "requires_purchase_description": "成员必须购买群组订阅才能获得此身份组",
+            "permissions": "权限",
+            "management_permissions": "管理权限",
+            "default_role": "默认身份组",
+            "management_roles": "管理身份组",
+            "member_roles": "成员身份组",
+            "assigned_to_you": "分配给你",
+            "delete": "删除身份组",
+            "delete_confirm": "确定要删除“{name}”吗？此操作无法撤销。",
+            "cancel": "取消",
+            "create": "删除身份组",
+            "save": "保存",
+            "saved": "身份组已保存",
+            "save_failed": "身份组保存失败",
+            "deleted": "身份组已删除",
+            "delete_failed": "身份组删除失败",
+            "add_self": "添加自己",
+            "remove_self": "移除自己",
+            "self_role_added": "身份组已添加",
+            "self_role_removed": "身份组已移除",
+            "self_role_failed": "身份组更新失败"
+        },
         "group_post_edit": {
             "header": "创建/编辑帖子",
             "title": "标题",
@@ -2582,6 +2735,83 @@
             "header": "管理群组成员",
             "choose_group_placeholder": "选择群组...",
             "moderation_tools": "打开管理工具"
+        },
+        "moderation_report": {
+            "header": "举报",
+            "category": "分类",
+            "reason": "理由",
+            "description": "描述",
+            "description_placeholder": "描述发生了什么（可选）",
+            "no_options": "此内容没有可用的举报选项。",
+            "cancel": "取消",
+            "submit": "提交举报",
+            "success": "举报已提交"
+        },
+        "moderation_reports": {
+            "header": "我的举报",
+            "filter_type": "类型",
+            "all": "全部",
+            "load_more": "载入更多",
+            "delete_confirm": "删除此举报？"
+        },
+        "purchase_history": {
+            "header": "购买历史",
+            "filter_type": "类型",
+            "all": "全部",
+            "gift": "礼物",
+            "inactive": "未激活",
+            "seller": "卖家",
+            "free": "免费",
+            "ends": "终止于",
+            "purchases": "购得物",
+            "transactions": "交易",
+            "from": "来自",
+            "balance": "余额"
+        },
+        "info_push": {
+            "header": "信息推送",
+            "categories": {
+                "help-article": "帮助文章",
+                "quick-menu-banner": "快捷菜单横幅",
+                "loading-screen-banners": "加载屏幕"
+            },
+            "end_date": "结束日期",
+            "open_link": "打开链接",
+            "open_video": "打开视频",
+            "domains": "域",
+            "disabled": "禁用",
+            "expired": "已过期",
+            "scheduled": "计划中"
+        },
+        "blocked_groups": {
+            "header": "已屏蔽的群组",
+            "unblock": "取消屏蔽"
+        },
+        "group_invites": {
+            "header": "群组邀请",
+            "invited": "受邀",
+            "requested": "已申请",
+            "cancel_request": "取消加入申请",
+            "accept": "接受",
+            "decline": "拒绝",
+            "block": "屏蔽",
+            "accepted": "已加入群组"
+        },
+        "inventory_bundle_dialog": {
+            "header": "新捆绑包",
+            "description": "你的库存中有未打开的捆绑包。",
+            "dont_show_again": "不再提示",
+            "close": "关闭",
+            "consume": "使用",
+            "consume_success": "捆绑包已使用"
+        },
+        "free_store_item_dialog": {
+            "header": "免费商店物品",
+            "description": "这些物品可以在 VRChat 商店免费领取。",
+            "dont_show_again": "不再提示",
+            "close": "关闭",
+            "claim": "领取全部",
+            "claim_success": "已领取 {count} 个免费物品"
         },
         "boop_dialog": {
             "header": "戳一戳",
@@ -2665,6 +2895,14 @@
             "select_image": "选择图片",
             "sending": "发送中...",
             "send": "发送房间公告"
+        },
+        "instance_calendar_link": {
+            "header": "分配群组事件",
+            "event": "事件",
+            "no_events": "没有开始于未来 6 小时或结束于过去 6 小时的事件",
+            "assign": "分配",
+            "remove": "移除链接",
+            "saving": "保存中..."
         }
     },
     "confirm": {
@@ -2690,10 +2928,14 @@
         "clear_group": "确定要清空群组吗？",
         "delete_group": "确定要删除群组 {name} 吗？",
         "delete_post": "确定要删除这个公告吗？",
+        "delete_gallery_image": "确定要删除这个照片吗？",
+        "delete_gallery": "确定要删除相册 {name} 及其所有照片吗？",
         "block_group": "确定要屏蔽这个群组吗？",
         "unblock_group": "确定要取消屏蔽这个群组吗？",
         "leave_group": "确定要离开这个群组吗？",
         "disable_gamelog": "确定要禁用游戏日志吗？",
+        "youtube_bot_error_title": "YouTube 视频加载失败",
+        "youtube_bot_error": "YouTube 正在阻止视频播放，出现“登录确认”错误。 VRCVideoCacher 可以修复这个问题，要打开它的 Steam 商店页面吗？",
         "restore_backup": "确定要恢复设置数据的备份吗？",
         "delete_vrc_registry": "确定要删除 VRC 的设置数据吗？",
         "clear_cache": "确定要清除所有 VRChat 缓存吗？",
@@ -2764,6 +3006,10 @@
             "cancel": "取消",
             "ok": "确定",
             "input_error": "请输入有效的秒数"
+        },
+        "rename_instance": {
+            "header": "重命名房间",
+            "description": "输入房间名称，留空以清除"
         },
         "rename_avatar": {
             "header": "重命名模型",
@@ -2914,7 +3160,8 @@
             "auto_login_failed": "自动登录失败。",
             "offline": "你现在处于离线状态。",
             "login_network_issue_hint_title": "登录遇到问题？",
-            "login_network_issue_hint_description": "发现你最近几次的登录都失败了，点击“打开”看看故障排查指南吧。"
+            "login_network_issue_hint_description": "发现你最近几次的登录都失败了，点击“打开”看看故障排查指南吧。",
+            "check_your_email": "检查你的邮箱以获取 VRChat 的消息"
         },
         "vrcx_updater": {
             "failed": "无法检查更新，{message}",
@@ -2929,6 +3176,7 @@
         },
         "instance": {
             "closed": "房间已关闭",
+            "renamed": "房间已重命名",
             "removed_form_queue": "已从等待队列中移除 {worldName}",
             "not_allowed": "你无权访问此房间",
             "create_failed": "房间创建失败",
@@ -3144,6 +3392,7 @@
             "language": "语言",
             "bioLink": "社交链接",
             "note": "备注",
+            "memo": "备忘录",
             "date": "时间",
             "user": "玩家",
             "type": "种类",

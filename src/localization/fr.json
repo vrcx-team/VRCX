@@ -168,7 +168,6 @@
             "avatars": {
                 "search": "Rechercher",
                 "vrchat_favorites": "Favoris VRChat",
-                "local_favorites": "Favoris locaux (Requires VRC+)",
                 "new_group": "Nouveau groupe",
                 "cancel_refresh": "Annuler la réactualisation",
                 "check_invalid": "Check for deleted/private avatars",
@@ -801,7 +800,6 @@
                 "edit_language": "Langue",
                 "edit_bio": "Bio",
                 "edit_pronouns": "Pronoms",
-                "report_hacking": "Signaler un piratage",
                 "unfriend": "Supprimer des amis",
                 "logout": "Se déconnecter"
             },

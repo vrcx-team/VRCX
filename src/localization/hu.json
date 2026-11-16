@@ -374,7 +374,6 @@
             "avatars": {
                 "search": "Keresés",
                 "vrchat_favorites": "VRChat kedvencek",
-                "local_favorites": "Helyi kedvencek (VRC+ szükséges)",
                 "new_group": "Új csoport",
                 "cancel_refresh": "Frissítés megszakítása",
                 "check_invalid": "Törölt/privát avatarok keresése",
@@ -1388,7 +1387,6 @@
                 "edit_language": "Nyelv",
                 "edit_bio": "Bemutatkozás",
                 "edit_pronouns": "Névmások",
-                "report_hacking": "Jelentés hackelésért",
                 "unfriend": "Barátság megszüntetése",
                 "unfriend_success_msg": "Barátság megszüntetve",
                 "logout": "Kijelentkezés",
@@ -2303,8 +2301,7 @@
             "drone_skin": "Drón skin",
             "emoji": "Emoji",
             "redeem": "Beváltás",
-            "create_animated_emoji": "Animált emoji generátor",
-            "crop_image": "Feltöltés megerősítése"
+            "create_animated_emoji": "Animált emoji generátor"
         },
         "image_crop": {
             "rotate_left": "Forgatás balra",
