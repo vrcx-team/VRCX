@@ -506,8 +506,8 @@ export const useFriendStore = defineStore('Friend', () => {
             if (friendLogRef?.displayName) {
                 ctx.name = friendLogRef.displayName;
             }
-        } else {
-            ctx.name = ref.name;
+        } else if (ref.displayName) {
+            ctx.name = ref.displayName;
         }
         friends.set(id, ctx);
         watchState.isLoggedIn = true;

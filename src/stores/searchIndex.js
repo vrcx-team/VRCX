@@ -24,7 +24,7 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
         if (!ctx || !ctx.id) return;
         const entry = {
             id: ctx.id,
-            name: ctx.name || '',
+            name: ctx.name || ctx.ref?.displayName || '',
             memo: ctx.ref?.$memo || '',
             note: ctx.ref?.note || '',
             imageUrl: ctx.ref?.currentAvatarThumbnailImageUrl || ''
